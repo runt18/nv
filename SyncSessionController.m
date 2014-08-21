@@ -35,12 +35,12 @@ static void SleepCallBack(void *refcon, io_service_t y, natural_t messageType, v
 	if (!self) { return nil; }
 
 	if (!(syncDelegate = aSyncDelegate)) {
-		NSLog(@"%s: need syncDelegate!", _cmd);
+		NSLog(@"%@: need syncDelegate!", NSStringFromSelector(_cmd));
 		[self release];
 		return (self = nil);
 	}
 	if (!(notationPrefs = [prefs retain])) {
-		NSLog(@"%s: need notationPrefs!", _cmd);
+		NSLog(@"%@: need notationPrefs!", NSStringFromSelector(_cmd));
 		[self release];
 		return (self = nil);
 	}

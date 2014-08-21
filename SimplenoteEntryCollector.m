@@ -41,7 +41,7 @@
 	entriesInError = [[NSMutableArray alloc] init];
 
 	if (![simperiumToken length] || ![entriesToCollect count]) {
-		NSLog(@"%s: missing parameters", _cmd);
+		NSLog(@"%@: missing parameters", NSStringFromSelector(_cmd));
 		[self release];
 		return (self = nil);
 	}
@@ -254,7 +254,7 @@
 	//set modification date when updating
 	//need to check for success when deleting
 	if (![self respondsToSelector:opSEL]) {
-		NSLog(@"%@ doesn't respond to %s", self, opSEL);
+		NSLog(@"%@ doesn't respond to %@", self, NSStringFromSelector(opSEL));
 		[self release];
 		return (self = nil);
 	}

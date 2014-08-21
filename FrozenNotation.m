@@ -82,7 +82,7 @@
 	}
 	
 	if (![notesData length]) {
-		NSLog(@"%s: empty notesData; returning nil", _cmd);
+		NSLog(@"%@: empty notesData; returning nil", NSStringFromSelector(_cmd));
 		[self release];
 		return (self = nil);
 	}

@@ -247,7 +247,7 @@ static void SNReachabilityCallback(SCNetworkReachabilityRef	target, SCNetworkCon
 	reachabilityFailed = NO;
 
 	if (![(emailAddress = [aUserString retain]) length]) {
-		NSLog(@"%s: empty email address", _cmd);
+		NSLog(@"%@: empty email address", NSStringFromSelector(_cmd));
 		[self release];
 		return (self = nil);
 	}
@@ -805,15 +805,15 @@ static void SNReachabilityCallback(SCNetworkReachabilityRef	target, SCNetworkCon
 	}
 		
 	if ([downloadedNotesToKeep count]) {
-		NSLog(@"%@: found %lu genuinely new notes on the server",NSStringFromSelector(_cmd), (unsigned long)[downloadedNotesToKeep count]);
+		NSLog(@"%@: found %lu genuinely new notes on the server", NSStringFromSelector(_cmd), (unsigned long)[downloadedNotesToKeep count]);
 		[delegate syncSession:self receivedAddedNotes:downloadedNotesToKeep];
 	}
 	if ([notesToReportModified count]) {
-		NSLog(@"%@: found %lu duplicate notes on the server",NSStringFromSelector(_cmd), (unsigned long)[notesToReportModified count]);
+		NSLog(@"%@: found %lu duplicate notes on the server", NSStringFromSelector(_cmd), (unsigned long)[notesToReportModified count]);
 		[delegate syncSession:self didModifyNotes:notesToReportModified];
 	}
 	if ([localNotesToUpload count] && ![collector collectionStoppedPrematurely]) {
-		NSLog(@"%@: found %lu locally unique notes",NSStringFromSelector(_cmd), (unsigned long)[localNotesToUpload count]);
+		NSLog(@"%@: found %lu locally unique notes", NSStringFromSelector(_cmd), (unsigned long)[localNotesToUpload count]);
 		//automatically upload the rest of the unique notes using -startCreatingNotes:
 		[self startCreatingNotes:[localNotesToUpload allObjects]];
 	}
