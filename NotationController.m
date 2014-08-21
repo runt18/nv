@@ -68,10 +68,6 @@
 		sortedCatalogEntries = NULL;
 		catEntriesCount = totalCatEntriesCount = 0;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-		subscriptionCallback = NewFNSubscriptionUPP(NotesDirFNSubscriptionProc);
-		bzero(&noteDirSubscription, sizeof(FNSubscriptionRef));
-#endif
 		bzero(&noteDatabaseRef, sizeof(FSRef));
 		bzero(&noteDirectoryRef, sizeof(FSRef));
 		volumeSupportsExchangeObjects = -1;
@@ -1583,9 +1579,6 @@ bail:
 	[notationPrefs setDelegate:nil];
 	[allNotes makeObjectsPerformSelector:@selector(setDelegate:) withObject:nil];
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-    DisposeFNSubscriptionUPP(subscriptionCallback);
-#endif
 	if (fsCatInfoArray)
 		free(fsCatInfoArray);
 	if (HFSUniNameArray)

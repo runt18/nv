@@ -6,7 +6,7 @@
    - Redistributions in binary form must reproduce the above copyright notice, this list of 
 	 conditions and the following disclaimer in the documentation and/or other materials provided with
      the distribution.
-   - Neither the name of Notational Velocity nor the names of its contributors may be used to endorse 
+   - Neither the name of Notational Velocity nor the names of its contributors maay be used to endorse
      or promote products derived from this software without specific prior written permission. */
 
 
@@ -15,7 +15,6 @@
 #import "AppController.h"
 #import "AppController_Importing.h"
 #import "NotesTableView.h"
-#import "NSTextFinder.h"
 #import "LinkingEditor_Indentation.h"
 #import "NSCollection_utils.h"
 #import "AttributedPlainText.h"
@@ -26,9 +25,7 @@
 
 
 #include <CoreServices/CoreServices.h>
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
 #include <Carbon/Carbon.h>
-#endif
 
 #define PASSWORD_SUGGESTIONS 0
 
@@ -72,10 +69,7 @@ CGFloat _perceptualDarkness(NSColor*a);
     prefsController = [GlobalPrefs defaultPrefs];
 	
     [self setContinuousSpellCheckingEnabled:[prefsController checkSpellingAsYouType]];
-	if (IsSnowLeopardOrLater) {
-		[self setAutomaticTextReplacementEnabled:[prefsController useTextReplacement]];
-	}
-
+	[self setAutomaticTextReplacementEnabled:[prefsController useTextReplacement]];
     
     [prefsController registerWithTarget:self forChangesInSettings:
 	 @selector(setCheckSpellingAsYouType:sender:),
@@ -95,10 +89,8 @@ CGFloat _perceptualDarkness(NSColor*a);
     [self prepareTextFinder];
     
 	[[self window] setAcceptsMouseMovedEvents:YES];
-	if (IsLeopardOrLater) {
-		defaultIBeamCursorIMP = method_getImplementation(class_getClassMethod([NSCursor class], @selector(IBeamCursor)));
-		whiteIBeamCursorIMP = method_getImplementation(class_getClassMethod([NSCursor class], @selector(whiteIBeamCursor)));
-	}
+	defaultIBeamCursorIMP = method_getImplementation(class_getClassMethod([NSCursor class], @selector(IBeamCursor)));
+	whiteIBeamCursorIMP = method_getImplementation(class_getClassMethod([NSCursor class], @selector(whiteIBeamCursor)));
 	
 	didRenderFully = NO;
 	[[self layoutManager] setDelegate:self];
@@ -120,11 +112,10 @@ CGFloat _perceptualDarkness(NSColor*a);
 		[self setContinuousSpellCheckingEnabled:[prefsController checkSpellingAsYouType]];
 		
 	} else if ([selectorString isEqualToString:SEL_STR(setUseTextReplacement:sender:)]) {
-		
-		if (IsSnowLeopardOrLater) {
-			[self setAutomaticTextReplacementEnabled:[prefsController useTextReplacement]];
-		}
-    } else if ([selectorString isEqualToString:SEL_STR(setNoteBodyFont:sender:)]) {
+
+		[self setAutomaticTextReplacementEnabled:[prefsController useTextReplacement]];
+
+	} else if ([selectorString isEqualToString:SEL_STR(setNoteBodyFont:sender:)]) {
 
 		[self setTypingAttributes:[prefsController noteBodyAttributes]];
 		//[textView setFont:[prefsController noteBodyFont]];
@@ -175,9 +166,7 @@ CGFloat _perceptualDarkness(NSColor*a);
 }
 
 - (void)indicateRange:(NSValue*)rangeValue {
-	if (IsLeopardOrLater) {
-		[self showFindIndicatorForRange:[rangeValue rangeValue]];
-	}
+	[self showFindIndicatorForRange:[rangeValue rangeValue]];
 }
 
 - (BOOL)resignFirstResponder {
@@ -812,21 +801,6 @@ copyRTFType:
 	return [super performKeyEquivalent:anEvent];
 }
 
-- (void)keyDown:(NSEvent*)anEvent {	
-    //    [[NSNotificationCenter defaultCenter] postNotificationName:@"ModTimersShouldReset" object:nil];
-	unichar keyChar = [anEvent firstCharacterIgnoringModifiers];
-    
-	if (keyChar == NSBackTabCharacter) {
-		//apparently interpretKeyEvents: on 10.3 does not call insertBacktab
-		//maybe it works on someone else's 10.3 Mac
-		[self doCommandBySelector:@selector(insertBacktab:)];
-		return;
-	}
-    //[super interpretKeyEvents:[NSArray arrayWithObject:anEvent]];
-	[super keyDown:anEvent];
-    
-}
-
 - (BOOL)jumpToRenaming {
 	NSEvent *event = [[self window] currentEvent];
 	if ([event type] == NSKeyDown && ![event isARepeat] && NSEqualRanges([self selectedRange], NSMakeRange(0, 0))) {
@@ -1093,8 +1067,7 @@ copyRTFType:
 }
 
 - (void)fixCursorForBackgroundUpdatingMouseInside:(BOOL)checkMouseLoc {
-	
-	if (IsLeopardOrLater && whiteIBeamCursorIMP && defaultIBeamCursorIMP) {
+	if (whiteIBeamCursorIMP && defaultIBeamCursorIMP) {
         if (checkMouseLoc) {
             mouseInside=[self mouseIsHere];
         }
@@ -1422,16 +1395,12 @@ static long (*GetGetScriptManagerVariablePointer())(short) {
 	
 	BOOL currentKeyboardInputIsSystemLanguage = NO;
 	
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
     TISInputSourceRef inputRef = TISCopyCurrentKeyboardInputSource();
     NSArray* inputLangs = [[(NSArray*)TISGetInputSourceProperty(inputRef, kTISPropertyInputSourceLanguages) retain] autorelease];
     CFRelease(inputRef);
     NSString *preferredLang = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
     currentKeyboardInputIsSystemLanguage = nil != preferredLang && [inputLangs containsObject:preferredLang];
-#else
-	currentKeyboardInputIsSystemLanguage = GetScriptManagerVariable(smSysScript) == GetScriptManagerVariable(smKeyScript);
-#endif
-	
+
 	if (currentKeyboardInputIsSystemLanguage) {
 		//only attempt to restore fonts (with styles of course) if the current script is system default--that is, not using an input method that would change the font
 		//this check helps prevent NSTextView from being repeatedly punched in the face when it can't help it
@@ -1480,14 +1449,9 @@ static long (*GetGetScriptManagerVariablePointer())(short) {
 		id bulletIndicator = nil;
 		
 		//sometimes the temporary attributes are split across juxtaposing characters for some reason, so longest-effective-range is necessary
-		//unfortunately there is no such method on Tiger, and I'm not about to emulate its coalescing behavior here
-		if (IsLeopardOrLater) {
-			bulletIndicator = [[self layoutManager] temporaryAttribute:NVHiddenBulletIndentAttributeName atCharacterIndex:NSMaxRange(effectiveRange) 
+		bulletIndicator = [[self layoutManager] temporaryAttribute:NVHiddenBulletIndentAttributeName atCharacterIndex:NSMaxRange(effectiveRange)
 												 longestEffectiveRange:&effectiveRange inRange:aRange];
-		} else {
-			NSDictionary *dict = [[self layoutManager] temporaryAttributesAtCharacterIndex:NSMaxRange(effectiveRange) effectiveRange:&effectiveRange];
-			bulletIndicator = [dict objectForKey:NVHiddenBulletIndentAttributeName];
-		}
+
 		if (bulletIndicator && NSEqualRanges(effectiveRange, aRange)) {
 			return YES;
 		}
@@ -1594,12 +1558,9 @@ static long (*GetGetScriptManagerVariablePointer())(short) {
 - (void)setupFontMenu {
 	NSMenu *theMenu = [[[NSMenu alloc] initWithTitle:@"NVFontMenu"] autorelease];
 	NSMenuItem *theMenuItem;
-	if(IsLeopardOrLater){
-        
-        theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Enter Full Screen",@"menu item title for entering fullscreen") action:@selector(switchFullScreen:) keyEquivalent:@""] autorelease];
-        [theMenuItem setTarget:[NSApp delegate]];
-        [theMenu addItem:theMenuItem];         
-	}
+	theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Enter Full Screen",@"menu item title for entering fullscreen") action:@selector(switchFullScreen:) keyEquivalent:@""] autorelease];
+	[theMenuItem setTarget:[NSApp delegate]];
+	[theMenu addItem:theMenuItem];         
     theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Insert Link",@"insert link menu item title") action:@selector(insertLink:) keyEquivalent:@""] autorelease];
 	[theMenuItem setTarget:self];
 	[theMenu addItem:theMenuItem];
@@ -1697,16 +1658,12 @@ static long (*GetGetScriptManagerVariablePointer())(short) {
 {
     [self insertText:password];
     @try {
-    NSPasteboard *pb = [NSPasteboard generalPasteboard];
-    #if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6
-    NSPasteboardItem *pbitem = [[[NSPasteboardItem alloc] init] autorelease];
-    [pbitem setData:[password dataUsingEncoding:NSUTF8StringEncoding] forType:@"public.plain-text"];
-    [pb writeObjects:[NSArray arrayWithObject:pbitem]];
-    #else
-    [pb declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
-    [pb setString:password forType:NSStringPboardType];
-    #endif
-    } @catch (NSException *e) {}
+		NSPasteboard *pb = [NSPasteboard generalPasteboard];
+
+		NSPasteboardItem *pbitem = [[[NSPasteboardItem alloc] init] autorelease];
+		[pbitem setData:[password dataUsingEncoding:NSUTF8StringEncoding] forType:(NSString *)kUTTypePlainText];
+		[pb writeObjects:[NSArray arrayWithObject:pbitem]];
+	} @catch (NSException *e) {}
 }
 
 - (void)insertGeneratedPassword:(id)sender {
@@ -2419,12 +2376,7 @@ static long (*GetGetScriptManagerVariablePointer())(short) {
     
     [sender setTarget:self];
     if(!IsLionOrLater||([sender tag]!=7)){
-        NSString *pbType;
-        if (IsSnowLeopardOrLater) {
-            pbType=NSPasteboardTypeString;
-        }else{
-            pbType=NSStringPboardType;
-        }
+        NSString *pbType=NSPasteboardTypeString;
         NSString *typedString = [controller typedString];
         if (!typedString) typedString = [controlField stringValue];
         if (!typedString||([typedString length]==0)) {

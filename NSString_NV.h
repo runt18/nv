@@ -81,7 +81,6 @@ CFDateFormatterRef simplenoteDateFormatter(int lowPrecision);
 + (NSCharacterSet*)labelSeparatorCharacterSet;
 + (NSCharacterSet*)listBulletsCharacterSet;
 
-
 @end
 
 

@@ -275,9 +275,9 @@
     return theData;
 }
 
-//yes, to do the same encoding detection we could use something like initWithContentsOfFile: or 
-//initWithContentsOfFile:(NSString *)path usedEncoding:(NSStringEncoding *)enc error:(NSError **)error
-//but those 1) require file paths and 2) the non-deprecated version is available only on 10.4
+// yes, to do the same encoding detection we could use something like initWithContentsOfFile: or
+// initWithContentsOfFile:(NSString *)path usedEncoding:(NSStringEncoding *)enc error:(NSError **)error
+// but those require file paths.
 
 - (NSMutableString*)newStringUsingBOMReturningEncoding:(NSStringEncoding*)encoding {
 	NSUInteger len = [self length];

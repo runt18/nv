@@ -89,8 +89,8 @@
 		}		
 	}
 	
-	//safari on 10.5 does not seem to provide a plain-text equivalent, so we must be able to dumb-down RTF data as well
-	//should fall-back to plain text if 1) user doesn't want styles and 2) plain text is actually available
+	// Safari does not seem to provide a plain-text equivalent, so we must be able to dumb-down RTF data as well
+	// should fall-back to plain text if 1) user doesn't want styles and 2) plain text is actually available
 	BOOL shallUsePlainTextFallback = pbHasPlainText && ![prefsController pastePreservesStyle];
 	BOOL hasRTFData = NO;
 	

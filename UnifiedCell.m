@@ -30,8 +30,7 @@
 
 		//should be handled by NSParagraphStyle in our string, as it is more complex than this
 //		[self setLineBreakMode:NSLineBreakByTruncatingTail];
-		if (IsLeopardOrLater)
-			[self setTruncatesLastVisibleLine:YES];
+		[self setTruncatesLastVisibleLine:YES];
 		[self setEditable:YES];
         return self;
 	}
@@ -136,18 +135,7 @@
 	return color;
 }
 
-static NSShadow* ShadowForSnowLeopard() {
-	static NSShadow *sh = nil;
-	if (!sh) {
-		sh = [[NSShadow alloc] init];
-		[sh setShadowOffset:NSMakeSize(0,-1)];
-		[sh setShadowColor:[NSColor colorWithCalibratedWhite:0.15 alpha:0.67]];
-		[sh setShadowBlurRadius:0.5];
-	}
-	return sh;
-}
-
-NSAttributedString *AttributedStringForSelection(NSAttributedString *str, BOOL withShadow) {
+NSAttributedString *AttributedStringForSelection(NSAttributedString *str) {
 	//used to modify the cell's attributed string before display when it is selected
 	
 	//snow leopard is stricter about applying the default highlight-attributes (e.g., no shadow unless no paragraph formatting)
@@ -156,9 +144,6 @@ NSAttributedString *AttributedStringForSelection(NSAttributedString *str, BOOL w
 	NSRange fullRange = NSMakeRange(0, [str length]);
 	NSMutableAttributedString *colorFreeStr = [str mutableCopy];
 	[colorFreeStr removeAttribute:NSForegroundColorAttributeName range:fullRange];
-	if (withShadow) {
-		//[colorFreeStr addAttribute:NSShadowAttributeName value:ShadowForSnowLeopard() range:NSMakeRange(0, [str length])];
-	}
 	return [colorFreeStr autorelease];
 }
 
@@ -180,15 +165,12 @@ NSAttributedString *AttributedStringForSelection(NSAttributedString *str, BOOL w
 	//draw note date and tags
 
 	NSMutableDictionary *baseAttrs = [self baseTextAttributes];
-	BOOL isActive = (IsLeopardOrLater && [tv selectionHighlightStyle] == NSTableViewSelectionHighlightStyleSourceList) ? YES : [tv isActiveStyle];
+	BOOL isActive = ([tv selectionHighlightStyle] == NSTableViewSelectionHighlightStyleSourceList) ? YES : [tv isActiveStyle];
 	
 	NSColor *textColor = ([self isHighlighted] && isActive) ? [NSColor whiteColor] : (![self isHighlighted] ? [[self class] dateColorForTint]/*[NSColor grayColor]*/ : nil);
 	if (textColor)
 		[baseAttrs setObject:textColor forKey:NSForegroundColorAttributeName];
-	if (IsSnowLeopardOrLater && [self isHighlighted] && ([tv selectionHighlightStyle] == NSTableViewSelectionHighlightStyleSourceList)) {
-//		[baseAttrs setObject:ShadowForSnowLeopard() forKey:NSShadowAttributeName];
-	}
-	
+
 	float fontHeight = [tv tableFontHeight];
 	
 	//if the sort-order is date-created, then show the date on which this note was created; otherwise show date modified.

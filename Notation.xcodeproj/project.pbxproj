@@ -701,7 +701,6 @@
 		5CE5B00E1422796900FB554C /* de */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = de; path = de.lproj/PTKeyComboPanel.xib; sourceTree = "<group>"; };
 		5CE5B00F1422796900FB554C /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/PTKeyComboPanel.xib; sourceTree = "<group>"; };
 		5CE5B0101422796900FB554C /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/PTKeyComboPanel.xib; sourceTree = "<group>"; };
-		5CE6624913185202002039D0 /* NSTextFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTextFinder.h; sourceTree = "<group>"; };
 		5CF01B02132975910083D66E /* greyscrollervertbottom.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = greyscrollervertbottom.tiff; sourceTree = "<group>"; };
 		5CF01B04132975910083D66E /* greyscrollervertfill.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = greyscrollervertfill.tiff; sourceTree = "<group>"; };
 		5CF01B06132975910083D66E /* greyscrollerverttop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = greyscrollerverttop.tiff; sourceTree = "<group>"; };
@@ -1292,7 +1291,6 @@
 				21BD2ECF10DAF31500BA3DF6 /* LinearDividerShader.m */,
 				2114C23B095883A600614E74 /* NSData_transformations.h */,
 				2114C23C095883A600614E74 /* NSData_transformations.m */,
-				5CE6624913185202002039D0 /* NSTextFinder.h */,
 				214495040ADC7F4F00E2A2B6 /* SFPasswordAssistantInspectorController.h */,
 				213FAD510B3C6B52004C74BD /* FSExchangeObjectsCompat.h */,
 				213FAD520B3C6B52004C74BD /* FSExchangeObjectsCompat.c */,

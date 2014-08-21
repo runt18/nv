@@ -104,7 +104,6 @@
 	return titles;
 }
 
-
 - (void)invalidateCachedLabelImages {
 	//used when the list font size changes
 	[labelImages removeAllObjects];

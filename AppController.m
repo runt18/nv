@@ -10,7 +10,6 @@
  or promote products derived from this software without specific prior written permission. */
 //ET NV4
 
-#import "NSTextFinder.h"
 #import "AppController.h"
 #import "NoteObject.h"
 #import "GlobalPrefs.h"
@@ -52,12 +51,6 @@
 #import "NSFileManager+DirectoryLocations.h"
 #import "nvaDevConfig.h"
 #import <Sparkle/SUUpdater.h>
-
-#define NSApplicationPresentationAutoHideMenuBar (1 <<  2)
-#define NSApplicationPresentationHideMenuBar (1 <<  3)
-//#define NSApplicationPresentationAutoHideDock (1 <<  0)
-#define NSApplicationPresentationHideDock (1 <<  1)
-//#define NSApplicationActivationPolicyAccessory
 
 #define kSparkleUpdateFeedForLions @"http://abyss.designheresy.com/nvalt/updates.xml"
 #define kSparkleUpdateFeedForSnowLeopard @"http://abyss.designheresy.com/nvalt2/nvalt2snowleopardfeed.xml"
@@ -299,7 +292,7 @@ BOOL splitViewAwoke;
 		}else if (userScheme==2) {
 			[self setUserColorScheme:self];
 		}
-		//this is necessary on 10.3; keep just in case
+
 		[splitView display];
         
         
@@ -378,33 +371,31 @@ void outletObjectAwoke(id sender) {
     //theMenuItem = [[viewMenu itemWithTag:801] copy];
 	//[statBarMenu insertItem:theMenuItem atIndex:11];
     //[theMenuItem release];
-    if(IsLeopardOrLater){
-        //theMenuItem =[viewMenu itemWithTag:314];
-        [fsMenuItem setEnabled:YES];
-        [fsMenuItem setHidden:NO];
+	[fsMenuItem setEnabled:YES];
+	[fsMenuItem setHidden:NO];
+	
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+	if (IsLionOrLater) {
+		//  [window setCollectionBehavior:NSWindowCollectionBehaviorTransient|NSWindowCollectionBehaviorMoveToActiveSpace];
+		//
+		[window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+		//            [window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
+		[NSApp setPresentationOptions:NSApplicationPresentationFullScreen];
+		
+		
+	}else{
+#endif
+		[fsMenuItem setTarget:self];
+		[fsMenuItem setAction:@selector(switchFullScreen:)];
 		
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-        if (IsLionOrLater) {
-            //  [window setCollectionBehavior:NSWindowCollectionBehaviorTransient|NSWindowCollectionBehaviorMoveToActiveSpace];
-            //
-            [window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
-            //            [window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
-//            [NSApp setPresentationOptions:[NSApp currentSystemPresentationOptions]|NSApplicationPresentationFullScreen];
-            
-            
-        }else{
+	}
 #endif
-            [fsMenuItem setTarget:self];
-            [fsMenuItem setAction:@selector(switchFullScreen:)];
-            
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-        }
-#endif
-        theMenuItem = [fsMenuItem copy];
-        [statBarMenu insertItem:theMenuItem atIndex:14];
-        [theMenuItem release];
-    }
-    
+
+	theMenuItem = [fsMenuItem copy];
+	[statBarMenu insertItem:theMenuItem atIndex:12];
+	[theMenuItem release];
+
 	if (![prefsController showWordCount]) {
 		[wordCounter setHidden:NO];
 	}else {
@@ -688,20 +679,11 @@ terminateApp:
             }
         }
 	} else if ((selector == @selector(toggleFullScreen:))||(selector == @selector(switchFullScreen:))) {
-        
-        if (IsLeopardOrLater) {
-            
-            if([NSApp presentationOptions]>0){
-                [menuItem setTitle:NSLocalizedString(@"Exit Full Screen",@"menu item title for exiting fullscreen")];
-            }else{
-                
-                [menuItem setTitle:NSLocalizedString(@"Enter Full Screen",@"menu item title for entering fullscreen")];
-                
-            }
-            
-        }
-        
-        
+		if([NSApp presentationOptions]>0){
+			[menuItem setTitle:NSLocalizedString(@"Exit Full Screen",@"menu item title for exiting fullscreen")];
+		}else{
+			[menuItem setTitle:NSLocalizedString(@"Enter Full Screen",@"menu item title for entering fullscreen")];
+		}
 	} else if (selector == @selector(fixFileEncoding:)) {
 		
 		return (currentNote != nil && storageFormatOfNote(currentNote) == PlainTextFormat && ![currentNote contentsWere7Bit]);
@@ -834,6 +816,7 @@ terminateApp:
     
 	[notesTableView editRowAtColumnWithIdentifier:NoteTitleColumnString];
 }
+
 //
 - (void)deleteAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(NSIndexSet *)contextInfo {
     if ((returnCode == NSAlertFirstButtonReturn)&&(contextInfo!=nil)&&([contextInfo count]>0)) {
@@ -900,7 +883,6 @@ terminateApp:
                 [indexes retain];
                 [alert beginSheetModalForWindow:window modalDelegate:self didEndSelector:@selector(deleteAlertDidEnd:returnCode:contextInfo:) contextInfo:indexes];
             }
-            
 		} else {
             //just delete the notes outright
             [notationController removeNotesAtIndexes:indexes];
@@ -1159,21 +1141,17 @@ terminateApp:
 }
 
 - (void)applicationWillBecomeActive:(NSNotification *)aNotification {
+	SpaceSwitchingContext thisSpaceSwitchCtx;
+	if ([window windowNumber]!=-1) {
+		CurrentContextForWindowNumber([window windowNumber], &thisSpaceSwitchCtx);
+	}
+	//what if the app is switched-to in another way? then the last-stored spaceSwitchCtx will cause us to return to the wrong app
+	//unfortunately this notification occurs only after NV has become the front process, but we can still verify the space number
 	
-	if (IsLeopardOrLater) {
-		SpaceSwitchingContext thisSpaceSwitchCtx;
-        if ([window windowNumber]!=-1) {
-            CurrentContextForWindowNumber([window windowNumber], &thisSpaceSwitchCtx);
-            
-        }
-		//what if the app is switched-to in another way? then the last-stored spaceSwitchCtx will cause us to return to the wrong app
-		//unfortunately this notification occurs only after NV has become the front process, but we can still verify the space number
-		
-		if ((thisSpaceSwitchCtx.userSpace != spaceSwitchCtx.userSpace) ||
-			(thisSpaceSwitchCtx.windowSpace != spaceSwitchCtx.windowSpace)) {
-			//forget the last space-switch info if it's effectively different from how we're switching into the app now
-			bzero(&spaceSwitchCtx, sizeof(SpaceSwitchingContext));
-		}
+	if ((thisSpaceSwitchCtx.userSpace != spaceSwitchCtx.userSpace) ||
+		(thisSpaceSwitchCtx.windowSpace != spaceSwitchCtx.windowSpace)) {
+		//forget the last space-switch info if it's effectively different from how we're switching into the app now
+		bzero(&spaceSwitchCtx, sizeof(SpaceSwitchingContext));
 	}
 }
 
@@ -1824,10 +1802,6 @@ terminateApp:
 - (NSUndoManager *)windowWillReturnUndoManager:(NSWindow *)sender {
 	
 	if ([sender firstResponder] == textView) {
-		if ((floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_3) && currentNote) {
-			NSLog(@"windowWillReturnUndoManager should not be called when textView is first responder on Tiger or higher");
-		}
-		
 		NSUndoManager *undoMan = [self undoManagerForTextView:textView];
 		if (undoMan)
 			return undoMan;
@@ -1911,8 +1885,7 @@ terminateApp:
 		if (opts & NVOrderFrontWindow) {
 			//for external url-handling, often the app will already have been brought to the foreground
 			if (![NSApp isActive]) {
-				if (IsLeopardOrLater)
-					CurrentContextForWindowNumber([window windowNumber], &spaceSwitchCtx);
+				CurrentContextForWindowNumber([window windowNumber], &spaceSwitchCtx);
 				[NSApp activateIgnoringOtherApps:YES];
 			}
 			if (![window isKeyWindow])
@@ -2238,11 +2211,8 @@ terminateApp:
 	if ([NSApp isActive] && [window isMainWindow]&&[window isVisible]) {
         
 		SpaceSwitchingContext laterSpaceSwitchCtx;
-		if (IsLeopardOrLater){
-			CurrentContextForWindowNumber([window windowNumber], &laterSpaceSwitchCtx);
-            
-        }
-		if (!IsLeopardOrLater || !CompareContextsAndSwitch(&spaceSwitchCtx, &laterSpaceSwitchCtx)) {
+		CurrentContextForWindowNumber([window windowNumber], &laterSpaceSwitchCtx);
+		if (!CompareContextsAndSwitch(&spaceSwitchCtx, &laterSpaceSwitchCtx)) {
 			//hide only if we didn't need to or weren't able to switch spaces
 			[NSApp hide:sender];
 		}
@@ -2768,80 +2738,78 @@ terminateApp:
         return;
 	}   
 #endif
-    if(IsLeopardOrLater){
         
-        self.isEditing = NO;
-        NSResponder *currentResponder = [window firstResponder];
-        NSDictionary* options;
-        if (([[NSUserDefaults standardUserDefaults] boolForKey:@"ShowDockIcon"])&&(IsSnowLeopardOrLater)) {
-            options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:(NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationHideDock)],@"NSFullScreenModeApplicationPresentationOptions", nil];
-        }else {
-            options = [NSDictionary dictionaryWithObjectsAndKeys:nil];
-        }
-        CGFloat colW = [notesSubview dimension];
-        
-        wasDFVisible=[self dualFieldIsVisible];
-        if ([self isInFullScreen]) {
-            window = normalWindow;
-            [mainView exitFullScreenModeWithOptions:options];
-            
-            [notesSubview setDimension:colW];
-            [self setDualFieldInToolbar];
-            [splitView setFrameSize:[mainView frame].size];
-            if ((!wasVert)&&([splitView isVertical])) {
-                [self switchViewLayout:self];
-            }else{
-                [splitView adjustSubviews];
-            }
-            [window makeKeyAndOrderFront:self];
-        }else {
-            [mainView enterFullScreenMode:[window screen]  withOptions:options];
-            [notesSubview setDimension:colW];
-            [self setDualFieldInView];
-            if (![splitView isVertical]) {
-                [self switchViewLayout:self];
-                wasVert = NO;
-            }else {
-                wasVert = YES;
-                [splitView adjustSubviews];
-            }
-            normalWindow = window;
-            [normalWindow orderOut:self];
-            window = [mainView window];
-            //[NSApp setDelegate:self];
-            [notesTableView setDelegate:self];
-            [window setDelegate:self];
-            // [window setInitialFirstResponder:field];
-            [field setDelegate:self];
-            [textView setDelegate:self];
-            [splitView setDelegate:self];
-            NSSize wSize = [mainView frame].size;
-            wSize.height = [splitView frame].size.height;
-            [splitView setFrameSize:wSize];
-        }
-        [window setBackgroundColor:backgrndColor];
-        
-        [self setDualFieldIsVisible:wasDFVisible];
-        
-        [textView updateInsetAndForceLayout:YES];
-        if ([[currentResponder description] rangeOfString:@"_NSFullScreenWindow"].length>0){
-            currentResponder = textView;
-        }
-        if (([currentResponder isKindOfClass:[NSTextView class]])&&(![currentResponder isKindOfClass:[LinkingEditor class]])) {
-            currentResponder = field;
-        }
-        
-        [splitView setNextKeyView:notesTableView];
-        [field setNextKeyView:textView];
-        [textView setNextKeyView:field];
-        [window setAutorecalculatesKeyViewLoop:NO];
-        [window makeFirstResponder:currentResponder];
-        
-        [mainView setNeedsDisplay:YES];
-        if (![NSApp isActive]) {
-            [NSApp activateIgnoringOtherApps:YES];
-        }
-    }
+	self.isEditing = NO;
+	NSResponder *currentResponder = [window firstResponder];
+	NSDictionary* options;
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"ShowDockIcon"]) {
+		options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:(NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationHideDock)],@"NSFullScreenModeApplicationPresentationOptions", nil];
+	} else {
+		options = [NSDictionary dictionaryWithObjectsAndKeys:nil];
+	}
+	CGFloat colW = [notesSubview dimension];
+	
+	wasDFVisible=[self dualFieldIsVisible];
+	if ([self isInFullScreen]) {
+		window = normalWindow;
+		[mainView exitFullScreenModeWithOptions:options];
+		
+		[notesSubview setDimension:colW];
+		[self setDualFieldInToolbar];
+		[splitView setFrameSize:[mainView frame].size];
+		if ((!wasVert)&&([splitView isVertical])) {
+			[self switchViewLayout:self];
+		}else{
+			[splitView adjustSubviews];
+		}
+		[window makeKeyAndOrderFront:self];
+	}else {
+		[mainView enterFullScreenMode:[window screen]  withOptions:options];
+		[notesSubview setDimension:colW];
+		[self setDualFieldInView];
+		if (![splitView isVertical]) {
+			[self switchViewLayout:self];
+			wasVert = NO;
+		}else {
+			wasVert = YES;
+			[splitView adjustSubviews];
+		}
+		normalWindow = window;
+		[normalWindow orderOut:self];
+		window = [mainView window];
+		//[NSApp setDelegate:self];
+		[notesTableView setDelegate:self];
+		[window setDelegate:self];
+		// [window setInitialFirstResponder:field];
+		[field setDelegate:self];
+		[textView setDelegate:self];
+		[splitView setDelegate:self];
+		NSSize wSize = [mainView frame].size;
+		wSize.height = [splitView frame].size.height;
+		[splitView setFrameSize:wSize];
+	}
+	[window setBackgroundColor:backgrndColor];
+	
+	[self setDualFieldIsVisible:wasDFVisible];
+	
+	[textView updateInsetAndForceLayout:YES];
+	if ([[currentResponder description] rangeOfString:@"_NSFullScreenWindow"].length>0){
+		currentResponder = textView;
+	}
+	if (([currentResponder isKindOfClass:[NSTextView class]])&&(![currentResponder isKindOfClass:[LinkingEditor class]])) {
+		currentResponder = field;
+	}
+	
+	[splitView setNextKeyView:notesTableView];
+	[field setNextKeyView:textView];
+	[textView setNextKeyView:field];
+	[window setAutorecalculatesKeyViewLoop:NO];
+	[window makeFirstResponder:currentResponder];
+	
+	[mainView setNeedsDisplay:YES];
+	if (![NSApp isActive]) {
+		[NSApp activateIgnoringOtherApps:YES];
+	}
 }
 
 #pragma mark color scheme methods

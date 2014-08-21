@@ -308,9 +308,8 @@ force_inline id unifiedCellForNote(NotesTableView *tv, NoteObject *note, NSInteg
 	[cell setPreviewIsHidden:NO];
 
 	BOOL rowSelected = [tv isRowSelected:row];
-	BOOL drawShadow = IsSnowLeopardOrLater || (IsLeopardOrLater && rowSelected && [tv currentEditor]);
 	
-	id obj = note->tableTitleString ? (rowSelected ? (id)AttributedStringForSelection(note->tableTitleString, drawShadow) : 
+	id obj = note->tableTitleString ? (rowSelected ? (id)AttributedStringForSelection(note->tableTitleString) :
 									   (id)note->tableTitleString) : (id)titleOfNote(note);
 	
 	
@@ -1780,7 +1779,6 @@ force_inline id unifiedCellForNote(NotesTableView *tv, NoteObject *note, NSInteg
 -(void)odbEditor:(ODBEditor *)editor didClosefile:(NSString *)path context:(NSDictionary *)context {
 	//remove the temp file	
 	[[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
-
 }
 
 - (NSRange)nextRangeForWords:(NSArray*)words options:(unsigned)opts range:(NSRange)inRange {

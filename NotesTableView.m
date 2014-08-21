@@ -42,7 +42,6 @@ static void _CopyItemWithSelectorFromMenu(NSMenu *destMenu, NSMenu *sourceMenu, 
 
 @implementation NotesTableView
 
-//there's something wrong with this initialization under panther, I think
 - (id)initWithCoder:(NSCoder *)decoder {
     if ((self = [super initWithCoder:decoder])) {
 		
@@ -282,12 +281,10 @@ static void _CopyItemWithSelectorFromMenu(NSMenu *destMenu, NSMenu *sourceMenu, 
 	NSUInteger i;
 	for (i=0; i<[allColumns count]; i++) {
 		[[[allColumns objectAtIndex:i] dataCell] setFont:font];
-	}	
-//	BOOL isOneRow = !horiz || (![globalPrefs tableColumnsShowPreview] && !ColumnIsSet(NoteLabelsColumn, [globalPrefs tableColumnsBitmap]));
-    if (IsLeopardOrLater){
-        [self setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
-        //[self setSelectionHighlightStyle:isOneRow ? NSTableViewSelectionHighlightStyleRegular : NSTableViewSelectionHighlightStyleSourceList];
-    }
+	}
+
+	[self setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
+
 	NSLayoutManager *lm = [[NSLayoutManager alloc] init];
 	tableFontHeight = [lm defaultLineHeightForFont:font];
 	float h[4] = {(tableFontHeight * 3.0 + 5.0f), (tableFontHeight * 2.0 + 6.0f), (tableFontHeight + 2.0f), tableFontHeight + 2.0f};
@@ -470,13 +467,9 @@ static void _CopyItemWithSelectorFromMenu(NSMenu *destMenu, NSMenu *sourceMenu, 
 		[self setHeaderView:newHeader];
 		[self setCornerView: nil];
 		
+		// TODO: get rid of this, use a public API
 		if ([self respondsToSelector:@selector(_sizeRowHeaderToFitIfNecessary)]) {
-			//hopefully 10.5 has this
 			[self _sizeRowHeaderToFitIfNecessary];
-		} else if ([self respondsToSelector:@selector(_sizeToFitIfNecessary)]) {
-			//probably only on 10.3.x
-			[self _sizeToFitIfNecessary];
-			[[self enclosingScrollView] setNeedsDisplay:YES];
 		} else {
 			//anything else
 			NSWindow *win = [self window];
@@ -1073,9 +1066,6 @@ enum { kNext_Tag = 'j', kPrev_Tag = 'k' };
 - (NSArray *)textView:(NSTextView *)aTextView completions:(NSArray *)words  forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)anIndex {
 
 	if (charRange.location != NSNotFound) {
-		if (!IsLeopardOrLater)
-			goto getCompletions;
-		
 		NSCharacterSet *set = [NSCharacterSet labelSeparatorCharacterSet];
 		NSString *str = [aTextView string];
 #define CharIndexIsMember(__index) ([set characterIsMember:[str characterAtIndex:(__index)]])
@@ -1088,14 +1078,10 @@ enum { kNext_Tag = 'j', kPrev_Tag = 'k' };
 			(hasLChar && hasRChar && CharIndexIsMember(charRange.location - 1) && CharIndexIsMember(NSMaxRange(charRange))) ||
 			(hasLChar && NSMaxRange(charRange) == [str length] && CharIndexIsMember(charRange.location - 1)) ||
 			(hasRChar && charRange.location == 0 && CharIndexIsMember(NSMaxRange(charRange)))) {
-			
-		getCompletions:
-			{
 			NSSet *existingWordSet = [NSSet setWithArray:[[aTextView string] labelCompatibleWords]];
 			NSArray *tags = [labelsListSource labelTitlesPrefixedByString:[[aTextView string] substringWithRange:charRange] 
 													  indexOfSelectedItem:anIndex minusWordSet:existingWordSet];
 			return tags;
-			}
 		}
 	}
 	return [NSArray array];
@@ -1229,9 +1215,6 @@ enum { kNext_Tag = 'j', kPrev_Tag = 'k' };
     NSRange charRange = [fieldString rangeOfString:fieldString];
     NSArray *tags = [NSArray arrayWithObject:@""];
     if (charRange.location != NSNotFound) {
-		if (!IsLeopardOrLater)
-			goto getCompletions;
-		
 		NSCharacterSet *set = [NSCharacterSet labelSeparatorCharacterSet];
 		NSString *str = fieldString;
 #define CharIndexIsMember(__index) ([set characterIsMember:[str characterAtIndex:(__index)]])
@@ -1244,14 +1227,9 @@ enum { kNext_Tag = 'j', kPrev_Tag = 'k' };
 			(hasLChar && hasRChar && CharIndexIsMember(charRange.location - 1) && CharIndexIsMember(NSMaxRange(charRange))) ||
 			(hasLChar && NSMaxRange(charRange) == [str length] && CharIndexIsMember(charRange.location - 1)) ||
 			(hasRChar && charRange.location == 0 && CharIndexIsMember(NSMaxRange(charRange)))) {
-			
-		getCompletions:
-			{
 				NSSet *existingWordSet = [NSSet setWithArray:[fieldString labelCompatibleWords]];
 				tags = [labelsListSource labelTitlesPrefixedByString:[fieldString substringWithRange:charRange] 
 														  indexOfSelectedItem:&index minusWordSet:existingWordSet];
-				
-			}
 		}
 	}
     return tags;

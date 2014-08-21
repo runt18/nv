@@ -25,7 +25,7 @@
 }
 
 
-NSAttributedString *AttributedStringForSelection(NSAttributedString *str, BOOL withShadow);
+NSAttributedString *AttributedStringForSelection(NSAttributedString *str);
 - (NSRect)nv_titleRectForFrame:(NSRect)aFrame;
 - (NSRect)nv_tagsRectForFrame:(NSRect)frame;
 

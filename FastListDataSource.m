@@ -43,7 +43,7 @@
 	return NSNotFound;	
 }
 
-//NSArray has objectsAtIndexes--too bad it's only in 10.4.
+// TODO: NSArray has objectsAtIndexes -- move to that or something like it
 
 //figure out which notes are in the indexset
 - (NSArray*)objectsAtFilteredIndexes:(NSIndexSet*)indexSet {
