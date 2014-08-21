@@ -70,7 +70,7 @@ NSString *ShouldImportCreationDates = @"ShouldImportCreationDates";
 			[notation addNotes:noteArray];
 		} else {
 			//add localized RTF help notes (how do we handle initializing a new NV copy when the owner just wants to re-sync from web? they will get new help notes each time?)
-			NSArray *paths = [[NSBundle mainBundle] pathsForResourcesOfType:@"nvhelp" inDirectory:nil];
+			NSArray *paths = [[NSBundle mainBundle] pathsForResourcesOfType:@"nvhelp" inDirectory:@"HelpNotes"];
 			NSArray *helpNotes = [[[[AlienNoteImporter alloc] initWithStoragePaths:paths] autorelease] importedNotes];
 			if ([helpNotes count] > 0) {
 				[notation addNotes:helpNotes];
