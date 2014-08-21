@@ -1466,18 +1466,12 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
-				Portuguese,
-				fr,
-				pt,
-				de,
-				it,
-				"zh-Hans-CN",
-				zh,
 				en,
+				fr,
+				it,
+				de,
+				zh,
+				pt,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Notation */;
 			projectDirPath = "";
