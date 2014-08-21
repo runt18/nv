@@ -24,15 +24,16 @@
 @implementation LabelObject
 
 - (id)initWithTitle:(NSString*)name {
-    if (self=[super init]) {
-		labelName = [name retain];
-		lowercaseName = [[name lowercaseString] retain];
-	
-		lowercaseHash = [lowercaseName hash];
-		
-		notes = [[NSMutableSet alloc] init];
-    }
-    
+	self = [super init];
+	if (!self) { return nil; }
+
+	labelName = [name retain];
+	lowercaseName = [[name lowercaseString] retain];
+
+	lowercaseHash = [lowercaseName hash];
+
+	notes = [[NSMutableSet alloc] init];
+
     return self;
 }
 

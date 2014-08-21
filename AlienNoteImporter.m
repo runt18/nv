@@ -45,12 +45,13 @@ NSString *ShouldImportCreationDates = @"ShouldImportCreationDates";
 @implementation AlienNoteImporter
 
 - (id)init {
-	if (self=[super init]) {
-		shouldGrabCreationDates = NO;
-		documentSettings = [[NSMutableDictionary alloc] init];
-        return self;
-	}
-	return nil;
+	self = [super init];
+	if (!self) { return nil; }
+
+	shouldGrabCreationDates = NO;
+	documentSettings = [[NSMutableDictionary alloc] init];
+
+	return self;
 }
 
 + (void)importBlorOrHelpFilesIfNecessaryIntoNotation:(NotationController*)notation {
@@ -96,40 +97,43 @@ NSString *ShouldImportCreationDates = @"ShouldImportCreationDates";
 }
 
 - (id)initWithStoragePaths:(NSArray*)filenames {
-	if (self=[self init]) {
-		if ((source = [filenames retain])) {
-		
-			importerSelector = @selector(notesWithPaths:);
-		} else {
-			return nil;
-		}
-        return self;
+	if (!filenames) {
+		[self release];
+		return (self = nil);
 	}
-	
-	return nil;
+
+	self = [self init];
+	if (!self) { return nil; }
+
+	source = [filenames copy];
+	importerSelector = @selector(notesWithPaths:);
+
+	return self;
 }
 
 - (id)initWithStoragePath:(NSString*)filename {
-	if (self=[self init]) {
-		if ((source = [filename retain])) {
-			
-			//auto-detect based on bundle/extension/metadata
-            NSDictionary *pathAttributes = [[NSFileManager defaultManager]attributesAtPath:filename followLink:YES];
-//			NSDictionary *pathAttributes = [[NSFileManager defaultManager] fileAttributesAtPath:filename traverseLink:YES];
-			if ([[filename pathExtension] caseInsensitiveCompare:@"rtfd"] != NSOrderedSame &&
-				[[pathAttributes objectForKey:NSFileType] isEqualToString:NSFileTypeDirectory]) {
-				
-				importerSelector = @selector(notesInDirectory:);
-			} else {
-				importerSelector = @selector(notesInFile:);
-			}
-		} else {
-			return nil;
-		}
-        return self;
+	if (!filename) {
+		[self release];
+		return (self = nil);
 	}
-	
-	return nil;
+
+	self = [self init];
+	if (!self) { return nil; }
+
+	source = [filename copy];
+
+	//auto-detect based on bundle/extension/metadata
+	NSDictionary *pathAttributes = [[NSFileManager defaultManager]attributesAtPath:filename followLink:YES];
+//			NSDictionary *pathAttributes = [[NSFileManager defaultManager] fileAttributesAtPath:filename traverseLink:YES];
+	if ([[filename pathExtension] caseInsensitiveCompare:@"rtfd"] != NSOrderedSame &&
+		[[pathAttributes objectForKey:NSFileType] isEqualToString:NSFileTypeDirectory]) {
+		
+		importerSelector = @selector(notesInDirectory:);
+	} else {
+		importerSelector = @selector(notesInFile:);
+	}
+
+	return self;
 }
 
 - (void)dealloc {

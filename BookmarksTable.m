@@ -16,12 +16,6 @@
 
 @implementation BookmarksTable
 
-- (id)initWithCoder:(NSCoder *)decoder {
-	if ((self = [super initWithCoder:decoder])) {
-	}
-	return self;
-}
-
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent {
 	return YES;
 }

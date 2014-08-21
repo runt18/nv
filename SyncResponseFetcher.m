@@ -36,32 +36,34 @@
 	if (stringToEncode) {
 		NSString *B64String = [[stringToEncode dataUsingEncoding:NSUTF8StringEncoding] encodeBase64WithNewlines:NO];
 		if (!(B64Data = [B64String dataUsingEncoding:NSASCIIStringEncoding])) {
-			return nil;
+			[self release];
+			return (self = nil);
 		}
 	}
 	
-	return [self initWithURL:aURL POSTData:B64Data delegate:aDelegate];
+	return (self = [self initWithURL:aURL POSTData:B64Data delegate:aDelegate]);
 }
 
 - (id)initWithURL:(NSURL*)aURL POSTData:(NSData*)POSTData headers:(NSDictionary *)aHeaders delegate:(id)aDelegate {
-	return [self initWithURL:aURL POSTData:POSTData headers:aHeaders contentType:nil delegate:aDelegate];
+	return (self = [self initWithURL:aURL POSTData:POSTData headers:aHeaders contentType:nil delegate:aDelegate]);
 }
 
 - (id)initWithURL:(NSURL*)aURL POSTData:(NSData*)POSTData delegate:(id)aDelegate {
-	return [self initWithURL:aURL POSTData:POSTData headers:nil contentType:nil delegate:aDelegate];
+	return (self = [self initWithURL:aURL POSTData:POSTData headers:nil contentType:nil delegate:aDelegate]);
 }
 
 - (id)initWithURL:(NSURL*)aURL POSTData:(NSData*)POSTData headers:(NSDictionary *)aHeaders contentType:(NSString*)contentType delegate:(id)aDelegate {
-	if (self=[self init]) {
-		receivedData = [[NSMutableData alloc] init];
-		requestURL = [aURL retain];
-		delegate = aDelegate;
-		dataToSend = [POSTData retain];
-		dataToSendContentType = [contentType copy];
-		requestHeaders = [aHeaders retain];
-        return self;
-	}
-    return nil;
+	self = [self init];
+	if (!self) { return nil; }
+
+	receivedData = [[NSMutableData alloc] init];
+	requestURL = [aURL retain];
+	delegate = aDelegate;
+	dataToSend = [POSTData retain];
+	dataToSendContentType = [contentType copy];
+	requestHeaders = [aHeaders retain];
+
+	return self;
 }
 
 - (NSInvocation*)successInvocation {

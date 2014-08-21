@@ -12,14 +12,14 @@
 @implementation DFView
 
 - (id)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {        
-        if (!vColor) {
-            [self setBackgroundColor:[[NSApp delegate] backgrndColor]];
-        }
-        // Initialization code here.
-    }
-    return self;
+	self = [super initWithFrame:frame];
+	if (!self) { return nil; }
+
+	if (!vColor) {
+		[self setBackgroundColor:[[NSApp delegate] backgrndColor]];
+	}
+
+	return self;
 }
 
 - (void)dealloc{

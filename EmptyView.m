@@ -16,11 +16,11 @@
 @implementation EmptyView
 
 - (id)initWithFrame:(NSRect)frameRect {
-	if ((self = [super initWithFrame:frameRect]) != nil) {
-		// Add initialization code here
-		
-		lastNotesNumber = -1;
-	}
+	self = [super initWithFrame:frameRect];
+	if (!self) { return nil; }
+
+	lastNotesNumber = -1;
+
 	return self;
 }
 

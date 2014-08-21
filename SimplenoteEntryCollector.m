@@ -32,19 +32,21 @@
 //instances this short-lived class are intended to be started only once, and then deallocated
 
 - (id)initWithEntriesToCollect:(NSArray*)wantedEntries simperiumToken:(NSString*)aSimperiumToken {
-	if (self=[super init]) {
-		simperiumToken = [aSimperiumToken retain];
-		entriesToCollect = [wantedEntries retain];
-		entriesCollected = [[NSMutableArray alloc] init];
-		entriesInError = [[NSMutableArray alloc] init];
-		
-		if (![simperiumToken length] || ![entriesToCollect count]) {
-			NSLog(@"%@: missing parameters", NSStringFromSelector(_cmd));
-			return nil;
-		}
-        return self;
+	self = [super init];
+	if (!self) { return nil; }
+
+	simperiumToken = [aSimperiumToken retain];
+	entriesToCollect = [wantedEntries retain];
+	entriesCollected = [[NSMutableArray alloc] init];
+	entriesInError = [[NSMutableArray alloc] init];
+
+	if (![simperiumToken length] || ![entriesToCollect count]) {
+		NSLog(@"%s: missing parameters", _cmd);
+		[self release];
+		return (self = nil);
 	}
-	return nil;
+
+	return self;
 }
 
 - (NSArray*)entriesToCollect {
@@ -245,18 +247,20 @@
 //and to ensure we know what the time was for the next time we compare dates
 
 - (id)initWithEntries:(NSArray*)wantedEntries operation:(SEL)opSEL simperiumToken:(NSString *)aSimperiumToken {
-	if (self=[super initWithEntriesToCollect:wantedEntries simperiumToken:aSimperiumToken]) {
-		//set creation and modification date when creating
-		//set modification date when updating
-		//need to check for success when deleting
-		if (![self respondsToSelector:opSEL]) {
-			NSLog(@"%@ doesn't respond to %@", self, NSStringFromSelector(opSEL));
-			return nil;
-		}
-		fetcherOpSEL = opSEL;
-        return self;
+	self = [super initWithEntriesToCollect:wantedEntries simperiumToken:aSimperiumToken];
+	if (!self) { return nil; }
+
+	//set creation and modification date when creating
+	//set modification date when updating
+	//need to check for success when deleting
+	if (![self respondsToSelector:opSEL]) {
+		NSLog(@"%@ doesn't respond to %s", self, opSEL);
+		[self release];
+		return (self = nil);
 	}
-	return nil;
+	fetcherOpSEL = opSEL;
+
+	return self;
 }
 
 - (SyncResponseFetcher*)fetcherForEntry:(id)anEntry {

@@ -41,65 +41,68 @@
 {
     // Insist on having a valid view.
     if (!view) {
-        return nil;
+		[self release];
+        return (self = nil);
     }
     
     // Create dummy initial contentRect for window.
     NSRect contentRect = NSZeroRect;
     contentRect.size = [view frame].size;
-    
-    if ((self = [super initWithContentRect:contentRect 
-                                styleMask:NSBorderlessWindowMask 
-                                  backing:NSBackingStoreBuffered 
-                                    defer:NO])) {
-        _view = view;
-        _window = window;
-        _point = point;
-        _side = side;
-        _distance = distance;
-        
-        // Configure window characteristics.
-        [super setBackgroundColor:[NSColor clearColor]];
-        [self setMovableByWindowBackground:NO];
-        [self setExcludedFromWindowsMenu:YES];
-        [self setAlphaValue:1.0];
-        [self setOpaque:NO];
-        [self setHasShadow:YES];
-        [self useOptimizedDrawing:YES];
-        
-        // Set up some sensible defaults for display.
-        _MABackgroundColor = [MAATTACHEDWINDOW_DEFAULT_BACKGROUND_COLOR copy];
-        borderColor = [MAATTACHEDWINDOW_DEFAULT_BORDER_COLOR copy];
-        borderWidth = 2.0;
-        viewMargin = 2.0;
-        arrowBaseWidth = 20.0;
-        arrowHeight = 16.0;
-        hasArrow = YES;
-        cornerRadius = 8.0;
-        drawsRoundCornerBesideArrow = YES;
-        _resizing = NO;
-        
-        // Work out what side to put the window on if it's "automatic".
-        if (_side == MAPositionAutomatic) {
-            _side = [self _bestSideForAutomaticPosition];
-        }
-        
-        // Configure our initial geometry.
-        [self _updateGeometry];
-        
-        // Update the background.
-        [self _updateBackground];
-        
-        // Add view as subview of our contentView.
-        [[self contentView] addSubview:_view];
-        
-        // Subscribe to notifications for when we change size.
-        [[NSNotificationCenter defaultCenter] addObserver:self 
-                                                 selector:@selector(windowDidResize:) 
-                                                     name:NSWindowDidResizeNotification 
-                                                   object:self];
-    }
-    return self;
+
+	self = [super initWithContentRect:contentRect
+							styleMask:NSBorderlessWindowMask
+							  backing:NSBackingStoreBuffered
+								defer:NO];
+	if (!self) { return nil; }
+
+	_view = view;
+	_window = window;
+	_point = point;
+	_side = side;
+	_distance = distance;
+	
+	// Configure window characteristics.
+	[super setBackgroundColor:[NSColor clearColor]];
+	[self setMovableByWindowBackground:NO];
+	[self setExcludedFromWindowsMenu:YES];
+	[self setAlphaValue:1.0];
+	[self setOpaque:NO];
+	[self setHasShadow:YES];
+	[self useOptimizedDrawing:YES];
+	
+	// Set up some sensible defaults for display.
+	_MABackgroundColor = [MAATTACHEDWINDOW_DEFAULT_BACKGROUND_COLOR copy];
+	borderColor = [MAATTACHEDWINDOW_DEFAULT_BORDER_COLOR copy];
+	borderWidth = 2.0;
+	viewMargin = 2.0;
+	arrowBaseWidth = 20.0;
+	arrowHeight = 16.0;
+	hasArrow = YES;
+	cornerRadius = 8.0;
+	drawsRoundCornerBesideArrow = YES;
+	_resizing = NO;
+	
+	// Work out what side to put the window on if it's "automatic".
+	if (_side == MAPositionAutomatic) {
+		_side = [self _bestSideForAutomaticPosition];
+	}
+	
+	// Configure our initial geometry.
+	[self _updateGeometry];
+	
+	// Update the background.
+	[self _updateBackground];
+	
+	// Add view as subview of our contentView.
+	[[self contentView] addSubview:_view];
+	
+	// Subscribe to notifications for when we change size.
+	[[NSNotificationCenter defaultCenter] addObserver:self 
+											 selector:@selector(windowDidResize:) 
+												 name:NSWindowDidResizeNotification 
+											   object:self];
+
+		return self;
 }
 
 
@@ -108,9 +111,9 @@
                           inWindow:(NSWindow *)window 
                         atDistance:(float)distance
 {
-    return [self initWithView:view attachedToPoint:point 
-                     inWindow:window onSide:MAPositionAutomatic 
-                   atDistance:distance];
+    return (self = [self initWithView:view attachedToPoint:point
+							 inWindow:window onSide:MAPositionAutomatic
+						   atDistance:distance]);
 }
 
 
@@ -119,9 +122,8 @@
                             onSide:(MAWindowPosition)side 
                         atDistance:(float)distance
 {
-    return [self initWithView:view attachedToPoint:point 
-                     inWindow:nil onSide:side 
-                   atDistance:distance];
+    return (self = [self initWithView:view attachedToPoint:point inWindow:nil
+							   onSide:side atDistance:distance]);
 }
 
 
@@ -129,9 +131,9 @@
                    attachedToPoint:(NSPoint)point 
                         atDistance:(float)distance
 {
-    return [self initWithView:view attachedToPoint:point 
-                     inWindow:nil onSide:MAPositionAutomatic 
-                   atDistance:distance];
+    return (self = [self initWithView:view attachedToPoint:point
+							 inWindow:nil onSide:MAPositionAutomatic
+						   atDistance:distance]);
 }
 
 
@@ -139,9 +141,9 @@
                    attachedToPoint:(NSPoint)point 
                           inWindow:(NSWindow *)window
 {
-    return [self initWithView:view attachedToPoint:point 
-                     inWindow:window onSide:MAPositionAutomatic 
-                   atDistance:0];
+    return (self = [self initWithView:view attachedToPoint:point
+							 inWindow:window onSide:MAPositionAutomatic
+						   atDistance:0]);
 }
 
 
@@ -149,18 +151,18 @@
                    attachedToPoint:(NSPoint)point 
                             onSide:(MAWindowPosition)side
 {
-    return [self initWithView:view attachedToPoint:point 
-                     inWindow:nil onSide:side 
-                   atDistance:0];
+    return (self = [self initWithView:view attachedToPoint:point
+							 inWindow:nil onSide:side
+						   atDistance:0]);
 }
 
 
 - (MAAttachedWindow *)initWithView:(NSView *)view 
                    attachedToPoint:(NSPoint)point
 {
-    return [self initWithView:view attachedToPoint:point 
-                     inWindow:nil onSide:MAPositionAutomatic 
-                   atDistance:0];
+    return (self = [self initWithView:view attachedToPoint:point
+							 inWindow:nil onSide:MAPositionAutomatic
+						   atDistance:0]);
 }
 
 

@@ -66,13 +66,17 @@
 @implementation ComparableInvocation 
 
 - (id)initWithInvocation:(NSInvocation*)anInvocation {
-	if (self=[super init]) {
-		if (!(innerInvocation = [anInvocation retain]))
-			return nil;
-        
-        return self;
-    }
-    return nil;
+	self = [super init];
+	if (!self) { return nil; }
+
+	if (!innerInvocation) {
+		[self release];
+		return (self = nil);
+	}
+
+	innerInvocation = [anInvocation retain];
+
+	return self;
 }
 - (void)dealloc {
 	[innerInvocation release];

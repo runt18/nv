@@ -46,114 +46,129 @@
 @implementation NotationController
 
 - (id)init {
-    if (self=[super init]) {
-		directoryChangesFound = notesChanged = aliasNeedsUpdating = NO;
-		
-		allNotes = [[NSMutableArray alloc] init]; //<--the authoritative list of all memory-accessible notes
-		deletedNotes = [[NSMutableSet alloc] init];
-		labelsListController = [[LabelsListController alloc] init];
-		prefsController = [GlobalPrefs defaultPrefs];
-		notesListDataSource = [[FastListDataSource alloc] init];
-		deletionManager = [[DeletionManager alloc] initWithNotationController:self];
-		
-		allNotesBuffer = NULL;
-		allNotesBufferSize = 0;
-		manglingString = currentFilterStr = NULL;
-		lastWordInFilterStr = 0;
-		selectedNoteIndex = NSNotFound;
-		
-		fsCatInfoArray = NULL;
-		HFSUniNameArray = NULL;
-		catalogEntries = NULL;
-		sortedCatalogEntries = NULL;
-		catEntriesCount = totalCatEntriesCount = 0;
+	self = [super init];
+	if (!self) { return nil; }
 
-		bzero(&noteDatabaseRef, sizeof(FSRef));
-		bzero(&noteDirectoryRef, sizeof(FSRef));
-		volumeSupportsExchangeObjects = -1;
-		
-		lastLayoutStyleGenerated = -1;
-		lastCheckedDateInHours = hoursFromAbsoluteTime(CFAbsoluteTimeGetCurrent());
-		blockSize = 0;
-		
-		lastWriteError = noErr;
-		unwrittenNotes = [[NSMutableSet alloc] init];
-    }
-    return self;
+	directoryChangesFound = notesChanged = aliasNeedsUpdating = NO;
+	
+	allNotes = [[NSMutableArray alloc] init]; //<--the authoritative list of all memory-accessible notes
+	deletedNotes = [[NSMutableSet alloc] init];
+	labelsListController = [[LabelsListController alloc] init];
+	prefsController = [GlobalPrefs defaultPrefs];
+	notesListDataSource = [[FastListDataSource alloc] init];
+	deletionManager = [[DeletionManager alloc] initWithNotationController:self];
+	
+	allNotesBuffer = NULL;
+	allNotesBufferSize = 0;
+	manglingString = currentFilterStr = NULL;
+	lastWordInFilterStr = 0;
+	selectedNoteIndex = NSNotFound;
+	
+	fsCatInfoArray = NULL;
+	HFSUniNameArray = NULL;
+	catalogEntries = NULL;
+	sortedCatalogEntries = NULL;
+	catEntriesCount = totalCatEntriesCount = 0;
+
+	bzero(&noteDatabaseRef, sizeof(FSRef));
+	bzero(&noteDirectoryRef, sizeof(FSRef));
+	volumeSupportsExchangeObjects = -1;
+	
+	lastLayoutStyleGenerated = -1;
+	lastCheckedDateInHours = hoursFromAbsoluteTime(CFAbsoluteTimeGetCurrent());
+	blockSize = 0;
+	
+	lastWriteError = noErr;
+	unwrittenNotes = [[NSMutableSet alloc] init];
+
+	return self;
 }
 
 
 - (id)initWithAliasData:(NSData*)data error:(OSStatus*)err {
-    OSStatus anErr = noErr;
-    
-    if (data && (anErr = PtrToHand([data bytes], (Handle*)&aliasHandle, [data length])) == noErr) {
+	if (!data) {
+		if (err) *err = paramErr;
+		[self release];
+		return (self = nil);
+	}
+
+	OSStatus anErr = noErr;
+
+    if ((anErr = PtrToHand([data bytes], (Handle*)&aliasHandle, [data length])) != noErr) {
+		if (err) *err = anErr;
+		[self release];
+		return (self = nil);
+	}
 	
 	FSRef targetRef;
 	Boolean changed;
 	
-	if ((anErr = FSResolveAliasWithMountFlags(NULL, aliasHandle, &targetRef, &changed, 0)) == noErr) {
-	    if (self=[self initWithDirectoryRef:&targetRef error:&anErr]) {
-		aliasNeedsUpdating = changed;
-		*err = noErr;
-		
-		return self;
-	    }
+	if ((anErr = FSResolveAliasWithMountFlags(NULL, aliasHandle, &targetRef, &changed, 0)) != noErr) {
+		if (err) *err = anErr;
+		[self release];
+		return (self = nil);
 	}
-    }
-    
-    *err = anErr;
-    
-    return nil;
+
+	self = [self initWithDirectoryRef:&targetRef error:err];
+	if (!self) { return nil; }
+
+	aliasNeedsUpdating = changed;
+	if (err) *err = noErr;
+	
+	return self;
 }
 
 - (id)initWithDefaultDirectoryReturningError:(OSStatus*)err {
     FSRef targetRef;
-    
+
     OSStatus anErr = noErr;
-    if ((anErr = [NotationController getDefaultNotesDirectoryRef:&targetRef]) == noErr) {
-		
-		if (self=[self initWithDirectoryRef:&targetRef error:&anErr]) {
-			*err = noErr;
-			return self;
-		}
-    }
-    
-    *err = anErr;
-    
-    return nil;
+	if ((anErr = [NotationController getDefaultNotesDirectoryRef:&targetRef]) != noErr) {
+		if (err) *err = anErr;
+		[self release];
+		return (self = nil);
+	}
+
+	self = [self initWithDirectoryRef:&targetRef error:err];
+	if (!self) { return nil; }
+
+	if (err) *err = noErr;
+
+	return self;
 }
 
 - (id)initWithDirectoryRef:(FSRef*)directoryRef error:(OSStatus*)err {
-    
-    *err = noErr;
-    
-    if (self=[self init]) {
-		aliasNeedsUpdating = YES; //we don't know if we have an alias yet
-		
-		noteDirectoryRef = *directoryRef;
-		
-		//check writable and readable perms, warning user if necessary
-		
-		//first read cache file
-		OSStatus anErr = noErr;
-		if ((anErr = [self _readAndInitializeSerializedNotes]) != noErr) {
-			*err = anErr;
-			return nil;
-		}
-		
-		//set up the directory subscription, if necessary
-		//and sync based on notes in directory and their mod. dates
-		[self databaseSettingsChangedFromOldFormat:[notationPrefs notesStorageFormat]];
-		if (!walWriter) {
-			*err = kJournalingError;
-			return nil;
-		}
-		
-		[self upgradeDatabaseIfNecessary];
-		
-		[self updateTitlePrefixConnections];
-    }
-    
+	self = [self init];
+	if (!self) { return nil; }
+
+	aliasNeedsUpdating = YES; //we don't know if we have an alias yet
+	
+	noteDirectoryRef = *directoryRef;
+	
+	//check writable and readable perms, warning user if necessary
+	
+	//first read cache file
+	OSStatus anErr = noErr;
+	if ((anErr = [self _readAndInitializeSerializedNotes]) != noErr) {
+		if (err) *err = anErr;
+		[self release];
+		return (self = nil);
+	}
+	
+	//set up the directory subscription, if necessary
+	//and sync based on notes in directory and their mod. dates
+	[self databaseSettingsChangedFromOldFormat:[notationPrefs notesStorageFormat]];
+	if (!walWriter) {
+		if (err) *err = kJournalingError;
+		[self release];
+		return (self = nil);
+	}
+	
+	[self upgradeDatabaseIfNecessary];
+	
+	[self updateTitlePrefixConnections];
+
+	if (err) *err = noErr;
+
     return self;
 }
 

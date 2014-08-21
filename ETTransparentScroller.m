@@ -24,32 +24,34 @@
 }
 
 - (id)initWithFrame:(NSRect)frameRect{
-	if ((self=[super initWithFrame:frameRect])) {	
-        fillBackground=NO;
-        NSBundle *bundle = [NSBundle mainBundle];
-        
-        knobTop				= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerKnobTop.tif"]];
-        knobVerticalFill	= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerKnobVerticalFill.tif"]];
-        knobBottom			= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerKnobBottom.tif"]];
-        slotTop				= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerSlotTop.tif"]];
-        slotVerticalFill	= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerSlotVerticalFill.tif"]];
-        slotBottom			= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerSlotBottom.tif"]];
-       verticalPaddingLeft = 4.0f;
-       verticalPaddingRight = 3.0f;
-       verticalPaddingTop =3.75f;
-       verticalPaddingBottom = 4.25f;
-       minKnobHeight = knobTop.size.height + knobVerticalFill.size.height + knobBottom.size.height + 20.0;
-        slotAlpha=0.45f;
-        knobAlpha=0.45f;
-		[self setArrowsPosition:NSScrollerArrowsNone];
-        
-//        isOverlay=NO;        
+	self = [super initWithFrame:frameRect];
+	if (!self) { return nil; }
+
+	fillBackground=NO;
+	NSBundle *bundle = [NSBundle mainBundle];
+	
+	knobTop				= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerKnobTop.tif"]];
+	knobVerticalFill	= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerKnobVerticalFill.tif"]];
+	knobBottom			= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerKnobBottom.tif"]];
+	slotTop				= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerSlotTop.tif"]];
+	slotVerticalFill	= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerSlotVerticalFill.tif"]];
+	slotBottom			= [[NSImage alloc] initWithContentsOfFile:[bundle pathForImageResource:@"TransparentScrollerSlotBottom.tif"]];
+	verticalPaddingLeft = 4.0f;
+	verticalPaddingRight = 3.0f;
+	verticalPaddingTop =3.75f;
+	verticalPaddingBottom = 4.25f;
+	minKnobHeight = knobTop.size.height + knobVerticalFill.size.height + knobBottom.size.height + 20.0;
+	slotAlpha=0.45f;
+	knobAlpha=0.45f;
+	[self setArrowsPosition:NSScrollerArrowsNone];
+	
+//	isOverlay=NO;        
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-        if (IsLionOrLater) {
-//            isOverlay=[[self class]isCompatibleWithOverlayScrollers];
-        }
-#endif
+	if (IsLionOrLater) {
+//		isOverlay=[[self class]isCompatibleWithOverlayScrollers];
 	}
+#endif
+
 	return self;
 }
 

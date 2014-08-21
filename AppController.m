@@ -75,68 +75,69 @@ BOOL splitViewAwoke;
 @synthesize isEditing;
 
 - (id)init {
-    self = [super init];
-    if (self) {
-        hasLaunched=NO;
+	self = [super init];
+	if (!self) { return nil; }
+
+	hasLaunched=NO;
         
-        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"ShowDockIcon"]){
-            if (IsLionOrLater) {
-                ProcessSerialNumber psn = { 0, kCurrentProcess };
-                OSStatus returnCode = TransformProcessType(&psn, kProcessTransformToUIElementApplication);
-                if( returnCode != 0) {
-                    NSLog(@"Could not bring the application to front. Error %d", returnCode);
-                }                
-            }
-            if (![[NSUserDefaults standardUserDefaults] boolForKey:@"StatusBarItem"]) {
-                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"StatusBarItem"];
-            }
-        }else{
-            if (!IsLionOrLater) {
-                enum {NSApplicationActivationPolicyRegular};
-                [[NSApplication sharedApplication] setActivationPolicy:NSApplicationActivationPolicyRegular];
-            }
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"ShowDockIcon"]){
+		if (IsLionOrLater) {
+			ProcessSerialNumber psn = { 0, kCurrentProcess };
+			OSStatus returnCode = TransformProcessType(&psn, kProcessTransformToUIElementApplication);
+			if( returnCode != 0) {
+				NSLog(@"Could not bring the application to front. Error %d", returnCode);
+			}                
+		}
+		if (![[NSUserDefaults standardUserDefaults] boolForKey:@"StatusBarItem"]) {
+			[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"StatusBarItem"];
+		}
+	}else{
+		if (!IsLionOrLater) {
+			enum {NSApplicationActivationPolicyRegular};
+			[[NSApplication sharedApplication] setActivationPolicy:NSApplicationActivationPolicyRegular];
+		}
+	
+	}
+
+	splitViewAwoke = NO;
+	windowUndoManager = [[NSUndoManager alloc] init];
+	
+	previewController = [[PreviewController alloc] init];
+	
+	NSFileManager *fileManager = [NSFileManager defaultManager];
         
-        }
         
-        splitViewAwoke = NO;
-        windowUndoManager = [[NSUndoManager alloc] init];
-        
-        previewController = [[PreviewController alloc] init];
-        
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        
-        
-        NSString *folder = [[NSFileManager defaultManager] applicationSupportDirectory];
-        
-        if ([fileManager fileExistsAtPath: folder] == NO)
-        {
-            [fileManager createFolderAtPath:folder];
-            
+	NSString *folder = [[NSFileManager defaultManager] applicationSupportDirectory];
+	
+	if ([fileManager fileExistsAtPath: folder] == NO)
+	{
+		[fileManager createFolderAtPath:folder];
+		
 //            [fileManager createDirectoryAtPath: folder attributes: nil];
-            
-        }
-        
-        NSNotificationCenter *nc=[NSNotificationCenter defaultCenter];
-        [nc addObserver:previewController selector:@selector(requestPreviewUpdate:) name:@"TextViewHasChangedContents" object:self];
-        [nc addObserver:self selector:@selector(toggleAttachedWindow:) name:@"NVShouldActivate" object:nil];
-        [nc addObserver:self selector:@selector(toggleAttachedMenu:) name:@"StatusItemMenuShouldDrop" object:nil];
-        [nc addObserver:self selector:@selector(togDockIcon:) name:@"AppShouldToggleDockIcon" object:nil];
-        [nc addObserver:self selector:@selector(toggleStatusItem:) name:@"AppShouldToggleStatusItem" object:nil];
-        
-        [nc addObserver:self selector:@selector(resetModTimers:) name:@"ModTimersShouldReset" object:nil];
-        [nc addObserver:self selector:@selector(releaseTagEditor:) name:@"TagEditorShouldRelease" object:nil];
-        // Setup URL Handling
-        NSAppleEventManager *appleEventManager = [NSAppleEventManager sharedAppleEventManager];
-        [appleEventManager setEventHandler:self andSelector:@selector(handleGetURLEvent:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
-        
-        //	dividerShader = [[LinearDividerShader alloc] initWithStartColor:[NSColor colorWithCalibratedWhite:0.988 alpha:1.0]
-        //														   endColor:[NSColor colorWithCalibratedWhite:0.875 alpha:1.0]];
-        dividerShader = [[[LinearDividerShader alloc] initWithBaseColors:self] retain];
-        isCreatingANote = isFilteringFromTyping = typedStringIsCached = NO;
-        typedString = @"";
-        self.isEditing=NO;
-    }
-    return self;
+		
+	}
+	
+	NSNotificationCenter *nc=[NSNotificationCenter defaultCenter];
+	[nc addObserver:previewController selector:@selector(requestPreviewUpdate:) name:@"TextViewHasChangedContents" object:self];
+	[nc addObserver:self selector:@selector(toggleAttachedWindow:) name:@"NVShouldActivate" object:nil];
+	[nc addObserver:self selector:@selector(toggleAttachedMenu:) name:@"StatusItemMenuShouldDrop" object:nil];
+	[nc addObserver:self selector:@selector(togDockIcon:) name:@"AppShouldToggleDockIcon" object:nil];
+	[nc addObserver:self selector:@selector(toggleStatusItem:) name:@"AppShouldToggleStatusItem" object:nil];
+	
+	[nc addObserver:self selector:@selector(resetModTimers:) name:@"ModTimersShouldReset" object:nil];
+	[nc addObserver:self selector:@selector(releaseTagEditor:) name:@"TagEditorShouldRelease" object:nil];
+	// Setup URL Handling
+	NSAppleEventManager *appleEventManager = [NSAppleEventManager sharedAppleEventManager];
+	[appleEventManager setEventHandler:self andSelector:@selector(handleGetURLEvent:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
+	
+	//	dividerShader = [[LinearDividerShader alloc] initWithStartColor:[NSColor colorWithCalibratedWhite:0.988 alpha:1.0]
+	//														   endColor:[NSColor colorWithCalibratedWhite:0.875 alpha:1.0]];
+	dividerShader = [[[LinearDividerShader alloc] initWithBaseColors:self] retain];
+	isCreatingANote = isFilteringFromTyping = typedStringIsCached = NO;
+	typedString = @"";
+	self.isEditing=NO;
+
+	return self;
 }
 
 - (void)awakeFromNib {

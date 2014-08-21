@@ -18,48 +18,45 @@ static void ColorBlendFunction(void *info, const CGFloat *in, CGFloat *out);
 @implementation LinearDividerShader
 
 - (id)initWithStartColor:(NSColor*)start endColor:(NSColor*)end {
-    
-    if ((self = [super init])) {
-		
-		colorSpaceRef = CGColorSpaceCreateDeviceRGB();
-		
-		[[start colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed: &colors.firstColor.redComp green:&colors.firstColor.greenComp
-																  blue:&colors.firstColor.blueComp alpha:&colors.firstColor.alphaComp];
-		
-		[[end colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed: &colors.secondColor.redComp green:&colors.secondColor.greenComp
-																blue:&colors.secondColor.blueComp alpha:&colors.secondColor.alphaComp];
-		
-		static const CGFloat validIntervals[8] = { 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0 };
-		static const CGFunctionCallbacks cgFunctionCallbacks = { 0, &ColorBlendFunction, nil };
-		
-		axialShadingFunction = CGFunctionCreate(&colors, 1, validIntervals, 4, validIntervals, &cgFunctionCallbacks);
-		
-		//dimpleImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:@"SplitViewDimple.tif"]];
-    }
+	self = [super init];
+	if (!self) { return nil; }
+
+	colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+	
+	[[start colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed: &colors.firstColor.redComp green:&colors.firstColor.greenComp
+															  blue:&colors.firstColor.blueComp alpha:&colors.firstColor.alphaComp];
+	
+	[[end colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed: &colors.secondColor.redComp green:&colors.secondColor.greenComp
+															blue:&colors.secondColor.blueComp alpha:&colors.secondColor.alphaComp];
+	
+	static const CGFloat validIntervals[8] = { 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0 };
+	static const CGFunctionCallbacks cgFunctionCallbacks = { 0, &ColorBlendFunction, nil };
+	
+	axialShadingFunction = CGFunctionCreate(&colors, 1, validIntervals, 4, validIntervals, &cgFunctionCallbacks);
 
     return self;
 }
 
 - (id)initWithBaseColors:(id)sender {
-	if ((self = [super init])) {
-		NSColor *endColor = [NSColor colorWithCalibratedWhite:0.875 alpha:1.0f];
-		NSColor *oneColor = [NSColor colorWithCalibratedWhite:0.988 alpha:1.0f];
-		
-		colorSpaceRef = CGColorSpaceCreateDeviceRGB();
-		
-		[[oneColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed: &colors.firstColor.redComp green:&colors.firstColor.greenComp
-																  blue:&colors.firstColor.blueComp alpha:&colors.firstColor.alphaComp];
-		
-		[[endColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed: &colors.secondColor.redComp green:&colors.secondColor.greenComp
-																blue:&colors.secondColor.blueComp alpha:&colors.secondColor.alphaComp];
-		
-		static const CGFloat validIntervals[8] = { 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0 };
-		static const CGFunctionCallbacks cgFunctionCallbacks = { 0, &ColorBlendFunction, nil };
-		
-		axialShadingFunction = CGFunctionCreate(&colors, 1, validIntervals, 4, validIntervals, &cgFunctionCallbacks);
-		
-		//dimpleImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:@"SplitViewDimple.tif"]];
-	}
+	self = [super init];
+	if (!self) { return nil; }
+
+	NSColor *endColor = [NSColor colorWithCalibratedWhite:0.875 alpha:1.0f];
+	NSColor *oneColor = [NSColor colorWithCalibratedWhite:0.988 alpha:1.0f];
+	
+	colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+	
+	[[oneColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed: &colors.firstColor.redComp green:&colors.firstColor.greenComp
+															  blue:&colors.firstColor.blueComp alpha:&colors.firstColor.alphaComp];
+	
+	[[endColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed: &colors.secondColor.redComp green:&colors.secondColor.greenComp
+															blue:&colors.secondColor.blueComp alpha:&colors.secondColor.alphaComp];
+	
+	static const CGFloat validIntervals[8] = { 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0 };
+	static const CGFunctionCallbacks cgFunctionCallbacks = { 0, &ColorBlendFunction, nil };
+	
+	axialShadingFunction = CGFunctionCreate(&colors, 1, validIntervals, 4, validIntervals, &cgFunctionCallbacks);
+
 	return self;
 }
 

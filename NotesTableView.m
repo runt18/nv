@@ -43,80 +43,76 @@ static void _CopyItemWithSelectorFromMenu(NSMenu *destMenu, NSMenu *sourceMenu, 
 @implementation NotesTableView
 
 - (id)initWithCoder:(NSCoder *)decoder {
-    if ((self = [super initWithCoder:decoder])) {
+	self = [super initWithCoder:decoder];
+	if (!self) { return nil; }
 		
-		globalPrefs = [GlobalPrefs defaultPrefs];
+	globalPrefs = [GlobalPrefs defaultPrefs];
       
     userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults registerDefaults: [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool: NO], @"UseCtrlForSwitchingNotes", nil]];
       
-		loadStatusString = NSLocalizedString(@"Loading Notes...",nil);
-		loadStatusAttributes = [[NSDictionary dictionaryWithObjectsAndKeys:
-								 [NSFont fontWithName:@"Helvetica" size:STATUS_STRING_FONT_SIZE], NSFontAttributeName,
-								 [NSColor colorWithCalibratedRed:0.0f green:0.0f blue:0.0f alpha:0.5f], NSForegroundColorAttributeName, nil] retain];
-		loadStatusStringWidth = [loadStatusString sizeWithAttributes:loadStatusAttributes].width;
-		
-		affinity = 0;
-		shouldUseSecondaryHighlightColor = viewMenusValid = NO;
-		firstRowIndexBeforeSplitResize = NSNotFound;
-		
-		headerView = [[HeaderViewWithMenu alloc] init];
-		[headerView setTableView:self];
-		[headerView setFrame:[[self headerView] frame]];
+	loadStatusString = NSLocalizedString(@"Loading Notes...",nil);
+	loadStatusAttributes = [[NSDictionary dictionaryWithObjectsAndKeys:
+							 [NSFont fontWithName:@"Helvetica" size:STATUS_STRING_FONT_SIZE], NSFontAttributeName,
+							 [NSColor colorWithCalibratedRed:0.0f green:0.0f blue:0.0f alpha:0.5f], NSForegroundColorAttributeName, nil] retain];
+	loadStatusStringWidth = [loadStatusString sizeWithAttributes:loadStatusAttributes].width;
+	
+	affinity = 0;
+	shouldUseSecondaryHighlightColor = viewMenusValid = NO;
+	firstRowIndexBeforeSplitResize = NSNotFound;
+	
+	headerView = [[HeaderViewWithMenu alloc] init];
+	[headerView setTableView:self];
+	[headerView setFrame:[[self headerView] frame]];
 
-		NSArray *columnsToDisplay = [globalPrefs visibleTableColumns];
-		allColumns = [[NSMutableArray alloc] initWithCapacity:4];
-		allColsDict = [[NSMutableDictionary alloc] initWithCapacity:4];
-		
-		id (*titleReferencor)(id, id, NSInteger) = [globalPrefs horizontalLayout] ? 
-		([globalPrefs tableColumnsShowPreview] ? unifiedCellForNote : unifiedCellSingleLineForNote) :
-		([globalPrefs tableColumnsShowPreview] ? tableTitleOfNote : titleOfNote2);
-		
-		NSString *colStrings[] = { NoteTitleColumnString, NoteLabelsColumnString, NoteDateModifiedColumnString, NoteDateCreatedColumnString };
-		SEL colMutators[] = { @selector(setTitleString:), @selector(setLabelString:), NULL, NULL };
-		id (*colReferencors[])(id, id, NSInteger) = {titleReferencor, labelColumnCellForNote, dateModifiedStringOfNote, dateCreatedStringOfNote };
-		NSInteger (*sortFunctions[])(id*, id*) = { compareTitleString, compareLabelString, compareDateModified, compareDateCreated };
-		NSInteger (*reverseSortFunctions[])(id*, id*) = { compareTitleStringReverse, compareLabelStringReverse, compareDateModifiedReverse, 
-			compareDateCreatedReverse };
-		
-		NSUInteger i;
-		for (i=0; i<sizeof(colStrings)/sizeof(NSString*); i++) {
-			NoteAttributeColumn *column = [[NoteAttributeColumn alloc] initWithIdentifier:colStrings[i]];
-			[column setEditable:(colMutators[i] != NULL)];
-			[column setHeaderCell:[[[NotesTableHeaderCell alloc] initTextCell:[[NSBundle mainBundle] localizedStringForKey:colStrings[i] value:@"" table:nil]] autorelease]];
-			
-			[column setMutatingSelector:colMutators[i]];
-			[column setDereferencingFunction:colReferencors[i]];
-			[column setSortingFunction:sortFunctions[i]];
-			[column setReverseSortingFunction:reverseSortFunctions[i]];
-			[column setResizingMask:NSTableColumnUserResizingMask];
-			
-			[allColsDict setObject:column forKey:colStrings[i]];
-			[allColumns addObject:column];
-			[column release];
-		}
-        
-		[[self noteAttributeColumnForIdentifier:NoteLabelsColumnString] setDataCell: [[[LabelColumnCell alloc] init] autorelease]];
-        
-		[self _configureAttributesForCurrentLayout];
-		[self setAllowsColumnSelection:NO];
-		//[self setVerticalMotionCanBeginDrag:NO];
-		
-		BOOL hideHeader = (([columnsToDisplay count] == 1 && [columnsToDisplay containsObject:NoteTitleColumnString]) || [globalPrefs horizontalLayout]);
+	NSArray *columnsToDisplay = [globalPrefs visibleTableColumns];
+	allColumns = [[NSMutableArray alloc] initWithCapacity:4];
+	allColsDict = [[NSMutableDictionary alloc] initWithCapacity:4];
+	
+	id (*titleReferencor)(id, id, NSInteger) = [globalPrefs horizontalLayout] ? 
+	([globalPrefs tableColumnsShowPreview] ? unifiedCellForNote : unifiedCellSingleLineForNote) :
+	([globalPrefs tableColumnsShowPreview] ? tableTitleOfNote : titleOfNote2);
+	
+	NSString *colStrings[] = { NoteTitleColumnString, NoteLabelsColumnString, NoteDateModifiedColumnString, NoteDateCreatedColumnString };
+	SEL colMutators[] = { @selector(setTitleString:), @selector(setLabelString:), NULL, NULL };
+	id (*colReferencors[])(id, id, NSInteger) = {titleReferencor, labelColumnCellForNote, dateModifiedStringOfNote, dateCreatedStringOfNote };
+	NSInteger (*sortFunctions[])(id*, id*) = { compareTitleString, compareLabelString, compareDateModified, compareDateCreated };
+	NSInteger (*reverseSortFunctions[])(id*, id*) = { compareTitleStringReverse, compareLabelStringReverse, compareDateModifiedReverse, 
+		compareDateCreatedReverse };
 
-        [[self cornerView] setFrameOrigin:NSMakePoint(-1000,-1000)];
-        [self setCornerView:nil];
+	for (NSUInteger i=0; i<sizeof(colStrings)/sizeof(NSString*); i++) {
+		NoteAttributeColumn *column = [[NoteAttributeColumn alloc] initWithIdentifier:colStrings[i]];
+		[column setEditable:(colMutators[i] != NULL)];
+		[column setHeaderCell:[[[NotesTableHeaderCell alloc] initTextCell:[[NSBundle mainBundle] localizedStringForKey:colStrings[i] value:@"" table:nil]] autorelease]];
 
-		[self setHeaderView:hideHeader ? nil : headerView];
+		[column setMutatingSelector:colMutators[i]];
+		[column setDereferencingFunction:colReferencors[i]];
+		[column setSortingFunction:sortFunctions[i]];
+		[column setReverseSortingFunction:reverseSortFunctions[i]];
+		[column setResizingMask:NSTableColumnUserResizingMask];
 		
-		[[self noteAttributeColumnForIdentifier:NoteTitleColumnString] setResizingMask:NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask];
-		[self setColumnAutoresizingStyle:NSTableViewUniformColumnAutoresizingStyle];
-		
-		//[self setSortDirection:[globalPrefs tableIsReverseSorted] 
-		//		 inTableColumn:[self tableColumnWithIdentifier:[globalPrefs sortedTableColumnKey]]];
-		
-    }
-    return self;
+		[allColsDict setObject:column forKey:colStrings[i]];
+		[allColumns addObject:column];
+		[column release];
+	}
+	
+	[[self noteAttributeColumnForIdentifier:NoteLabelsColumnString] setDataCell: [[[LabelColumnCell alloc] init] autorelease]];
+	
+	[self _configureAttributesForCurrentLayout];
+	[self setAllowsColumnSelection:NO];
+	//[self setVerticalMotionCanBeginDrag:NO];
+	
+	BOOL hideHeader = (([columnsToDisplay count] == 1 && [columnsToDisplay containsObject:NoteTitleColumnString]) || [globalPrefs horizontalLayout]);
+
+	[[self cornerView] setFrameOrigin:NSMakePoint(-1000,-1000)];
+	[self setCornerView:nil];
+
+	[self setHeaderView:hideHeader ? nil : headerView];
+
+	[[self noteAttributeColumnForIdentifier:NoteTitleColumnString] setResizingMask:NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask];
+	[self setColumnAutoresizingStyle:NSTableViewUniformColumnAutoresizingStyle];
+
+	return self;
 }
 
 - (void)dealloc {

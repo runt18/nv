@@ -27,23 +27,25 @@
 @implementation BlorPasswordRetriever
 
 - (id)initWithBlor:(NSString*)blorPath {
-	if (self=[super init]) {
-		path = [blorPath retain];
+	self = [super init];
+	if (!self) { return nil; }
+
+	path = [blorPath retain];
 		
-		couldRetrieveFromKeychain = NO;
-		
-		//read hash (first 20 bytes) of file
-		NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
-		hashData = [[handle readDataOfLength:20] retain];
-		
-		[handle closeFile];
-		
-		if (!hashData || [hashData length] < 20)
-			return nil;
-        
-        return self;
-	}	
-	return nil;
+	couldRetrieveFromKeychain = NO;
+	
+	//read hash (first 20 bytes) of file
+	NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
+	hashData = [[handle readDataOfLength:20] retain];
+	
+	[handle closeFile];
+	
+	if (!hashData || [hashData length] < 20) {
+		[self release];
+		return (self = nil);
+	}
+
+	return self;
 }
 
 - (IBAction)cancelAction:(id)sender {
@@ -169,30 +171,34 @@
 @implementation BlorNoteEnumerator
 
 - (id)initWithBlor:(NSString*)blorPath passwordHashData:(NSData*)passwordHashData {
-	if (self=[super init]) {
-		path = [blorPath retain];
-		
-		if (!(keyData = [passwordHashData retain]))
-			return nil;
-		
-		if (!(blorData = [[NSMutableData dataWithContentsOfFile:path] retain]))
-			return nil;
-			
-		if ([blorData length] < 28) {
-			NSLog(@"read data is too small (%lu) to hold any notes!", (unsigned long)[blorData length]);
-			return nil;
-		}
-		
-		successfullyReadNoteCount = 0;
-		suspectedNoteCount = *(unsigned int*)([blorData bytes] + 20);
-		suspectedNoteCount = CFSwapInt32BigToHost(suspectedNoteCount);
-			
-		currentByteOffset = 24;
-		//read past the # of notes marker--we're just going to read as many notes as possible
-        return self;
+	self = [super init];
+	if (!self) { return nil; }
+
+	path = [blorPath retain];
+
+	if (!(keyData = [passwordHashData retain])) {
+		[self release];
+		return (self = nil);
 	}
-    return nil;
-	
+
+	if (!(blorData = [[NSMutableData dataWithContentsOfFile:path] retain])) {
+		[self release];
+		return (self = nil);
+	}
+
+	if ([blorData length] < 28) {
+		NSLog(@"read data is too small (%lu) to hold any notes!", (unsigned long)[blorData length]);
+		return nil;
+	}
+
+	successfullyReadNoteCount = 0;
+	suspectedNoteCount = *(unsigned int*)([blorData bytes] + 20);
+	suspectedNoteCount = CFSwapInt32BigToHost(suspectedNoteCount);
+		
+	currentByteOffset = 24;
+	//read past the # of notes marker--we're just going to read as many notes as possible
+
+	return self;
 }
 
 - (void)dealloc {

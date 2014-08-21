@@ -15,22 +15,23 @@
 @synthesize tagFieldString;
 
 - (id)initWithDelegate:(id)del commonTags:(NSArray *)cTags atPoint:(NSPoint)centerpoint{
-	if ((self=[super init])) {
-		if (![NSBundle loadNibNamed:@"TagEditingManager" owner:self])  {
-			NSLog(@"Failed to load TagEditer.nib");
-		}else{
-            isHappening = YES;
-            NSRect zRect=[tagPanel frame];
-            centerpoint.x-=(zRect.size.width/2.0);
-            centerpoint.y-=(zRect.size.height+70.0);
-            [tagPanel setDelegate:self];
-            [tagField setDelegate:del];
-            self.commonTags=cTags;
-            [tagPanel setFrameOrigin:centerpoint];
-            [tagPanel makeKeyAndOrderFront:del];
-            
-        }
+	self = [super init];
+	if (!self) { return nil; }
+
+	if (![NSBundle loadNibNamed:@"TagEditingManager" owner:self])  {
+		NSLog(@"Failed to load TagEditer.nib");
+	}else{
+		isHappening = YES;
+		NSRect zRect=[tagPanel frame];
+		centerpoint.x-=(zRect.size.width/2.0);
+		centerpoint.y-=(zRect.size.height+70.0);
+		[tagPanel setDelegate:self];
+		[tagField setDelegate:del];
+		self.commonTags=cTags;
+		[tagPanel setFrameOrigin:centerpoint];
+		[tagPanel makeKeyAndOrderFront:del];
 	}
+
 	return self;
 }
 

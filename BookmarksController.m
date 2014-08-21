@@ -29,45 +29,54 @@ static NSString *BMNoteUUIDStringKey = @"NoteUUIDString";
 @implementation NoteBookmark
 
 - (id)initWithDictionary:(NSDictionary*)aDict {
-        if (aDict) {
-            NSString *uuidString = [aDict objectForKey:BMNoteUUIDStringKey];
-            if (uuidString) {
-                return (self=[self initWithNoteUUIDBytes:[uuidString uuidBytes] searchString:[aDict objectForKey:BMSearchStringKey]]);
-            } else {
-                NSLog(@"NoteBookmark init: supplied nil uuidString");
-            }
-        } else {
-            NSLog(@"NoteBookmark init: supplied nil dictionary; couldn't init");
-            
-        }
-    return nil;
+	if (!aDict) {
+		NSLog(@"NoteBookmark init: supplied nil dictionary; couldn't init");
+		[self release];
+		return (self = nil);
+	}
+
+	NSString *uuidString = [aDict objectForKey:BMNoteUUIDStringKey];
+	if (!uuidString) {
+		NSLog(@"NoteBookmark init: supplied nil uuidString");
+		[self release];
+		return (self = nil);
+	}
+
+	return (self = [self initWithNoteUUIDBytes:[uuidString uuidBytes] searchString:[aDict objectForKey:BMSearchStringKey]]);
 }
 
 - (id)initWithNoteUUIDBytes:(CFUUIDBytes)bytes searchString:(NSString*)aString {
-	if (self=[super init]) {
-		uuidBytes = bytes;
-		searchString = [aString copy];
-        return self;
-	}
+	self = [super init];
+	if (!self) { return nil; }
+
+	uuidBytes = bytes;
+	searchString = [aString copy];
 	
-	return nil;
+	return self;
 }
 
 - (id)initWithNoteObject:(NoteObject*)aNote searchString:(NSString*)aString {
-	
-    if (aNote) {
-        
-        CFUUIDBytes *bytes = [aNote uniqueNoteIDBytes];
-        if (!bytes) {
-            NSLog(@"NoteBookmark init: no cfuuidbytes pointer from note %@", titleOfNote(aNote));
-        }else if(self=[self initWithNoteUUIDBytes:*bytes searchString:aString]){
-            noteObject = [aNote retain];
-            return self;
-        }
-    }
-    NSLog(@"NoteBookmark init: supplied nil note");
-    [self release];
-    return nil;
+	if (!aNote) {
+		NSLog(@"NoteBookmark init: supplied nil note");
+		[self release];
+		return (self = nil);
+	}
+
+	self = [super init];
+	if (!self) { return nil; }
+
+	noteObject = [aNote retain];
+	searchString = [aString copy];
+
+	CFUUIDBytes *bytes = [aNote uniqueNoteIDBytes];
+	if (!bytes) {
+		NSLog(@"NoteBookmark init: no cfuuidbytes pointer from note %@", titleOfNote(aNote));
+		[self release];
+		return (self = nil);
+	}
+	uuidBytes = *bytes;
+
+	return self;
 }
 
 - (void)dealloc {
@@ -132,14 +141,15 @@ static NSString *BMNoteUUIDStringKey = @"NoteUUIDString";
 @implementation BookmarksController
 
 - (id)init {
-	if (self=[super init]) {
-		bookmarks = [[NSMutableArray alloc] init];
-		isSelectingProgrammatically = isRestoringSearch = NO;
-		
-		prefsController = [GlobalPrefs defaultPrefs];
-        return self;
-	}
-	return nil;
+	self = [super init];
+	if (!self) { return nil; }
+
+	bookmarks = [[NSMutableArray alloc] init];
+	isSelectingProgrammatically = isRestoringSearch = NO;
+	
+	prefsController = [GlobalPrefs defaultPrefs];
+
+	return self;
 }
 
 - (void)awakeFromNib {
@@ -166,18 +176,17 @@ static NSString *BMNoteUUIDStringKey = @"NoteUUIDString";
 }
 
 - (id)initWithBookmarks:(NSArray*)array {
-	if (self=[self init]) {
-		unsigned int i;
-		for (i=0; i<[array count]; i++) {
-			NSDictionary *dict = [array objectAtIndex:i];
-			NoteBookmark *bookmark = [[NoteBookmark alloc] initWithDictionary:dict];
-			[bookmark setDelegate:self];
-			[bookmarks addObject:bookmark];
-			[bookmark release];
-		}
-        return self;
+	self = [self init];
+	if (!self) { return nil; }
+
+	for (NSUInteger i = 0; i < [array count]; i++) {
+		NSDictionary *dict = [array objectAtIndex:i];
+		NoteBookmark *bookmark = [[NoteBookmark alloc] initWithDictionary:dict];
+		[bookmark setDelegate:self];
+		[bookmarks addObject:bookmark];
+		[bookmark release];
 	}
-	return nil;
+	return self;
 }
 
 - (NSArray*)dictionaryReps {

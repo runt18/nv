@@ -27,16 +27,18 @@
 @implementation PrefsWindowController
 
 - (id)init {
-    if (self=[super init]) {
-		prefsController = [GlobalPrefs defaultPrefs];
-		fontPanelWasOpen = NO;
+	self = [super init];
+	if (!self) { return nil; }
+
+	prefsController = [GlobalPrefs defaultPrefs];
+	fontPanelWasOpen = NO;
       // remove opacity slider from color pickers -bt
     [[NSColorPanel sharedColorPanel] setShowsAlpha:NO];
-		[prefsController registerWithTarget:self forChangesInSettings:
+	[prefsController registerWithTarget:self forChangesInSettings:
 		 @selector(resolveNoteBodyFontFromNotationPrefsFromSender:), 
 		 @selector(setCheckSpellingAsYouType:sender:), 
 		 @selector(setConfirmNoteDeletion:sender:), nil];
-    }
+	
     return self;
 }
 

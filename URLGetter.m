@@ -18,22 +18,24 @@
 
 - (id)initWithURL:(NSURL*)aUrl delegate:(id)aDelegate userData:(id)someObj {
 	if (!aUrl || [aUrl isFileURL]) {
-		return nil;
+		[self release];
+		return (self = nil);
 	}
-	if (self=[super init]) {
-		maxExpectedByteCount = 0;
-		isImporting = isIndicating = NO;
-		delegate = aDelegate;
-		url = [aUrl retain];
-		userData = [someObj retain];
-		
-		downloader = [[NSURLDownload alloc] initWithRequest:[NSURLRequest requestWithURL:url] delegate:self];
-		
-		[self startProgressIndication:self];
-        return self;
-	}
-	
-	return nil;
+
+	self = [super init];
+	if (!self) { return nil; }
+
+	maxExpectedByteCount = 0;
+	isImporting = isIndicating = NO;
+	delegate = aDelegate;
+	url = [aUrl retain];
+	userData = [someObj retain];
+
+	downloader = [[NSURLDownload alloc] initWithRequest:[NSURLRequest requestWithURL:url] delegate:self];
+
+	[self startProgressIndication:self];
+
+	return self;
 }
 
 - (void)dealloc {

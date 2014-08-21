@@ -56,30 +56,29 @@ static ODBEditor	*_sharedODBEditor;
 
 - (id)init {
 	self = [super init];
-	if (self != nil) {
-		UInt32  packageType = 0;
-		UInt32  packageCreator = 0;
-		
-		if (_sharedODBEditor != nil) {
-			[self autorelease];
-			[NSException raise: NSInternalInconsistencyException format: @"ODBEditor is a singleton - use [ODBEditor sharedODBEditor]"];
-			return nil;
-		}
-		// our initialization
-		
-		CFBundleGetPackageInfo(CFBundleGetMainBundle(), &packageType, &packageCreator);
-		_signature = packageCreator;
-		
-		_filePathsBeingEdited = [[NSMutableDictionary alloc] init];
+	if (!self) { return nil; }
 
-		// setup our event handlers
-		
-		NSAppleEventManager *appleEventManager = [NSAppleEventManager sharedAppleEventManager];
-		[appleEventManager setEventHandler: self andSelector: @selector(handleModifiedFileEvent:withReplyEvent:) forEventClass: kODBEditorSuite andEventID: kAEModifiedFile];
-		[appleEventManager setEventHandler: self andSelector: @selector(handleClosedFileEvent:withReplyEvent:) forEventClass: kODBEditorSuite andEventID: kAEClosedFile];
-				
-	}
+	UInt32  packageType = 0;
+	UInt32  packageCreator = 0;
 	
+	if (_sharedODBEditor != nil) {
+		[NSException raise: NSInternalInconsistencyException format: @"ODBEditor is a singleton - use [ODBEditor sharedODBEditor]"];
+		[self release];
+		return (self = nil);
+	}
+	// our initialization
+	
+	CFBundleGetPackageInfo(CFBundleGetMainBundle(), &packageType, &packageCreator);
+	_signature = packageCreator;
+	
+	_filePathsBeingEdited = [[NSMutableDictionary alloc] init];
+
+	// setup our event handlers
+	
+	NSAppleEventManager *appleEventManager = [NSAppleEventManager sharedAppleEventManager];
+	[appleEventManager setEventHandler: self andSelector: @selector(handleModifiedFileEvent:withReplyEvent:) forEventClass: kODBEditorSuite andEventID: kAEModifiedFile];
+	[appleEventManager setEventHandler: self andSelector: @selector(handleClosedFileEvent:withReplyEvent:) forEventClass: kODBEditorSuite andEventID: kAEClosedFile];
+
 	return self;
 }
 

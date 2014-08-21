@@ -22,13 +22,15 @@
 @implementation DiskUUIDEntry
 
 - (id)initWithUUIDRef:(CFUUIDRef)aUUIDRef {
-	if (self=[super init]) {
-		NSAssert(aUUIDRef != nil, @"need a real UUID");
-		uuidRef = CFRetain(aUUIDRef);
-		lastAccessed = [[NSDate date] retain];
-        return self;
-	}
-    return nil;
+	NSAssert(NO, @"need a real UUID");
+
+	self = [super init];
+	if (!self) { return nil; }
+
+	uuidRef = CFRetain(aUUIDRef);
+	lastAccessed = [[NSDate date] retain];
+
+	return self;
 }
 
 - (void)dealloc {
@@ -49,22 +51,23 @@
 - (id)initWithCoder:(NSCoder*)decoder {
 	NSAssert([decoder allowsKeyedCoding], @"keyed-decoding only!");
 	
-    if (self=[super init]) {
+	self = [super init];
+	if (!self) { return nil; }
 
-		lastAccessed = [[decoder decodeObjectForKey:VAR_STR(lastAccessed)] retain];
-		
-		NSUInteger decodedByteCount = 0;
-		const uint8_t *bytes = [decoder decodeBytesForKey:VAR_STR(uuidRef) returnedLength:&decodedByteCount];
-		if (bytes && decodedByteCount)  {
-			uuidRef = CFUUIDCreateFromUUIDBytes(NULL, *(CFUUIDBytes*)bytes);
-		}
-		
-		if (!uuidRef) return nil;
-        
-        
-        return self;
+	lastAccessed = [[decoder decodeObjectForKey:VAR_STR(lastAccessed)] retain];
+	
+	NSUInteger decodedByteCount = 0;
+	const uint8_t *bytes = [decoder decodeBytesForKey:VAR_STR(uuidRef) returnedLength:&decodedByteCount];
+	if (bytes && decodedByteCount)  {
+		uuidRef = CFUUIDCreateFromUUIDBytes(NULL, *(CFUUIDBytes*)bytes);
 	}
-    return nil;
+		
+	if (!uuidRef) {
+		[self release];
+		return (self = nil);
+	}
+
+	return self;
 }
 
 - (void)see {

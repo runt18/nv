@@ -13,14 +13,15 @@
 @implementation ETTransparentButton
 
 - (id)initWithFrame:(NSRect)frameRect{
-    if ((self = [super initWithFrame:frameRect]))
-	{
-        ETTransparentButtonCell *newCell = [[ETTransparentButtonCell alloc] init];
-        [newCell setBezeled:YES];
-        [newCell setBezelStyle:NSRecessedBezelStyle];
-        [self setCell:newCell];
-        [newCell release];
-    }
+	self = [super initWithFrame:frameRect];
+	if (!self) { return nil; }
+
+	ETTransparentButtonCell *newCell = [[ETTransparentButtonCell alloc] init];
+	[newCell setBezeled:YES];
+	[newCell setBezelStyle:NSRecessedBezelStyle];
+	[self setCell:newCell];
+	[newCell release];
+
 	return self;
 }
 

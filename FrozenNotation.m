@@ -50,44 +50,44 @@
 }
 
 - (id)initWithNotes:(NSMutableArray*)notes deletedNotes:(NSMutableSet*)antiNotes prefs:(NotationPrefs*)somePrefs {
-	
-	if (self=[super init]) {
+	self = [super init];
+	if (!self) { return nil; }
 
-		notesData = [[NSMutableData alloc] init];
-		NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:notesData];
-		[archiver encodeObject:notes forKey:@"notes"];
-        [archiver finishEncoding];
-		[archiver release];
-		
-		prefs = [somePrefs retain];
-		deletedNoteSet = [antiNotes retain];		
-		
-		NSMutableData *oldNotesData = notesData;
-		notesData = [[notesData compressedData] retain];
-		[oldNotesData release];
-		
-		//ostensibly to create more entropy in the first blocks, relying on CBC dependency to crack
-		//[notesData reverseBytes];
-		
-		if ([somePrefs doesEncryption]) {
-			//compress?, reverse?, encrypt notesData based on notationprefs
-			//we also want to have the salt reset here, but that requires knowing the original password
-			
-			if (![prefs encryptDataInNewSession:notesData]) {
-				NSLog(@"Couldn't encrypt data!");
-                [self dealloc];
-				return nil;
-			}
+	notesData = [[NSMutableData alloc] init];
+	NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:notesData];
+	[archiver encodeObject:notes forKey:@"notes"];
+	[archiver finishEncoding];
+	[archiver release];
+
+	prefs = [somePrefs retain];
+	deletedNoteSet = [antiNotes retain];
+
+	NSMutableData *oldNotesData = notesData;
+	notesData = [[notesData compressedData] retain];
+	[oldNotesData release];
+
+	//ostensibly to create more entropy in the first blocks, relying on CBC dependency to crack
+	//[notesData reverseBytes];
+
+	
+	if ([somePrefs doesEncryption]) {
+		//compress?, reverse?, encrypt notesData based on notationprefs
+		//we also want to have the salt reset here, but that requires knowing the original password
+
+		if (![prefs encryptDataInNewSession:notesData]) {
+			NSLog(@"Couldn't encrypt data!");
+			[self release];
+			return (self = nil);
 		}
-		
-		if (![notesData length]) {
-			NSLog(@"%@: empty notesData; returning nil", NSStringFromSelector(_cmd));
-            [self dealloc];
-			return nil;
-		}
-        return self;
 	}
-	return nil;
+	
+	if (![notesData length]) {
+		NSLog(@"%s: empty notesData; returning nil", _cmd);
+		[self release];
+		return (self = nil);
+	}
+	
+	return self;
 }
 
 - (void)dealloc {

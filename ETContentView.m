@@ -10,22 +10,11 @@
 
 @implementation ETContentView
 
-//- (id)initWithFrame:(NSRect)frame
-//{
-//    self = [super initWithFrame:frame];
-//    if (self) {
-//        // Initialization code here.
-//    }
-//    
-//    return self;
-//}
-//
 - (void)dealloc
 {
     [backColor release];
     [super dealloc];
 }
-
 
 - (void)drawRect:(NSRect)dirtyRect
 {

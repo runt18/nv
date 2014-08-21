@@ -60,20 +60,19 @@ static void setAttrModifiedDate(NoteObject *note, UTCDateTime *dateTime);
 static void setCatalogNodeID(NoteObject *note, UInt32 cnid);
 
 - (id)init {
-    if (self=[super init]) {
-	
-		perDiskInfoGroups = calloc(1, sizeof(PerDiskInfo));
-		perDiskInfoGroups[0].diskIDIndex = -1;
-		perDiskInfoGroupCount = 1;
-		
-		currentFormatID = SingleDatabaseFormat;
-		fileEncoding = NSUTF8StringEncoding;
-		selectedRange = NSMakeRange(NSNotFound, 0);
-		
-		//other instance variables initialized on demand
-        return self;
-    }
-	return nil;
+	self = [super init];
+	if (!self) { return nil; }
+
+	perDiskInfoGroups = calloc(1, sizeof(PerDiskInfo));
+	perDiskInfoGroups[0].diskIDIndex = -1;
+	perDiskInfoGroupCount = 1;
+
+	currentFormatID = SingleDatabaseFormat;
+	fileEncoding = NSUTF8StringEncoding;
+	selectedRange = NSMakeRange(NSNotFound, 0);
+
+	//other instance variables initialized on demand
+	return self;
 }
 
 - (void)dealloc {
@@ -323,117 +322,120 @@ force_inline id unifiedCellForNote(NotesTableView *tv, NoteObject *note, NSInteg
 #define DECODE_INDIVIDUALLY 1
 
 - (id)initWithCoder:(NSCoder*)decoder {
-	if (self=[self init]) {
+	self = [self init];
+	if (!self) { return nil; }
+
+	if ([decoder allowsKeyedCoding]) {
+		//(hopefully?) no versioning necessary here
+
+		//for knowing when to delay certain initializations during launch (e.g., preview generation)
+		didUnarchive = YES;
 		
-		if ([decoder allowsKeyedCoding]) {
-			//(hopefully?) no versioning necessary here
-			
-			//for knowing when to delay certain initializations during launch (e.g., preview generation)
-			didUnarchive = YES;
-			
-			modifiedDate = [decoder decodeDoubleForKey:VAR_STR(modifiedDate)];
-			createdDate = [decoder decodeDoubleForKey:VAR_STR(createdDate)];
-			selectedRange.location = [decoder decodeInt32ForKey:@"selectionRangeLocation"];
-			selectedRange.length = [decoder decodeInt32ForKey:@"selectionRangeLength"];
-			contentsWere7Bit = [decoder decodeBoolForKey:VAR_STR(contentsWere7Bit)];
-			
-			logSequenceNumber = [decoder decodeInt32ForKey:VAR_STR(logSequenceNumber)];
+		modifiedDate = [decoder decodeDoubleForKey:VAR_STR(modifiedDate)];
+		createdDate = [decoder decodeDoubleForKey:VAR_STR(createdDate)];
+		selectedRange.location = [decoder decodeInt32ForKey:@"selectionRangeLocation"];
+		selectedRange.length = [decoder decodeInt32ForKey:@"selectionRangeLength"];
+		contentsWere7Bit = [decoder decodeBoolForKey:VAR_STR(contentsWere7Bit)];
+		
+		logSequenceNumber = [decoder decodeInt32ForKey:VAR_STR(logSequenceNumber)];
 
-			currentFormatID = [decoder decodeInt32ForKey:VAR_STR(currentFormatID)];
-			logicalSize = [decoder decodeInt32ForKey:VAR_STR(logicalSize)];
-			
-			int64_t fileModifiedDate64 = [decoder decodeInt64ForKey:VAR_STR(fileModifiedDate)];
-			memcpy(&fileModifiedDate, &fileModifiedDate64, sizeof(int64_t));
-						
-			NSUInteger decodedPerDiskByteCount = 0;
-			const uint8_t *decodedPerDiskBytes = [decoder decodeBytesForKey:VAR_STR(perDiskInfoGroups) returnedLength:&decodedPerDiskByteCount];
-			if (decodedPerDiskBytes && decodedPerDiskByteCount) {
-				CopyPerDiskInfoGroupsToOrder(&perDiskInfoGroups, &perDiskInfoGroupCount, (PerDiskInfo *)decodedPerDiskBytes, decodedPerDiskByteCount, 1);
-			}
-			
-			fileEncoding = [decoder decodeInt32ForKey:VAR_STR(fileEncoding)];
-
-			NSUInteger decodedUUIDByteCount = 0;
-			const uint8_t *decodedUUIDBytes = [decoder decodeBytesForKey:VAR_STR(uniqueNoteIDBytes) returnedLength:&decodedUUIDByteCount];
-			if (decodedUUIDBytes) memcpy(&uniqueNoteIDBytes, decodedUUIDBytes, MIN(decodedUUIDByteCount, sizeof(CFUUIDBytes)));
-			
-			syncServicesMD = [[decoder decodeObjectForKey:VAR_STR(syncServicesMD)] retain];
-			
-			titleString = [[decoder decodeObjectForKey:VAR_STR(titleString)] retain];
-			labelString = [[decoder decodeObjectForKey:VAR_STR(labelString)] retain];
-			contentString = [[NSMutableAttributedString alloc] initWithAttributedString: [decoder decodeObjectForKey:VAR_STR(contentString)]];
-			filename = [[decoder decodeObjectForKey:VAR_STR(filename)] retain];
-			
-		} else {
-            NSRange32 range32;
-			unsigned int serverModifiedTime = 0;
-			float scrolledProportion = 0.0;
-            #if __LP64__
-            unsigned long longTemp;
-            #endif
-#if DECODE_INDIVIDUALLY
-			[decoder decodeValueOfObjCType:@encode(CFAbsoluteTime) at:&modifiedDate];
-			[decoder decodeValueOfObjCType:@encode(CFAbsoluteTime) at:&createdDate];
-            #if __LP64__
-			[decoder decodeValueOfObjCType:"{_NSRange=II}" at:&range32];
-            #else
-            [decoder decodeValueOfObjCType:@encode(NSRange) at:&range32];
-            #endif
-			[decoder decodeValueOfObjCType:@encode(float) at:&scrolledProportion];
-			
-			[decoder decodeValueOfObjCType:@encode(unsigned int) at:&logSequenceNumber];
-			
-			[decoder decodeValueOfObjCType:@encode(int) at:&currentFormatID];
-            #if __LP64__
-            [decoder decodeValueOfObjCType:"L" at:&longTemp];
-            nodeID = (UInt32)longTemp;
-            #else
-			[decoder decodeValueOfObjCType:@encode(UInt32) at:&nodeID];
-            #endif
-			[decoder decodeValueOfObjCType:@encode(UInt16) at:&fileModifiedDate.highSeconds];
-            #if __LP64__
-			[decoder decodeValueOfObjCType:"L" at:&longTemp];
-            fileModifiedDate.lowSeconds = (UInt32)longTemp;
-            #else
-            [decoder decodeValueOfObjCType:@encode(UInt32) at:&fileModifiedDate.lowSeconds];
-            #endif
-			[decoder decodeValueOfObjCType:@encode(UInt16) at:&fileModifiedDate.fraction];	
-            
-            #if __LP64__
-            [decoder decodeValueOfObjCType:"I" at:&fileEncoding];
-            #else
-            [decoder decodeValueOfObjCType:@encode(NSStringEncoding) at:&fileEncoding];
-            #endif
-			
-			[decoder decodeValueOfObjCType:@encode(CFUUIDBytes) at:&uniqueNoteIDBytes];
-			[decoder decodeValueOfObjCType:@encode(unsigned int) at:&serverModifiedTime];
-			
-			titleString = [[decoder decodeObject] retain];
-			labelString = [[decoder decodeObject] retain];
-			contentString = [[[decoder decodeObject] mutableCopy] retain];
-			filename = [[decoder decodeObject] retain];
-#else 
-			[decoder decodeValuesOfObjCTypes: "dd{NSRange=ii}fIiI{UTCDateTime=SIS}I[16C]I@@@@", &modifiedDate, &createdDate, &range32, 
-				&scrolledProportion, &logSequenceNumber, &currentFormatID, &nodeID, &fileModifiedDate, &fileEncoding, &uniqueNoteIDBytes, 
-				&serverModifiedTime, &titleString, &labelString, &contentString, &filename];
-#endif
-            selectedRange.location = range32.location;
-            selectedRange.length = range32.length;
-			contentsWere7Bit = (*(unsigned int*)&scrolledProportion) != 0; //hacko wacko
+		currentFormatID = [decoder decodeInt32ForKey:VAR_STR(currentFormatID)];
+		logicalSize = [decoder decodeInt32ForKey:VAR_STR(logicalSize)];
+		
+		int64_t fileModifiedDate64 = [decoder decodeInt64ForKey:VAR_STR(fileModifiedDate)];
+		memcpy(&fileModifiedDate, &fileModifiedDate64, sizeof(int64_t));
+					
+		NSUInteger decodedPerDiskByteCount = 0;
+		const uint8_t *decodedPerDiskBytes = [decoder decodeBytesForKey:VAR_STR(perDiskInfoGroups) returnedLength:&decodedPerDiskByteCount];
+		if (decodedPerDiskBytes && decodedPerDiskByteCount) {
+			CopyPerDiskInfoGroupsToOrder(&perDiskInfoGroups, &perDiskInfoGroupCount, (PerDiskInfo *)decodedPerDiskBytes, decodedPerDiskByteCount, 1);
 		}
-	
-		//re-created at runtime to save space
-		[self initContentCacheCString];
-		cTitleFoundPtr = cTitle = titleString ? strdup([titleString lowercaseUTF8String]) : NULL;
-		cLabelsFoundPtr = cLabels = labelString ? strdup([labelString lowercaseUTF8String]) : NULL;
 		
-		dateCreatedString = [[NSString relativeDateStringWithAbsoluteTime:createdDate] retain];
-		dateModifiedString = [[NSString relativeDateStringWithAbsoluteTime:modifiedDate] retain];
+		fileEncoding = [decoder decodeInt32ForKey:VAR_STR(fileEncoding)];
+
+		NSUInteger decodedUUIDByteCount = 0;
+		const uint8_t *decodedUUIDBytes = [decoder decodeBytesForKey:VAR_STR(uniqueNoteIDBytes) returnedLength:&decodedUUIDByteCount];
+		if (decodedUUIDBytes) memcpy(&uniqueNoteIDBytes, decodedUUIDBytes, MIN(decodedUUIDByteCount, sizeof(CFUUIDBytes)));
 		
-		if (!titleString && !contentString && !labelString) return nil;
-        return self;
+		syncServicesMD = [[decoder decodeObjectForKey:VAR_STR(syncServicesMD)] retain];
+		
+		titleString = [[decoder decodeObjectForKey:VAR_STR(titleString)] retain];
+		labelString = [[decoder decodeObjectForKey:VAR_STR(labelString)] retain];
+		contentString = [[NSMutableAttributedString alloc] initWithAttributedString: [decoder decodeObjectForKey:VAR_STR(contentString)]];
+		filename = [[decoder decodeObjectForKey:VAR_STR(filename)] retain];
+		
+	} else {
+		NSRange32 range32;
+		unsigned int serverModifiedTime = 0;
+		float scrolledProportion = 0.0;
+		#if __LP64__
+		unsigned long longTemp;
+		#endif
+#if DECODE_INDIVIDUALLY
+		[decoder decodeValueOfObjCType:@encode(CFAbsoluteTime) at:&modifiedDate];
+		[decoder decodeValueOfObjCType:@encode(CFAbsoluteTime) at:&createdDate];
+		#if __LP64__
+		[decoder decodeValueOfObjCType:"{_NSRange=II}" at:&range32];
+		#else
+		[decoder decodeValueOfObjCType:@encode(NSRange) at:&range32];
+		#endif
+		[decoder decodeValueOfObjCType:@encode(float) at:&scrolledProportion];
+		
+		[decoder decodeValueOfObjCType:@encode(unsigned int) at:&logSequenceNumber];
+		
+		[decoder decodeValueOfObjCType:@encode(int) at:&currentFormatID];
+		#if __LP64__
+		[decoder decodeValueOfObjCType:"L" at:&longTemp];
+		nodeID = (UInt32)longTemp;
+		#else
+		[decoder decodeValueOfObjCType:@encode(UInt32) at:&nodeID];
+		#endif
+		[decoder decodeValueOfObjCType:@encode(UInt16) at:&fileModifiedDate.highSeconds];
+		#if __LP64__
+		[decoder decodeValueOfObjCType:"L" at:&longTemp];
+		fileModifiedDate.lowSeconds = (UInt32)longTemp;
+		#else
+		[decoder decodeValueOfObjCType:@encode(UInt32) at:&fileModifiedDate.lowSeconds];
+		#endif
+		[decoder decodeValueOfObjCType:@encode(UInt16) at:&fileModifiedDate.fraction];	
+		
+		#if __LP64__
+		[decoder decodeValueOfObjCType:"I" at:&fileEncoding];
+		#else
+		[decoder decodeValueOfObjCType:@encode(NSStringEncoding) at:&fileEncoding];
+		#endif
+		
+		[decoder decodeValueOfObjCType:@encode(CFUUIDBytes) at:&uniqueNoteIDBytes];
+		[decoder decodeValueOfObjCType:@encode(unsigned int) at:&serverModifiedTime];
+		
+		titleString = [[decoder decodeObject] retain];
+		labelString = [[decoder decodeObject] retain];
+		contentString = [[[decoder decodeObject] mutableCopy] retain];
+		filename = [[decoder decodeObject] retain];
+#else 
+		[decoder decodeValuesOfObjCTypes: "dd{NSRange=ii}fIiI{UTCDateTime=SIS}I[16C]I@@@@", &modifiedDate, &createdDate, &range32, 
+			&scrolledProportion, &logSequenceNumber, &currentFormatID, &nodeID, &fileModifiedDate, &fileEncoding, &uniqueNoteIDBytes, 
+			&serverModifiedTime, &titleString, &labelString, &contentString, &filename];
+#endif
+		selectedRange.location = range32.location;
+		selectedRange.length = range32.length;
+		contentsWere7Bit = (*(unsigned int*)&scrolledProportion) != 0; //hacko wacko
 	}
-    return nil;
+
+	//re-created at runtime to save space
+	[self initContentCacheCString];
+	cTitleFoundPtr = cTitle = titleString ? strdup([titleString lowercaseUTF8String]) : NULL;
+	cLabelsFoundPtr = cLabels = labelString ? strdup([labelString lowercaseUTF8String]) : NULL;
+	
+	dateCreatedString = [[NSString relativeDateStringWithAbsoluteTime:createdDate] retain];
+	dateModifiedString = [[NSString relativeDateStringWithAbsoluteTime:modifiedDate] retain];
+	
+	if (!titleString && !contentString && !labelString) {
+		[self release];
+		return (self = nil);
+	}
+
+	return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
@@ -509,92 +511,93 @@ force_inline id unifiedCellForNote(NotesTableView *tv, NoteObject *note, NSInteg
 
 - (id)initWithNoteBody:(NSAttributedString*)bodyText title:(NSString*)aNoteTitle delegate:(id)aDelegate format:(NSInteger)formatID labels:(NSString*)aLabelString {
 	//delegate optional here
-    if (self=[self init]) {
-		
-		if (!bodyText || !aNoteTitle) {
-			return nil;
-		}
-		delegate = aDelegate;
+	if (!bodyText || !aNoteTitle) {
+		[self release];
+		return (self = nil);
+	}
 
-		contentString = [[NSMutableAttributedString alloc] initWithAttributedString:bodyText];
-		[self initContentCacheCString];
-		if (!cContents) {
-			NSLog(@"couldn't get UTF8 string from contents?!?");
-			return nil;
-		}
+	self = [self init];
+	if (!self) { return nil; }
 
-		if (![self _setTitleString:aNoteTitle])
-		    titleString = NSLocalizedString(@"Untitled Note", @"Title of a nameless note");
-		
-		if (![self _setLabelString:aLabelString]) {
-			labelString = @"";
-			cLabelsFoundPtr = cLabels = strdup("");
-		}
-		
-		currentFormatID = formatID;
-		filename = [[delegate uniqueFilenameForTitle:titleString fromNote:nil] retain];
-		
-		CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-		uniqueNoteIDBytes = CFUUIDGetUUIDBytes(uuidRef);
-		CFRelease(uuidRef);
-		
-		createdDate = modifiedDate = CFAbsoluteTimeGetCurrent();
-		dateCreatedString = [dateModifiedString = [[NSString relativeDateStringWithAbsoluteTime:modifiedDate] retain] retain];
-		UCConvertCFAbsoluteTimeToUTCDateTime(modifiedDate, &fileModifiedDate);
-		
-		if (delegate)
-			[self updateTablePreviewString];
-        
-        
-        return self;
-    }
-    return nil;
+	contentString = [[NSMutableAttributedString alloc] initWithAttributedString:bodyText];
+	[self initContentCacheCString];
+	if (!cContents) {
+		NSLog(@"couldn't get UTF8 string from contents?!?");
+		[self release];
+		return (self = nil);
+	}
+
+	if (![self _setTitleString:aNoteTitle])
+		titleString = NSLocalizedString(@"Untitled Note", @"Title of a nameless note");
+
+	if (![self _setLabelString:aLabelString]) {
+		labelString = @"";
+		cLabelsFoundPtr = cLabels = strdup("");
+	}
+
+	currentFormatID = formatID;
+	filename = [[delegate uniqueFilenameForTitle:titleString fromNote:nil] retain];
+
+	CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+	uniqueNoteIDBytes = CFUUIDGetUUIDBytes(uuidRef);
+	CFRelease(uuidRef);
+
+	createdDate = modifiedDate = CFAbsoluteTimeGetCurrent();
+	dateCreatedString = [dateModifiedString = [[NSString relativeDateStringWithAbsoluteTime:modifiedDate] retain] retain];
+	UCConvertCFAbsoluteTimeToUTCDateTime(modifiedDate, &fileModifiedDate);
+
+	if (delegate)
+		[self updateTablePreviewString];
+
+
+	return self;
 }
 
 //only get the fsrefs until we absolutely need them
 
 - (id)initWithCatalogEntry:(NoteCatalogEntry*)entry delegate:(id)aDelegate {
 	NSAssert(aDelegate != nil, @"must supply a delegate");
-    if (self=[self init]) {
-		delegate = aDelegate;
-		filename = [(NSString*)entry->filename copy];
-		currentFormatID = [delegate currentNoteStorageFormat];
-		fileModifiedDate = entry->lastModified;
-		setAttrModifiedDate(self, &(entry->lastAttrModified));
-		setCatalogNodeID(self, entry->nodeID);
-		logicalSize = entry->logicalSize;
-		
-		CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-		uniqueNoteIDBytes = CFUUIDGetUUIDBytes(uuidRef);
-		CFRelease(uuidRef);
-		
-		if (![self _setTitleString:[filename stringByDeletingPathExtension]])
-			titleString = NSLocalizedString(@"Untitled Note", @"Title of a nameless note");
-		
-		labelString = @""; //set by updateFromCatalogEntry if there are openmeta extended attributes 
-		cLabelsFoundPtr = cLabels = strdup("");	
-				
-		contentString = [[NSMutableAttributedString alloc] initWithString:@""];
-		[self initContentCacheCString];
-		
-		if (![self updateFromCatalogEntry:entry]) {						
-			//just initialize a blank note for now; if the file becomes readable again we'll be updated
-			//but if we make modifications, well, the original is toast
-			//so warn the user here and offer to trash it?
-			//perhaps also offer to re-interpret using another text encoding?
-			
-			//additionally, it is possible that the file was deleted before we could read it
-		}
-		if (!modifiedDate || !createdDate) {
-			modifiedDate = createdDate = CFAbsoluteTimeGetCurrent();
-			dateModifiedString = [dateCreatedString = [[NSString relativeDateStringWithAbsoluteTime:createdDate] retain] retain];	
-		}
-	
-        [self updateTablePreviewString];
-    
-        return self;
-    }
-    return nil;
+
+	self = [self init];
+	if (!self) { return nil; }
+
+	delegate = aDelegate;
+	filename = [(NSString*)entry->filename copy];
+	currentFormatID = [delegate currentNoteStorageFormat];
+	fileModifiedDate = entry->lastModified;
+	setAttrModifiedDate(self, &(entry->lastAttrModified));
+	setCatalogNodeID(self, entry->nodeID);
+	logicalSize = entry->logicalSize;
+
+	CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+	uniqueNoteIDBytes = CFUUIDGetUUIDBytes(uuidRef);
+	CFRelease(uuidRef);
+
+	if (![self _setTitleString:[filename stringByDeletingPathExtension]])
+		titleString = NSLocalizedString(@"Untitled Note", @"Title of a nameless note");
+
+	labelString = @""; //set by updateFromCatalogEntry if there are openmeta extended attributes
+	cLabelsFoundPtr = cLabels = strdup("");
+
+	contentString = [[NSMutableAttributedString alloc] initWithString:@""];
+	[self initContentCacheCString];
+
+	if (![self updateFromCatalogEntry:entry]) {
+		//just initialize a blank note for now; if the file becomes readable again we'll be updated
+		//but if we make modifications, well, the original is toast
+		//so warn the user here and offer to trash it?
+		//perhaps also offer to re-interpret using another text encoding?
+
+		//additionally, it is possible that the file was deleted before we could read it
+	}
+	if (!modifiedDate || !createdDate) {
+		modifiedDate = createdDate = CFAbsoluteTimeGetCurrent();
+		dateModifiedString = [dateCreatedString = [[NSString relativeDateStringWithAbsoluteTime:createdDate] retain] retain];
+	}
+
+	[self updateTablePreviewString];
+
+	return self;
 }
 
 //assume any changes have been synchronized with undomanager

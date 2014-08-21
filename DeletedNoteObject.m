@@ -26,37 +26,36 @@
 }
 
 - (id)initWithExistingObject:(id<SynchronizedNote>)note {
-    if (self=[super init]) {
-		CFUUIDBytes *bytes = [note uniqueNoteIDBytes];
-		uniqueNoteIDBytes = *bytes;
-		syncServicesMD = [[note syncServicesMD] mutableCopy];
-		logSequenceNumber = [note logSequenceNumber];
-		//not serialized: for runtime lookup purposes only
-		originalNote = [note retain];
-    
-        return self;
-    }
-	return nil;
+	self = [super init];
+	if (!self) { return nil; }
+
+	CFUUIDBytes *bytes = [note uniqueNoteIDBytes];
+	uniqueNoteIDBytes = *bytes;
+	syncServicesMD = [[note syncServicesMD] mutableCopy];
+	logSequenceNumber = [note logSequenceNumber];
+	//not serialized: for runtime lookup purposes only
+	originalNote = [note retain];
+
+	return self;
 }
 
 - (id)initWithCoder:(NSCoder*)decoder {
-    if (self=[super init]) {
-		
-		if ([decoder allowsKeyedCoding]) {
-			NSUInteger decodedByteCount;
-			const uint8_t *decodedBytes = [decoder decodeBytesForKey:VAR_STR(uniqueNoteIDBytes) returnedLength:&decodedByteCount];
-			memcpy(&uniqueNoteIDBytes, decodedBytes, MIN(decodedByteCount, sizeof(CFUUIDBytes)));
-			syncServicesMD = [[decoder decodeObjectForKey:VAR_STR(syncServicesMD)] retain];
-			logSequenceNumber = [decoder decodeInt32ForKey:VAR_STR(logSequenceNumber)];
-		} else {
-			[decoder decodeValueOfObjCType:@encode(CFUUIDBytes) at:&uniqueNoteIDBytes];
-			syncServicesMD = [[decoder decodeObject] retain];
-			[decoder decodeValueOfObjCType:@encode(unsigned int) at:&logSequenceNumber];
-		}
-    
-        return self;
-    }
-	return nil;
+	self = [super init];
+	if (!self) { return nil; }
+
+	if ([decoder allowsKeyedCoding]) {
+		NSUInteger decodedByteCount;
+		const uint8_t *decodedBytes = [decoder decodeBytesForKey:VAR_STR(uniqueNoteIDBytes) returnedLength:&decodedByteCount];
+		memcpy(&uniqueNoteIDBytes, decodedBytes, MIN(decodedByteCount, sizeof(CFUUIDBytes)));
+		syncServicesMD = [[decoder decodeObjectForKey:VAR_STR(syncServicesMD)] retain];
+		logSequenceNumber = [decoder decodeInt32ForKey:VAR_STR(logSequenceNumber)];
+	} else {
+		[decoder decodeValueOfObjCType:@encode(CFUUIDBytes) at:&uniqueNoteIDBytes];
+		syncServicesMD = [[decoder decodeObject] retain];
+		[decoder decodeValueOfObjCType:@encode(unsigned int) at:&logSequenceNumber];
+	}
+
+	return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {

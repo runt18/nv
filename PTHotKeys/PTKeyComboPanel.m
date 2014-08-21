@@ -29,9 +29,13 @@ static id _sharedKeyComboPanel = nil;
 
 - (id)init
 {
+	self = [self initWithWindowNibName:@"PTKeyComboPanel"];
+	if (!self) { return nil; }
+
     mTitleFormat = @"empty";
     mKeyName = @"empty";
-	return [self initWithWindowNibName: @"PTKeyComboPanel"];
+
+	return self;
 }
 
 - (void)dealloc

@@ -52,108 +52,109 @@ NSMutableDictionary *ServiceAccountDictInit(NotationPrefs *prefs, NSString* serv
 }
 
 - (id)init {
-    if (self=[super init]) {
-		allowedTypes = NULL;
-		
-		unsigned int i;
-		for (i=0; i<4; i++) {
-			typeStrings[i] = [[NotationPrefs defaultTypeStringsForFormat:i] retain];
-			pathExtensions[i] = [[NotationPrefs defaultPathExtensionsForFormat:i] retain];
-			chosenExtIndices[i] = 0;
-		}
-		
-		confirmFileDeletion = YES;
-		storesPasswordInKeychain = secureTextEntry = doesEncryption = NO;
-		syncServiceAccounts = [[NSMutableDictionary alloc] init];
-		seenDiskUUIDEntries = [[NSMutableArray alloc] init];
-		notesStorageFormat = SingleDatabaseFormat;
-		hashIterationCount = DEFAULT_HASH_ITERATIONS;
-		keyLengthInBits = DEFAULT_KEY_LENGTH;
-		baseBodyFont = [[[GlobalPrefs defaultPrefs] noteBodyFont] retain];
-		//foregroundColor = [[[GlobalPrefs defaultPrefs] foregroundTextColor] retain];
-		foregroundColor = [[[NSApp delegate] foregrndColor]retain];
-		epochIteration = 0;
-		
-		[self updateOSTypesArray];
-		
-		firstTimeUsed = preferencesChanged = YES;
-		
-        return self;
-    }
-    return nil;
+	self = [super init];
+	if (!self) { return nil; }
+
+	allowedTypes = NULL;
+
+	unsigned int i;
+	for (i=0; i<4; i++) {
+		typeStrings[i] = [[NotationPrefs defaultTypeStringsForFormat:i] retain];
+		pathExtensions[i] = [[NotationPrefs defaultPathExtensionsForFormat:i] retain];
+		chosenExtIndices[i] = 0;
+	}
+	
+	confirmFileDeletion = YES;
+	storesPasswordInKeychain = secureTextEntry = doesEncryption = NO;
+	syncServiceAccounts = [[NSMutableDictionary alloc] init];
+	seenDiskUUIDEntries = [[NSMutableArray alloc] init];
+	notesStorageFormat = SingleDatabaseFormat;
+	hashIterationCount = DEFAULT_HASH_ITERATIONS;
+	keyLengthInBits = DEFAULT_KEY_LENGTH;
+	baseBodyFont = [[[GlobalPrefs defaultPrefs] noteBodyFont] retain];
+	//foregroundColor = [[[GlobalPrefs defaultPrefs] foregroundTextColor] retain];
+	foregroundColor = [[[NSApp delegate] foregrndColor]retain];
+	epochIteration = 0;
+	
+	[self updateOSTypesArray];
+	
+	firstTimeUsed = preferencesChanged = YES;
+
+	return self;
 }
 
 - (id)initWithCoder:(NSCoder*)decoder {
-    if ([super init]) {
-		NSAssert([decoder allowsKeyedCoding], @"Keyed decoding only!");
-		
-		//if we're initializing from an archive, we've obviously been run at least once before
-		firstTimeUsed = NO;
-		
-		preferencesChanged = NO;
-		
-		epochIteration = [decoder decodeInt32ForKey:VAR_STR(epochIteration)];
-		notesStorageFormat = [decoder decodeIntForKey:VAR_STR(notesStorageFormat)];
-		doesEncryption = [decoder decodeBoolForKey:VAR_STR(doesEncryption)];
-		storesPasswordInKeychain = [decoder decodeBoolForKey:VAR_STR(storesPasswordInKeychain)];
-		secureTextEntry = [decoder decodeBoolForKey:VAR_STR(secureTextEntry)];
-		
-		if (!(hashIterationCount = [decoder decodeIntForKey:VAR_STR(hashIterationCount)]))
-			hashIterationCount = DEFAULT_HASH_ITERATIONS;
-		if (!(keyLengthInBits = [decoder decodeIntForKey:VAR_STR(keyLengthInBits)]))
-			keyLengthInBits = DEFAULT_KEY_LENGTH;
-		
-		@try {
-			baseBodyFont = [[decoder decodeObjectForKey:VAR_STR(baseBodyFont)] retain];
-		} @catch (NSException *e) {
-			NSLog(@"Error trying to unarchive default base body font (%@, %@)", [e name], [e reason]);
-		}
-		if (!baseBodyFont || ![baseBodyFont isKindOfClass:[NSFont class]]) {
-			baseBodyFont = [[[GlobalPrefs defaultPrefs] noteBodyFont] retain];
-			NSLog(@"setting base body to current default: %@", baseBodyFont);
-			preferencesChanged = YES;
-		}
-		//foregroundColor does not receive the same treatment as basebodyfont; in the event of a discrepancy between global and per-db settings,
-		//the former is applied to the notes in the database, while the latter is restored from the database itself
-		@try {
-			foregroundColor = [[decoder decodeObjectForKey:VAR_STR(foregroundColor)] retain];
-		} @catch (NSException *e) {
-			NSLog(@"Error trying to unarchive foreground text color (%@, %@)", [e name], [e reason]);
-		}
-		if (!foregroundColor || ![foregroundColor isKindOfClass:[NSColor class]]) {
-			//foregroundColor = [[[GlobalPrefs defaultPrefs] foregroundTextColor] retain];
-			
-			foregroundColor = [[[NSApp delegate] foregrndColor]retain];
-			preferencesChanged = YES;
-		}
-		
-		confirmFileDeletion = [decoder decodeBoolForKey:VAR_STR(confirmFileDeletion)];
-		
-		unsigned int i;
-		for (i=0; i<4; i++) {
-			if (!(typeStrings[i] = [[decoder decodeObjectForKey:[VAR_STR(typeStrings) stringByAppendingFormat:@".%d",i]] retain]))
-				typeStrings[i] = [[NotationPrefs defaultTypeStringsForFormat:i] retain];
-			if (!(pathExtensions[i] = [[decoder decodeObjectForKey:[VAR_STR(pathExtensions) stringByAppendingFormat:@".%d",i]] retain]))
-				pathExtensions[i] = [[NotationPrefs defaultPathExtensionsForFormat:i] retain];
-			chosenExtIndices[i] = [decoder decodeIntForKey:[VAR_STR(chosenExtIndices) stringByAppendingFormat:@".%d",i]];
-		}
-		
-		if (!(syncServiceAccounts = [[decoder decodeObjectForKey:VAR_STR(syncServiceAccounts)] retain]))
-			syncServiceAccounts = [[NSMutableDictionary alloc] init];
-		keychainDatabaseIdentifier = [[decoder decodeObjectForKey:VAR_STR(keychainDatabaseIdentifier)] retain];
-		
-		if (!(seenDiskUUIDEntries = [[decoder decodeObjectForKey:VAR_STR(seenDiskUUIDEntries)] retain]))
-			seenDiskUUIDEntries = [[NSMutableArray alloc] init];
-		
-		masterSalt = [[decoder decodeObjectForKey:VAR_STR(masterSalt)] retain];
-		dataSessionSalt = [[decoder decodeObjectForKey:VAR_STR(dataSessionSalt)] retain];
-		verifierKey = [[decoder decodeObjectForKey:VAR_STR(verifierKey)] retain];
-		
-		doesEncryption = doesEncryption && verifierKey && masterSalt;
-		
-		[self updateOSTypesArray];
-    }
+	NSAssert([decoder allowsKeyedCoding], @"Keyed decoding only!");
+
+	self = [super init];
+	if (!self) { return nil; }
+
+	//if we're initializing from an archive, we've obviously been run at least once before
+	firstTimeUsed = NO;
 	
+	preferencesChanged = NO;
+	
+	epochIteration = [decoder decodeInt32ForKey:VAR_STR(epochIteration)];
+	notesStorageFormat = [decoder decodeIntForKey:VAR_STR(notesStorageFormat)];
+	doesEncryption = [decoder decodeBoolForKey:VAR_STR(doesEncryption)];
+	storesPasswordInKeychain = [decoder decodeBoolForKey:VAR_STR(storesPasswordInKeychain)];
+	secureTextEntry = [decoder decodeBoolForKey:VAR_STR(secureTextEntry)];
+	
+	if (!(hashIterationCount = [decoder decodeIntForKey:VAR_STR(hashIterationCount)]))
+		hashIterationCount = DEFAULT_HASH_ITERATIONS;
+	if (!(keyLengthInBits = [decoder decodeIntForKey:VAR_STR(keyLengthInBits)]))
+		keyLengthInBits = DEFAULT_KEY_LENGTH;
+	
+	@try {
+		baseBodyFont = [[decoder decodeObjectForKey:VAR_STR(baseBodyFont)] retain];
+	} @catch (NSException *e) {
+		NSLog(@"Error trying to unarchive default base body font (%@, %@)", [e name], [e reason]);
+	}
+	if (!baseBodyFont || ![baseBodyFont isKindOfClass:[NSFont class]]) {
+		baseBodyFont = [[[GlobalPrefs defaultPrefs] noteBodyFont] retain];
+		NSLog(@"setting base body to current default: %@", baseBodyFont);
+		preferencesChanged = YES;
+	}
+	//foregroundColor does not receive the same treatment as basebodyfont; in the event of a discrepancy between global and per-db settings,
+	//the former is applied to the notes in the database, while the latter is restored from the database itself
+	@try {
+		foregroundColor = [[decoder decodeObjectForKey:VAR_STR(foregroundColor)] retain];
+	} @catch (NSException *e) {
+		NSLog(@"Error trying to unarchive foreground text color (%@, %@)", [e name], [e reason]);
+	}
+	if (!foregroundColor || ![foregroundColor isKindOfClass:[NSColor class]]) {
+		//foregroundColor = [[[GlobalPrefs defaultPrefs] foregroundTextColor] retain];
+
+		foregroundColor = [[[NSApp delegate] foregrndColor]retain];
+		preferencesChanged = YES;
+	}
+	
+	confirmFileDeletion = [decoder decodeBoolForKey:VAR_STR(confirmFileDeletion)];
+	
+	unsigned int i;
+	for (i=0; i<4; i++) {
+		if (!(typeStrings[i] = [[decoder decodeObjectForKey:[VAR_STR(typeStrings) stringByAppendingFormat:@".%d",i]] retain]))
+			typeStrings[i] = [[NotationPrefs defaultTypeStringsForFormat:i] retain];
+		if (!(pathExtensions[i] = [[decoder decodeObjectForKey:[VAR_STR(pathExtensions) stringByAppendingFormat:@".%d",i]] retain]))
+			pathExtensions[i] = [[NotationPrefs defaultPathExtensionsForFormat:i] retain];
+		chosenExtIndices[i] = [decoder decodeIntForKey:[VAR_STR(chosenExtIndices) stringByAppendingFormat:@".%d",i]];
+	}
+	
+	if (!(syncServiceAccounts = [[decoder decodeObjectForKey:VAR_STR(syncServiceAccounts)] retain]))
+		syncServiceAccounts = [[NSMutableDictionary alloc] init];
+	keychainDatabaseIdentifier = [[decoder decodeObjectForKey:VAR_STR(keychainDatabaseIdentifier)] retain];
+	
+	if (!(seenDiskUUIDEntries = [[decoder decodeObjectForKey:VAR_STR(seenDiskUUIDEntries)] retain]))
+		seenDiskUUIDEntries = [[NSMutableArray alloc] init];
+	
+	masterSalt = [[decoder decodeObjectForKey:VAR_STR(masterSalt)] retain];
+	dataSessionSalt = [[decoder decodeObjectForKey:VAR_STR(dataSessionSalt)] retain];
+	verifierKey = [[decoder decodeObjectForKey:VAR_STR(verifierKey)] retain];
+	
+	doesEncryption = doesEncryption && verifierKey && masterSalt;
+	
+	[self updateOSTypesArray];
+
     return self;
 }
 

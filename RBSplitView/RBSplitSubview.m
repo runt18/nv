@@ -25,19 +25,20 @@ static animationData* currentAnimation = NULL;
 // This is the designated initializer for RBSplitSubview. It sets some reasonable defaults. However, you
 // can't rely on anything working until you insert it into a RBSplitView.
 - (id)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-	if (self) {
-		fraction = 0.0;
-		canCollapse = NO;
-		notInLimits = NO;
-		minDimension = 1.0;
-		maxDimension = WAYOUT;
-		identifier = @"";
-		previous = NSZeroRect;
-		savedSize = frame.size;
-		actDivider = NSNotFound;
-		canDragWindow = NO;
-	}
+	self = [super initWithFrame:frame];
+	if (!self) { return nil; }
+
+	fraction = 0.0;
+	canCollapse = NO;
+	notInLimits = NO;
+	minDimension = 1.0;
+	maxDimension = WAYOUT;
+	identifier = @"";
+	previous = NSZeroRect;
+	savedSize = frame.size;
+	actDivider = NSNotFound;
+	canDragWindow = NO;
+
 	return self;
 }
 
@@ -579,42 +580,44 @@ static animationData* currentAnimation = NULL;
 }
 
 - (id)initWithCoder:(NSCoder*)coder {
-    if ((self = [super initWithCoder:coder])) {
-		fraction = 0.0;
-		canCollapse = NO;
-		notInLimits = NO;
-		minDimension = 1.0;
-		maxDimension = WAYOUT;
-		identifier = @"";
-		actDivider = NSNotFound;
-		canDragWindow = NO;
-		previous = [self frame];
-		savedSize = previous.size;
-		if (previous.origin.x>=WAYOUT) {
-            // The subview was collapsed when encoded, so we correct the origin and collapse it.
-			BOOL ishor = [self splitViewIsHorizontal];
-			previous.origin.x -= WAYOUT;
-			DIM(previous.size) = 0.0;
-			[self setFrameOrigin:previous.origin];
-			[self setFrameSize:previous.size];
-		}
-		previous = NSZeroRect;
-		if ([coder allowsKeyedCoding]) {
-			[self setIdentifier:[coder decodeObjectForKey:@"identifier"]];
-			tag = [coder decodeIntegerForKey:@"tag"];
-			minDimension = [coder decodeDoubleForKey:@"minDimension"];
-			maxDimension = [coder decodeDoubleForKey:@"maxDimension"];
-			fraction = [coder decodeDoubleForKey:@"fraction"];
-			canCollapse = [coder decodeBoolForKey:@"canCollapse"];
-		} else {
-			[self setIdentifier:[coder decodeObject]];
-			[coder decodeValueOfObjCType:@encode(typeof(tag)) at:&tag];
-			[coder decodeValueOfObjCType:@encode(typeof(minDimension)) at:&minDimension];
-			[coder decodeValueOfObjCType:@encode(typeof(maxDimension)) at:&maxDimension];
-			[coder decodeValueOfObjCType:@encode(typeof(fraction)) at:&fraction];
-			[coder decodeValueOfObjCType:@encode(typeof(canCollapse)) at:&canCollapse];
-		}
+	self = [super initWithCoder:coder];
+	if (!self) { return nil; }
+
+	fraction = 0.0;
+	canCollapse = NO;
+	notInLimits = NO;
+	minDimension = 1.0;
+	maxDimension = WAYOUT;
+	identifier = @"";
+	actDivider = NSNotFound;
+	canDragWindow = NO;
+	previous = [self frame];
+	savedSize = previous.size;
+	if (previous.origin.x>=WAYOUT) {
+		// The subview was collapsed when encoded, so we correct the origin and collapse it.
+		BOOL ishor = [self splitViewIsHorizontal];
+		previous.origin.x -= WAYOUT;
+		DIM(previous.size) = 0.0;
+		[self setFrameOrigin:previous.origin];
+		[self setFrameSize:previous.size];
 	}
+	previous = NSZeroRect;
+	if ([coder allowsKeyedCoding]) {
+		[self setIdentifier:[coder decodeObjectForKey:@"identifier"]];
+		tag = [coder decodeIntegerForKey:@"tag"];
+		minDimension = [coder decodeDoubleForKey:@"minDimension"];
+		maxDimension = [coder decodeDoubleForKey:@"maxDimension"];
+		fraction = [coder decodeDoubleForKey:@"fraction"];
+		canCollapse = [coder decodeBoolForKey:@"canCollapse"];
+	} else {
+		[self setIdentifier:[coder decodeObject]];
+		[coder decodeValueOfObjCType:@encode(typeof(tag)) at:&tag];
+		[coder decodeValueOfObjCType:@encode(typeof(minDimension)) at:&minDimension];
+		[coder decodeValueOfObjCType:@encode(typeof(maxDimension)) at:&maxDimension];
+		[coder decodeValueOfObjCType:@encode(typeof(fraction)) at:&fraction];
+		[coder decodeValueOfObjCType:@encode(typeof(canCollapse)) at:&canCollapse];
+	}
+
     return self;
 }
 

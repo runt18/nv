@@ -17,10 +17,13 @@ static NSRect itemRect;
 
 
 - (id)initWithFrame:(NSRect)frameRect{
-    if ((self=[super initWithFrame:frameRect])) {
-        itemRect=NSMakeRect(4.0, 3.0, 16.0, 16.0);
-        self.sbIconType=DarkMenuIcon;
-    }
+	self = [super initWithFrame:frameRect];
+	if (!self) { return nil; }
+
+
+	itemRect=NSMakeRect(4.0, 3.0, 16.0, 16.0);
+	self.sbIconType=DarkMenuIcon;
+
     return self;
 }
 

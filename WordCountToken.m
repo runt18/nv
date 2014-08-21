@@ -10,13 +10,6 @@
 
 @implementation WordCountToken
 
-- (id)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-    }
-    return self;
-}
-
 - (void)awakeFromNib{
 	[self refusesFirstResponder];
 }

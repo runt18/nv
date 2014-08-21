@@ -43,13 +43,14 @@ static SecureTextEntryManager *sharedInstance = nil;
 }
 
 - (id)init {
-	if ((self = [super init])) {
-		
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:) 
-													 name:NSApplicationDidBecomeActiveNotification object:NSApp];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) 
-													 name:NSApplicationWillResignActiveNotification object:NSApp];		
-	}
+	self = [super init];
+	if (!self) { return nil; }
+
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)
+												 name:NSApplicationDidBecomeActiveNotification object:NSApp];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) 
+												 name:NSApplicationWillResignActiveNotification object:NSApp];		
+
 	return self;
 }
 

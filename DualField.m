@@ -29,21 +29,21 @@
 
 - (id) init {
 	self = [super init];
-	if (self != nil) {
-		[self setStringValue:@""];
-		[self setEditable:YES];
-		[self setSelectable:YES];
-		[self setBezeled:NO];
-		[self setBordered:NO];
-		[self setDrawsBackground:NO];
-		[self setWraps:YES];
-		[self setPlaceholderString:NSLocalizedString(@"Search or Create", @"placeholder text in search/create field")];
-		
-		[self setFocusRingType:NSFocusRingTypeExterior];
-		
-		clearButtonState = snapbackButtonState = BUTTON_HIDDEN;
-		
-	}
+	if (!self) { return nil; }
+
+	[self setStringValue:@""];
+	[self setEditable:YES];
+	[self setSelectable:YES];
+	[self setBezeled:NO];
+	[self setBordered:NO];
+	[self setDrawsBackground:NO];
+	[self setWraps:YES];
+	[self setPlaceholderString:NSLocalizedString(@"Search or Create", @"placeholder text in search/create field")];
+	
+	[self setFocusRingType:NSFocusRingTypeExterior];
+	
+	clearButtonState = snapbackButtonState = BUTTON_HIDDEN;
+
 	return self;
 }
 

@@ -32,18 +32,20 @@
 #endif
 
 - (id)initWithFrame:(NSRect)frameRect{
-	if ((self=[super initWithFrame:frameRect])) {	
-        verticalPaddingRight = 3.0f;
-        if (IsLionOrLater&&([self scrollerStyle]==NSScrollerStyleOverlay)) {
-            verticalPaddingLeft = 4.5f;
-        }else{
-            verticalPaddingLeft = 4.0f;
-        }
-        knobAlpha=0.6f;
-        slotAlpha=0.55f;
-        fillBackground=NO;
-//        isOverlay=YES;
+	self = [super initWithFrame:frameRect];
+	if (!self) { return nil; }
+
+	verticalPaddingRight = 3.0f;
+	if (IsLionOrLater&&([self scrollerStyle]==NSScrollerStyleOverlay)) {
+		verticalPaddingLeft = 4.5f;
+	}else{
+		verticalPaddingLeft = 4.0f;
 	}
+	knobAlpha=0.6f;
+	slotAlpha=0.55f;
+	fillBackground=NO;
+//	isOverlay=YES;
+
 	return self;
 }
 

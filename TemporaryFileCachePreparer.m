@@ -35,12 +35,12 @@ static NSString *RAMDiskMountPath();
 static NSString *TempDirectoryPathForEditing();
 
 - (id)init {
-	if (self=[super init]) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskTerminated:) name:NSTaskDidTerminateNotification object:nil];
-        return self;
-	}
+	self = [super init];
+	if (!self) { return nil; }
+
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskTerminated:) name:NSTaskDidTerminateNotification object:nil];
 	
-	return nil;
+	return self;
 }
 
 - (void)dealloc {

@@ -25,14 +25,13 @@
 @implementation NoteAttributeColumn
 
 - (id)initWithIdentifier:(id)anObject {
-	
-	if (self=[super initWithIdentifier:anObject]) {
+	self = [super initWithIdentifier:anObject];
+	if (!self) { return nil; }
 
-		absoluteMinimumWidth = [anObject sizeWithAttributes:[NoteAttributeColumn standardDictionary]].width + 5;
-		[self setMinWidth:absoluteMinimumWidth];
-        return self;
-	}
-	return nil;
+	absoluteMinimumWidth = [anObject sizeWithAttributes:[NoteAttributeColumn standardDictionary]].width + 5;
+	[self setMinWidth:absoluteMinimumWidth];
+
+	return self;
 }
 
 + (NSDictionary*)standardDictionary {

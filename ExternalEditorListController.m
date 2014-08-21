@@ -34,22 +34,22 @@ NSString *ExternalEditorsChangedNotification = @"ExternalEditorsChanged";
 @implementation ExternalEditor
 
 - (id)initWithBundleID:(NSString*)aBundleIdentifier resolvedURL:(NSURL*)aURL {
-	if (self=[self init]) {
-		bundleIdentifier = [aBundleIdentifier retain];
-		resolvedURL = [aURL retain];
-		
-		NSAssert(resolvedURL || bundleIdentifier, @"the bundle identifier and URL cannot both be nil");
-		if (!bundleIdentifier) {
-			if (!(bundleIdentifier = [[[NSBundle bundleWithPath:[aURL path]] bundleIdentifier] copy])) {
-				NSLog(@"initWithBundleID:resolvedURL: URL does not seem to point to a valid bundle");
-                [self dealloc];
-				return nil;
-			}
+	self = [super init];
+	if (!self) { return nil; }
+
+	bundleIdentifier = [aBundleIdentifier retain];
+	resolvedURL = [aURL retain];
+
+	NSAssert(resolvedURL || bundleIdentifier, @"the bundle identifier and URL cannot both be nil");
+	if (!bundleIdentifier) {
+		if (!(bundleIdentifier = [[[NSBundle bundleWithPath:[aURL path]] bundleIdentifier] copy])) {
+			NSLog(@"initWithBundleID:resolvedURL: URL does not seem to point to a valid bundle");
+			[self release];
+			return (self = nil);
 		}
-        return self;
 	}
-    [self dealloc];
-	return nil;
+
+	return self;
 }
 
 - (BOOL)canEditNoteDirectly:(NoteObject*)aNote {
@@ -190,24 +190,25 @@ static ExternalEditorListController* sharedInstance = nil;
 }
 
 - (id)initWithUserDefaults {
-	if (self=[self init]) {
-		//TextEdit is not an ODB editor, but can be used to open files directly
-		[[NSUserDefaults standardUserDefaults] registerDefaults:
-		 [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:@"com.apple.TextEdit"] forKey:UserEEIdentifiersKey]];
-	
-		[self _initDefaults];
-        return self;
-	}
-	return nil;
+	self = [self init];
+	if (!self) { return nil; }
+
+	//TextEdit is not an ODB editor, but can be used to open files directly
+	[[NSUserDefaults standardUserDefaults] registerDefaults:
+	 [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:@"com.apple.TextEdit"] forKey:UserEEIdentifiersKey]];
+
+	[self _initDefaults];
+
+	return self;
 }
 
 - (id)init {
-	if (self=[super init]) {
-		
-		userEditorList = [[NSMutableArray alloc] init];
-        return self;
-	}
-	return nil;
+	self = [super init];
+	if (!self) { return nil; }
+
+	userEditorList = [[NSMutableArray alloc] init];
+
+	return self;
 }
 
 - (void)_initDefaults {

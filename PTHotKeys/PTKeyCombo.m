@@ -25,13 +25,11 @@
 - (id)initWithKeyCode: (int)keyCode modifiers: (int)modifiers
 {
 	self = [super init];
-	
-	if( self )
-	{
-		mKeyCode = keyCode;
-		mModifiers = modifiers;
-	}
-	
+	if (!self) { return nil; }
+
+	mKeyCode = keyCode;
+	mModifiers = modifiers;
+
 	return self;
 }
 
@@ -45,7 +43,7 @@
 	modifiers = [[plist objectForKey: @"modifiers"] intValue];
 	if( modifiers <= 0 ) modifiers = -1;
 
-	return [self initWithKeyCode: keyCode modifiers: modifiers];
+	return (self = [self initWithKeyCode: keyCode modifiers: modifiers]);
 }
 
 - (id)plistRepresentation

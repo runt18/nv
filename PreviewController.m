@@ -66,92 +66,95 @@
 
 -(id)init
 {
-    if ((self = [super initWithWindowNibName:@"MarkupPreview" owner:self])) {
-        self.isPreviewOutdated = YES;
-        self.isPreviewSticky = NO;
+	self = [super initWithWindowNibName:@"MarkupPreview" owner:self];
+	if (!self) { return nil; }
+
+	self.isPreviewOutdated = YES;
+	self.isPreviewSticky = NO;
 //        [[self class] createCustomFiles];
-        BOOL showPreviewWindow = [[NSUserDefaults standardUserDefaults] boolForKey:kDefaultMarkupPreviewVisible];
-        if (showPreviewWindow) {
-            [[self window] orderFront:self];
-        }
+	BOOL showPreviewWindow = [[NSUserDefaults standardUserDefaults] boolForKey:kDefaultMarkupPreviewVisible];
+	if (showPreviewWindow) {
+		[[self window] orderFront:self];
+	}
 
-        NSRect shCon = [[[self window] contentView]visibleRect];
-        shCon.origin.x +=20;
-        shCon.origin.y -= 2;
-        shCon.size.width = 99;
-        shCon.size.height = 28;
-//        tabSwitcher = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
-//        shCon.origin.x = [[[self window] contentView]visibleRect].origin.x + [[[self window] contentView]visibleRect].size.width - 80;
-//        shCon.size.width = 56;
-//        saveButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
-//        shCon.origin.x -= 65;
-//        shareButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
-//        shCon.origin.x -= 65;
-//        stickyPreviewButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
-//        shCon.origin.x -= 65;
-//        printPreviewButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
-//        [tabSwitcher setTitle:@"View Source"];
-//        [tabSwitcher setTarget:self];
-//        [tabSwitcher setAction:@selector(switchTabs:)];
-//        [tabSwitcher setAutoresizingMask:NSViewMaxXMargin];
-//        [shareButton setTitle:@"Share"];
-//        [shareButton setToolTip:@"Make this note available to the public on Peg.gd"];
-//        [shareButton setTarget:self];
-//        [shareButton setAction:@selector(shareAsk:)];
-//        [shareButton setAutoresizingMask:NSViewMinXMargin];
-//        [saveButton setTitle:@"Save"];
-//        [saveButton setToolTip:@"Save the current preview as an HTML file"];
-//        [saveButton setTarget:self];
-//        [saveButton setAction:@selector(saveHTML:)];
-//        [saveButton setAutoresizingMask:NSViewMinXMargin];
-//        [stickyPreviewButton setTitle:@"Stick"];
-//        [stickyPreviewButton setToolTip:@"Maintain current note in Preview, even if you switch to other notes."];
-//        [stickyPreviewButton setTarget:self];
-//        [stickyPreviewButton setAction:@selector(makePreviewSticky:)];
-//        [stickyPreviewButton setAutoresizingMask:NSViewMinXMargin];
-//        [printPreviewButton setTitle:@"Print"];
-//        [printPreviewButton setToolTip:@"Print to Printer or PDF."];
-//        [printPreviewButton setTarget:self];
-//        [printPreviewButton setAction:@selector(printPreview:)];
-//        [printPreviewButton setAutoresizingMask:NSViewMinXMargin];
-//        [[[self window] contentView] addSubview:tabSwitcher];
-//        [[[self window] contentView] addSubview:shareButton];
-//        [[[self window] contentView] addSubview:saveButton];
-//        [[[self window] contentView] addSubview:stickyPreviewButton];
-//        [[[self window] contentView] addSubview:printPreviewButton];
-        [tabView selectTabViewItem:[tabView tabViewItemAtIndex:0]];
+	NSRect shCon = [[[self window] contentView]visibleRect];
+	shCon.origin.x +=20;
+	shCon.origin.y -= 2;
+	shCon.size.width = 99;
+	shCon.size.height = 28;
+//	tabSwitcher = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
+//	shCon.origin.x = [[[self window] contentView]visibleRect].origin.x + [[[self window] contentView]visibleRect].size.width - 80;
+//	shCon.size.width = 56;
+//	saveButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
+//	shCon.origin.x -= 65;
+//	shareButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
+//	shCon.origin.x -= 65;
+//	stickyPreviewButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
+//	shCon.origin.x -= 65;
+//	printPreviewButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
+//	[tabSwitcher setTitle:@"View Source"];
+//	[tabSwitcher setTarget:self];
+//	[tabSwitcher setAction:@selector(switchTabs:)];
+//	[tabSwitcher setAutoresizingMask:NSViewMaxXMargin];
+//	[shareButton setTitle:@"Share"];
+//	[shareButton setToolTip:@"Make this note available to the public on Peg.gd"];
+//	[shareButton setTarget:self];
+//	[shareButton setAction:@selector(shareAsk:)];
+//	[shareButton setAutoresizingMask:NSViewMinXMargin];
+//	[saveButton setTitle:@"Save"];
+//	[saveButton setToolTip:@"Save the current preview as an HTML file"];
+//	[saveButton setTarget:self];
+//	[saveButton setAction:@selector(saveHTML:)];
+//	[saveButton setAutoresizingMask:NSViewMinXMargin];
+//	[stickyPreviewButton setTitle:@"Stick"];
+//	[stickyPreviewButton setToolTip:@"Maintain current note in Preview, even if you switch to other notes."];
+//	[stickyPreviewButton setTarget:self];
+//	[stickyPreviewButton setAction:@selector(makePreviewSticky:)];
+//	[stickyPreviewButton setAutoresizingMask:NSViewMinXMargin];
+//	[printPreviewButton setTitle:@"Print"];
+//	[printPreviewButton setToolTip:@"Print to Printer or PDF."];
+//	[printPreviewButton setTarget:self];
+//	[printPreviewButton setAction:@selector(printPreview:)];
+//	[printPreviewButton setAutoresizingMask:NSViewMinXMargin];
+//	[[[self window] contentView] addSubview:tabSwitcher];
+//	[[[self window] contentView] addSubview:shareButton];
+//	[[[self window] contentView] addSubview:saveButton];
+//	[[[self window] contentView] addSubview:stickyPreviewButton];
+//	[[[self window] contentView] addSubview:printPreviewButton];
+	[tabView selectTabViewItem:[tabView tabViewItemAtIndex:0]];
 
-        shCon = [shareConfirmation visibleRect];
-        shCon.origin.x = shCon.size.width - 106;
-        shCon.origin.y = 1;
-        shCon.size.width = 81;
-        shCon.size.height = 28;
-        shareConfirm = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
-        shCon.origin.x = [shareConfirmation visibleRect].origin.x + 25;
-        shareCancel = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
-        [shareConfirm setTitle:@"Yes"];
-        [shareConfirm setTarget:self];
-        [shareConfirm setAction:@selector(shareNote:)];
-        [shareCancel setTitle:@"No, thanks"];
-        [shareCancel setTarget:self];
-        [shareCancel setAction:@selector(cancelShare:)];
-        [shareConfirmation addSubview:shareCancel];
-        [shareConfirmation addSubview:shareConfirm];
+	shCon = [shareConfirmation visibleRect];
+	shCon.origin.x = shCon.size.width - 106;
+	shCon.origin.y = 1;
+	shCon.size.width = 81;
+	shCon.size.height = 28;
+	shareConfirm = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
+	shCon.origin.x = [shareConfirmation visibleRect].origin.x + 25;
+	shareCancel = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
+	[shareConfirm setTitle:@"Yes"];
+	[shareConfirm setTarget:self];
+	[shareConfirm setAction:@selector(shareNote:)];
+	[shareCancel setTitle:@"No, thanks"];
+	[shareCancel setTarget:self];
+	[shareCancel setAction:@selector(cancelShare:)];
+	[shareConfirmation addSubview:shareCancel];
+	[shareConfirmation addSubview:shareConfirm];
 
-        shCon = [shareNotification visibleRect];
-        shCon.size.width = 116;
-        shCon.size.height = 28;
-        shCon.origin.x = 70;
-        viewOnWebButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
-        [viewOnWebButton setTitle:@"View in Browser"];
-        [viewOnWebButton setTarget:self];
-        [viewOnWebButton setAction:@selector(openShareURL:)];
-        [shareNotification addSubview:viewOnWebButton];
-       // [[[self window] contentView] setNeedsDisplay:YES];
+	shCon = [shareNotification visibleRect];
+	shCon.size.width = 116;
+	shCon.size.height = 28;
+	shCon.origin.x = 70;
+	viewOnWebButton = [[[ETTransparentButton alloc]initWithFrame:shCon] retain];
+	[viewOnWebButton setTitle:@"View in Browser"];
+	[viewOnWebButton setTarget:self];
+	[viewOnWebButton setAction:@selector(openShareURL:)];
+	[shareNotification addSubview:viewOnWebButton];
 
-//		[preview setPolicyDelegate:self];
-//		[preview setUIDelegate:self];
-    }
+//	[[[self window] contentView] setNeedsDisplay:YES];
+//
+//	[preview setPolicyDelegate:self];
+//	[preview setUIDelegate:self];
+
     return self;
 }
 

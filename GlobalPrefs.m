@@ -114,69 +114,70 @@ static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id orig
 }
 
 - (id)init {
-	if (self=[super init]) {
-	
-		runCallbacksIMP = [self methodForSelector:@selector(notifyCallbacksForSelector:excludingSender:)];
-		selectorObservers = [[NSMutableDictionary alloc] init];
-		
-		defaults = [NSUserDefaults standardUserDefaults];
-		
-		tableColumns = nil;
+	self = [super init];
+	if (!self) { return nil; }
 
-		[defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithBool:IsMavericksOrLater], UseFinderTagsKey,
-			[NSNumber numberWithBool:YES], AutoSuggestLinksKey,
-			[NSNumber numberWithBool:YES], AutoFormatsDoneTagKey, 
-			[NSNumber numberWithBool:YES], AutoIndentsNewLinesKey, 
-			[NSNumber numberWithBool:YES], AutoFormatsListBulletsKey,
-			[NSNumber numberWithBool:NO], UseSoftTabsKey,
-			[NSNumber numberWithInteger:4], NumberOfSpacesInTabKey,
-			[NSNumber numberWithBool:YES], PastePreservesStyleKey,
-			[NSNumber numberWithBool:YES], TabKeyIndentsKey,
-			[NSNumber numberWithBool:YES], ConfirmNoteDeletionKey,
-			[NSNumber numberWithBool:YES], CheckSpellingInNoteBodyKey, 
-			[NSNumber numberWithBool:NO], TextReplacementInNoteBodyKey, 
-			[NSNumber numberWithBool:YES], AutoCompleteSearchesKey, 
-			[NSNumber numberWithBool:YES], QuitWhenClosingMainWindowKey, 
-			[NSNumber numberWithBool:NO], TriedToImportBlorKey,
-			[NSNumber numberWithBool:NO], HorizontalLayoutKey,
-			[NSNumber numberWithBool:YES], MakeURLsClickableKey,
-			[NSNumber numberWithBool:YES], HighlightSearchTermsKey, 
-			[NSNumber numberWithBool:YES], TableColumnsHaveBodyPreviewKey, 
-			[NSNumber numberWithDouble:0.0], LastScrollOffsetKey,
-			@"General", LastSelectedPreferencesPaneKey, 
-			[NSNumber numberWithBool:NO], StatusBarItem, 
-			[NSNumber numberWithBool:NO], KeepsMaxTextWidth,
-			[NSNumber numberWithFloat:660.0], NoteBodyMaxWidth,
-			[NSNumber numberWithInt:2], ColorScheme,
-            [NSNumber numberWithBool:YES],ShowDockIcon,
-			[NSNumber numberWithBool:NO], RTLKey,
-            [NSNumber numberWithBool:YES], ShowWordCount,
-            [NSNumber numberWithInt:MultiMarkdownPreview], markupPreviewMode,
-			[NSNumber numberWithBool:NO], UseMarkdownImportKey,
-			[NSNumber numberWithBool:NO], UseReadabilityKey,
-            [NSNumber numberWithBool:YES], ShowGridKey,
-            [NSNumber numberWithBool:NO], AlternatingRowsKey,
-            [NSNumber numberWithBool:NO], UseAutoPairing,
-            [NSNumber numberWithBool:NO], UseETScrollbarsOnLion,
-            [NSNumber numberWithBool:NO], UsesMarkdownCompletions,
-			
-			[NSArchiver archivedDataWithRootObject:
-			 [NSFont fontWithName:@"Helvetica" size:12.0f]], NoteBodyFontKey,
-			
-			[NSArchiver archivedDataWithRootObject:[NSColor blackColor]], ForegroundTextColorKey,
-			[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]], BackgroundTextColorKey,
-			
-			[NSArchiver archivedDataWithRootObject:
-			 [NSColor colorWithCalibratedRed:0.945 green:0.702 blue:0.702 alpha:1.0f]], SearchTermHighlightColorKey,
-			
-			[NSNumber numberWithFloat:[NSFont smallSystemFontSize]], TableFontSizeKey, 
-			[NSArray arrayWithObjects:NoteTitleColumnString, NoteDateModifiedColumnString, nil], NoteAttributesVisibleKey,
-			NoteDateModifiedColumnString, TableSortColumnKey,
-			[NSNumber numberWithBool:YES], TableIsReverseSortedKey, nil]];
+	runCallbacksIMP = [self methodForSelector:@selector(notifyCallbacksForSelector:excludingSender:)];
+	selectorObservers = [[NSMutableDictionary alloc] init];
+
+	defaults = [NSUserDefaults standardUserDefaults];
+	
+	tableColumns = nil;
+	
+	[defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithBool:IsMavericksOrLater], UseFinderTagsKey,
+		[NSNumber numberWithBool:YES], AutoSuggestLinksKey,
+		[NSNumber numberWithBool:YES], AutoFormatsDoneTagKey, 
+		[NSNumber numberWithBool:YES], AutoIndentsNewLinesKey, 
+		[NSNumber numberWithBool:YES], AutoFormatsListBulletsKey,
+		[NSNumber numberWithBool:NO], UseSoftTabsKey,
+		[NSNumber numberWithInteger:4], NumberOfSpacesInTabKey,
+		[NSNumber numberWithBool:YES], PastePreservesStyleKey,
+		[NSNumber numberWithBool:YES], TabKeyIndentsKey,
+		[NSNumber numberWithBool:YES], ConfirmNoteDeletionKey,
+		[NSNumber numberWithBool:YES], CheckSpellingInNoteBodyKey, 
+		[NSNumber numberWithBool:NO], TextReplacementInNoteBodyKey, 
+		[NSNumber numberWithBool:YES], AutoCompleteSearchesKey, 
+		[NSNumber numberWithBool:YES], QuitWhenClosingMainWindowKey, 
+		[NSNumber numberWithBool:NO], TriedToImportBlorKey,
+		[NSNumber numberWithBool:NO], HorizontalLayoutKey,
+		[NSNumber numberWithBool:YES], MakeURLsClickableKey,
+		[NSNumber numberWithBool:YES], HighlightSearchTermsKey, 
+		[NSNumber numberWithBool:YES], TableColumnsHaveBodyPreviewKey, 
+		[NSNumber numberWithDouble:0.0], LastScrollOffsetKey,
+		@"General", LastSelectedPreferencesPaneKey, 
+		[NSNumber numberWithBool:NO], StatusBarItem, 
+		[NSNumber numberWithBool:NO], KeepsMaxTextWidth,
+		[NSNumber numberWithFloat:660.0], NoteBodyMaxWidth,
+		[NSNumber numberWithInt:2], ColorScheme,
+		[NSNumber numberWithBool:YES],ShowDockIcon,
+		[NSNumber numberWithBool:NO], RTLKey,
+		[NSNumber numberWithBool:YES], ShowWordCount,
+		[NSNumber numberWithInt:MultiMarkdownPreview], markupPreviewMode,
+		[NSNumber numberWithBool:NO], UseMarkdownImportKey,
+		[NSNumber numberWithBool:NO], UseReadabilityKey,
+		[NSNumber numberWithBool:YES], ShowGridKey,
+		[NSNumber numberWithBool:NO], AlternatingRowsKey,
+		[NSNumber numberWithBool:NO], UseAutoPairing,
+		[NSNumber numberWithBool:NO], UseETScrollbarsOnLion,
+		[NSNumber numberWithBool:NO], UsesMarkdownCompletions,
+
+		[NSArchiver archivedDataWithRootObject:
+		 [NSFont fontWithName:@"Helvetica" size:12.0f]], NoteBodyFontKey,
 		
-		autoCompleteSearches = [defaults boolForKey:AutoCompleteSearchesKey];
-	}
+		[NSArchiver archivedDataWithRootObject:[NSColor blackColor]], ForegroundTextColorKey,
+		[NSArchiver archivedDataWithRootObject:[NSColor whiteColor]], BackgroundTextColorKey,
+		
+		[NSArchiver archivedDataWithRootObject:
+		 [NSColor colorWithCalibratedRed:0.945 green:0.702 blue:0.702 alpha:1.0f]], SearchTermHighlightColorKey,
+
+		[NSNumber numberWithFloat:[NSFont smallSystemFontSize]], TableFontSizeKey, 
+		[NSArray arrayWithObjects:NoteTitleColumnString, NoteDateModifiedColumnString, nil], NoteAttributesVisibleKey,
+		NoteDateModifiedColumnString, TableSortColumnKey,
+		[NSNumber numberWithBool:YES], TableIsReverseSortedKey, nil]];
+	
+	autoCompleteSearches = [defaults boolForKey:AutoCompleteSearchesKey];
+
 	return self;
 }
 

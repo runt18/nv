@@ -248,30 +248,32 @@ static inline CGFloat fMAX(CGFloat a,CGFloat b) {
 // This is the designated initializer for creating RBSplitViews programmatically. You can set the
 // divider image and other parameters afterwards.
 - (id)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
- 		dividers = NULL;
-		isCoupled = YES;
-		isDragging = NO;
-		isInScrollView = NO;
-		canSaveState = NO;
-		[self setVertical:YES];
-		[self setDivider:nil];
-		[self setAutosaveName:nil recursively:NO];
-		[self setBackground:nil];
-	}
+	self = [super initWithFrame:frame];
+	if (!self) { return nil; }
+
+	dividers = NULL;
+	isCoupled = YES;
+	isDragging = NO;
+	isInScrollView = NO;
+	canSaveState = NO;
+	[self setVertical:YES];
+	[self setDivider:nil];
+	[self setAutosaveName:nil recursively:NO];
+	[self setBackground:nil];
+
 	return self;
 }
 
 // This convenience initializer adds any number of subviews and adjusts them proportionally.
 - (id)initWithFrame:(NSRect)frame andSubviews:(NSUInteger)count {
 	self = [self initWithFrame:frame];
-	if (self) {
-		while (count-->0) {
-			[self addSubview:[[[RBSplitSubview alloc] initWithFrame:frame] autorelease]];
-		}
-		[self setMustAdjust];
+	if (!self) { return nil; }
+
+	while (count-->0) {
+		[self addSubview:[[[RBSplitSubview alloc] initWithFrame:frame] autorelease]];
 	}
+	[self setMustAdjust];
+
 	return self;
 }
 
@@ -923,46 +925,49 @@ static inline CGFloat fMAX(CGFloat a,CGFloat b) {
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
-    if ((self = [super initWithCoder:coder])) {
-		NSData* data = nil;
-		CGFloat divt = 0.0;
-		isCoupled = YES;
-		isDragging = NO;
-		isInScrollView = NO;
-		canSaveState = NO;
-		if ([coder allowsKeyedCoding]) {
-			isCoupled = [coder decodeBoolForKey:@"isCoupled"];
-			[self setDelegate:[coder decodeObjectForKey:@"delegate"]];
-			[self setAutosaveName:[coder decodeObjectForKey:@"autosaveName"] recursively:NO];
-			data = [coder decodeObjectForKey:@"divider"];
-			[self setBackground:[coder decodeObjectForKey:@"background"]];
-			divt = [coder decodeDoubleForKey:@"dividerThickness"];
-			isHorizontal = [coder decodeBoolForKey:@"isHorizontal"];
-		} else {
-			[self setDelegate:[coder decodeObject]];
-			[self setAutosaveName:[coder decodeObject] recursively:NO];
-			data = [coder decodeObject];
-			[self setBackground:[coder decodeObject]];
-			[coder decodeValueOfObjCType:@encode(typeof(divt)) at:&divt];
-			[coder decodeValueOfObjCType:@encode(typeof(isHorizontal)) at:&isHorizontal];
-			[coder decodeValueOfObjCType:@encode(typeof(isCoupled)) at:&isCoupled];
-		}
-		dividers = NULL;
-		if (data) {
-			NSBitmapImageRep* rep = [NSBitmapImageRep imageRepWithData:data];
-			NSImage* image = [[[NSImage alloc] initWithSize:[rep size]] autorelease];
-//			[image setFlipped:YES];
-			[image addRepresentation:rep];
-			[self setDivider:image];
-		} else {
-			[self setDivider:nil];
-		}
-		[self setDividerThickness:divt];
-		[self setMustAdjust];
-		[self performSelector:@selector(viewDidMoveToSuperview) withObject:nil afterDelay:0.0];
-		[self performSelector:@selector(RB___adjustOutermostIfNeeded) withObject:nil afterDelay:0.0];
+	self = [super initWithCoder:coder];
+	if (!self) { return nil; }
+
+	NSData* data = nil;
+	CGFloat divt = 0.0;
+	isCoupled = YES;
+	isDragging = NO;
+	isInScrollView = NO;
+	canSaveState = NO;
+
+	if ([coder allowsKeyedCoding]) {
+		isCoupled = [coder decodeBoolForKey:@"isCoupled"];
+		[self setDelegate:[coder decodeObjectForKey:@"delegate"]];
+		[self setAutosaveName:[coder decodeObjectForKey:@"autosaveName"] recursively:NO];
+		data = [coder decodeObjectForKey:@"divider"];
+		[self setBackground:[coder decodeObjectForKey:@"background"]];
+		divt = [coder decodeDoubleForKey:@"dividerThickness"];
+		isHorizontal = [coder decodeBoolForKey:@"isHorizontal"];
+	} else {
+		[self setDelegate:[coder decodeObject]];
+		[self setAutosaveName:[coder decodeObject] recursively:NO];
+		data = [coder decodeObject];
+		[self setBackground:[coder decodeObject]];
+		[coder decodeValueOfObjCType:@encode(typeof(divt)) at:&divt];
+		[coder decodeValueOfObjCType:@encode(typeof(isHorizontal)) at:&isHorizontal];
+		[coder decodeValueOfObjCType:@encode(typeof(isCoupled)) at:&isCoupled];
 	}
-    return self;
+	dividers = NULL;
+	if (data) {
+		NSBitmapImageRep* rep = [NSBitmapImageRep imageRepWithData:data];
+		NSImage* image = [[[NSImage alloc] initWithSize:[rep size]] autorelease];
+		//			[image setFlipped:YES];
+		[image addRepresentation:rep];
+		[self setDivider:image];
+	} else {
+		[self setDivider:nil];
+	}
+	[self setDividerThickness:divt];
+	[self setMustAdjust];
+	[self performSelector:@selector(viewDidMoveToSuperview) withObject:nil afterDelay:0.0];
+	[self performSelector:@selector(RB___adjustOutermostIfNeeded) withObject:nil afterDelay:0.0];
+
+	return self;
 }
 
 - (BOOL)isAdjusting {

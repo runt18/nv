@@ -46,15 +46,16 @@
 @implementation MultiplePageView
 
 - (id)initWithFrame:(NSRect)rect {
-    if ((self = [super initWithFrame:rect])) {
-		
-		textStorage = [[NSTextStorage alloc] init]; 
-		
-        numPages = 0;
+	self = [super initWithFrame:rect];
+	if (!self) { return nil; }
+
+	textStorage = [[NSTextStorage alloc] init];
+	
+	numPages = 0;
 	/* This will set the frame to be whatever's appropriate... */
-        [self setPrintInfo:[NSPrintInfo sharedPrintInfo]];
-    }
-    return self;
+	[self setPrintInfo:[NSPrintInfo sharedPrintInfo]];
+
+	return self;
 }
 
 static float defaultTextPadding(void) {

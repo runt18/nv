@@ -26,13 +26,12 @@
 }
 
 - (id)initWithNotationPrefs:(NotationPrefs*)prefs {
-	if (self=[super init]) {
-		notationPrefs = [prefs retain];
+	self = [super init];
+	if (!self) { return nil; }
+
+	notationPrefs = [prefs retain];
 		
-	
-        return self;
-    }
-	return nil;
+	return self;
 }
 
 - (void)dealloc {

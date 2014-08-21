@@ -20,12 +20,13 @@
 
 @implementation HeaderViewWithMenu
 
+- (id)initWithFrame:(NSRect)frameRect {
+	self = [super initWithFrame:frameRect];
+	if (!self) { return nil; }
+	
+	isReloading = NO;
 
-- (id)initWithFrame:(NSRect)frameRect{
-    if ((self=[super initWithFrame:frameRect])) {
-        isReloading=NO;
-    }
-    return self;
+	return self;
 }
 
 - (void)setIsReloading:(BOOL)reloading {

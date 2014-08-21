@@ -31,19 +31,22 @@ NSString *SyncSessionsChangedVisibleStatusNotification = @"SSCVSN";
 static void SleepCallBack(void *refcon, io_service_t y, natural_t messageType, void * messageArgument);
 
 - (id)initWithSyncDelegate:(id)aSyncDelegate notationPrefs:(NotationPrefs*)prefs {
-	if (self=[super init]) {
-		if (!(syncDelegate = aSyncDelegate)) {
-			NSLog(@"%@: need syncDelegate!", NSStringFromSelector(_cmd));
-			return nil;
-		}
-		if (!(notationPrefs = [prefs retain])) {
-			NSLog(@"%@: need notationPrefs!", NSStringFromSelector(_cmd));
-			return nil;
-		}
-		syncServiceTimers = [[NSMutableDictionary alloc] init];
-        return self;
+	self = [super init];
+	if (!self) { return nil; }
+
+	if (!(syncDelegate = aSyncDelegate)) {
+		NSLog(@"%s: need syncDelegate!", _cmd);
+		[self release];
+		return (self = nil);
 	}
-	return nil;
+	if (!(notationPrefs = [prefs retain])) {
+		NSLog(@"%s: need notationPrefs!", _cmd);
+		[self release];
+		return (self = nil);
+	}
+	syncServiceTimers = [[NSMutableDictionary alloc] init];
+
+	return self;
 }
 
 //these two methods must return parallel arrays:

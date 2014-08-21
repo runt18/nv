@@ -35,14 +35,12 @@ static id _sharedHotKeyCenter = nil;
 - (id)init
 {
 	self = [super init];
-	
-	if( self )
-	{
-		mHotKeys = [[NSMutableDictionary alloc] init];
-        mHotKeyMap = [[NSMutableDictionary alloc] init];
-        mNextKeyID = 1;
-	}
-	
+	if (!self) { return nil; }
+
+	mHotKeys = [[NSMutableDictionary alloc] init];
+	mHotKeyMap = [[NSMutableDictionary alloc] init];
+	mNextKeyID = 1;
+
 	return self;
 }
 

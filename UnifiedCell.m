@@ -26,15 +26,13 @@
 @implementation UnifiedCell
 
 - (id)init {
-	if (self=[super init]) {
+	self = [super init];
+	if (!self) { return nil; }
 
-		//should be handled by NSParagraphStyle in our string, as it is more complex than this
-//		[self setLineBreakMode:NSLineBreakByTruncatingTail];
-		[self setTruncatesLastVisibleLine:YES];
-		[self setEditable:YES];
-        return self;
-	}
-	return nil;
+	[self setTruncatesLastVisibleLine:YES];
+	[self setEditable:YES];
+
+	return self;
 }
 
 - (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView editor:(NSText *)textObj 

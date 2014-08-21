@@ -16,11 +16,9 @@
 - (id)init
 {
 	self = [super init];
-	
-	if( self )
-	{
-		[self setKeyCombo: [PTKeyCombo clearKeyCombo]];
-	}
+	if (!self) { return nil; }
+
+	[self setKeyCombo: [PTKeyCombo clearKeyCombo]];
 	
 	return self;
 }

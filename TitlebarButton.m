@@ -21,12 +21,13 @@
 @implementation TitlebarButtonCell
 
 - (id)initTextCell:(NSString *)stringValue pullsDown:(BOOL)pullDown {
-	if (self=[super initTextCell:stringValue pullsDown:pullDown]) {
-		[self setBordered:NO];
-		[self setArrowPosition:NSPopUpNoArrow];
-        return self;
-	}
-    return nil;
+	self = [super initTextCell:stringValue pullsDown:pullDown];
+	if (!self) { return nil; }
+
+	[self setBordered:NO];
+	[self setArrowPosition:NSPopUpNoArrow];
+
+	return self;
 }
 
 - (void)handleRotationTimer:(NSTimer*)aTimer {
@@ -134,27 +135,27 @@
 }
 
 - (id)initWithFrame:(NSRect)frameRect pullsDown:(BOOL)flag {
-	if (self=[super initWithFrame:NSMakeRect(frameRect.origin.x, frameRect.origin.y, 17.0, 17.0) pullsDown:flag]) {
-		
-		TitlebarButtonCell *buttonCell = [[[TitlebarButtonCell alloc] initTextCell:@"" pullsDown:flag] autorelease];
-		[buttonCell setAction:[[self cell] action]];
-		[buttonCell setTarget:[[self cell] target]];
-		[self setCell:buttonCell];
-		
-		[buttonCell setControlSize:NSSmallControlSize];
-		[buttonCell setPullsDown:flag];
-		[self setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]]];
-		[self setShowsBorderOnlyWhileMouseInside:YES];
-		[self setBordered:NO];
-		[self setPullsDown:flag];
-		[self setTitle:@""];
-		[self setEnabled:NO]; //consistent with NoIcon
-		[self setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
-		
-		_initialDragPoint = NSMakePoint(-1, -1);
-        return self;
-	}
-	return nil;
+	self = [super initWithFrame:NSMakeRect(frameRect.origin.x, frameRect.origin.y, 17.0, 17.0) pullsDown:flag];
+	if (!self) { return nil; }
+
+	TitlebarButtonCell *buttonCell = [[[TitlebarButtonCell alloc] initTextCell:@"" pullsDown:flag] autorelease];
+	[buttonCell setAction:[[self cell] action]];
+	[buttonCell setTarget:[[self cell] target]];
+	[self setCell:buttonCell];
+
+	[buttonCell setControlSize:NSSmallControlSize];
+	[buttonCell setPullsDown:flag];
+	[self setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]]];
+	[self setShowsBorderOnlyWhileMouseInside:YES];
+	[self setBordered:NO];
+	[self setPullsDown:flag];
+	[self setTitle:@""];
+	[self setEnabled:NO]; //consistent with NoIcon
+	[self setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
+
+	_initialDragPoint = NSMakePoint(-1, -1);
+
+	return self;
 }
 
 - (void)addToWindow:(NSWindow*)aWin {

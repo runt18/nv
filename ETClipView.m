@@ -14,13 +14,14 @@
 @implementation ETClipView
 
 - (id)initWithFrame:(NSRect)frameRect{
-    self = [super initWithFrame:frameRect];
-    if (self) {
-        managesTextWidth=[[GlobalPrefs defaultPrefs] managesTextWidthInWindow];
-        [[GlobalPrefs defaultPrefs] registerForSettingChange:@selector(setMaxNoteBodyWidth:sender:) withTarget:self];
-        [[GlobalPrefs defaultPrefs] registerForSettingChange:@selector(setManagesTextWidthInWindow:sender:) withTarget:self];
-    }
-    return self;
+	self = [super initWithFrame:frameRect];
+	if (!self) { return nil; }
+
+	managesTextWidth=[[GlobalPrefs defaultPrefs] managesTextWidthInWindow];
+	[[GlobalPrefs defaultPrefs] registerForSettingChange:@selector(setMaxNoteBodyWidth:sender:) withTarget:self];
+	[[GlobalPrefs defaultPrefs] registerForSettingChange:@selector(setManagesTextWidthInWindow:sender:) withTarget:self];
+
+	return self;
 }
 
 //

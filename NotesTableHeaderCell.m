@@ -31,12 +31,14 @@ NSColor *tColor;
 }
 
 - (id)initTextCell:(NSString *)text{
-    if ((self = [super initTextCell:text])) {
-        if (!text || (text.length==0)) {
-            [self setTitle:@"Title"];
-        }
-    }
-    return self;
+	self = [super initTextCell:text];
+	if (!self) { return nil; }
+
+	if (!text || (text.length==0)) {
+		[self setTitle:@"Title"];
+	}
+
+	return self;
 }
 
 

@@ -224,40 +224,43 @@ static void SNReachabilityCallback(SCNetworkReachabilityRef	target, SCNetworkCon
 - (id)initWithNotationPrefs:(NotationPrefs*)prefs {
 	if (![prefs syncServiceIsEnabled:SimplenoteServiceName]) {
 		NSLog(@"notationPrefs says this service is disabled--stop it!");
-		return nil;
+		[self release];
+		return (self = nil);
 	}
-	
-	if (self=[self initWithUsername:[[prefs syncAccountForServiceName:SimplenoteServiceName] objectForKey:@"username"]
-				   andPassword:[prefs syncPasswordForServiceName:SimplenoteServiceName]]) {
-		
-		//create a reachability ref to trigger a sync upon network reestablishment
-		reachableRef = [[self class] createReachabilityRefWithCallback:SNReachabilityCallback target:self];
 
-		return self;
-	}
-	return nil;
+	NSString *syncUsername = [[prefs syncAccountForServiceName:SimplenoteServiceName] objectForKey:@"username"];
+	NSString *syncPassword = [prefs syncPasswordForServiceName:SimplenoteServiceName];
+	self = [self initWithUsername:syncUsername andPassword:syncPassword];
+	if (!self) { return nil; }
+	
+	//create a reachability ref to trigger a sync upon network reestablishment
+	reachableRef = [[self class] createReachabilityRefWithCallback:SNReachabilityCallback target:self];
+
+	return self;
 }
 
 - (id)initWithUsername:(NSString*)aUserString andPassword:(NSString*)aPassString {
-	
-	if (self=[super init]) {
-		lastSyncedTime = 0.0;
-		reachabilityFailed = NO;
+	self = [super init];
+	if (!self) { return nil; }
 
-		if (![(emailAddress = [aUserString retain]) length]) {
-			NSLog(@"%@: empty email address", NSStringFromSelector(_cmd));
-			return nil;
-		}
-		if (![(password = [aPassString retain]) length]) {
-			return nil;
-		}
-		notesToSuppressPushing = [[NSCountedSet alloc] init];
-		notesBeingModified = [[NSMutableSet alloc] init];
-		unsyncedServiceNotes = [[NSMutableSet alloc] init];
-		collectorsInProgress = [[NSMutableSet alloc] init];
-        return self;
+	lastSyncedTime = 0.0;
+	reachabilityFailed = NO;
+
+	if (![(emailAddress = [aUserString retain]) length]) {
+		NSLog(@"%s: empty email address", _cmd);
+		[self release];
+		return (self = nil);
 	}
-    return nil;
+	if (![(password = [aPassString retain]) length]) {
+		[self release];
+		return (self = nil);
+	}
+	notesToSuppressPushing = [[NSCountedSet alloc] init];
+	notesBeingModified = [[NSMutableSet alloc] init];
+	unsyncedServiceNotes = [[NSMutableSet alloc] init];
+	collectorsInProgress = [[NSMutableSet alloc] init];
+
+	return self;
 }
 
 - (NSString*)description {
