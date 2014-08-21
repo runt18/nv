@@ -358,7 +358,7 @@ static void SNReachabilityCallback(SCNetworkReachabilityRef	target, SCNetworkCon
 				stringByAppendingString:[NSString relativeDateStringWithAbsoluteTime:lastSyncedTime]];
 	} else if ([collectorsInProgress count]) {
 		//probably won't display this very often
-		return [NSString stringWithFormat:NSLocalizedString(@"%u update(s) in progress", nil), [collectorsInProgress count]];
+		return [NSString stringWithFormat:NSLocalizedString(@"%lu update(s) in progress", nil), (unsigned long)[collectorsInProgress count]];
 	} else {
 		return NSLocalizedString(@"Not synchronized yet", nil);
 	}
@@ -868,8 +868,8 @@ static void SNReachabilityCallback(SCNetworkReachabilityRef	target, SCNetworkCon
 	
 	if (![collector collectionStoppedPrematurely] && [[collector entriesInError] count] && ![[collector entriesCollected] count]) {
 		//failed! all failed!
-		[self _stoppedWithErrorString:[NSString stringWithFormat:NSLocalizedString(@"%@ %u note(s) failed", @"e.g., Downloading 2 note(s) failed"), 
-									   [collector localizedActionDescription], [[collector entriesToCollect] count]]];
+		[self _stoppedWithErrorString:[NSString stringWithFormat:NSLocalizedString(@"%@ %lu note(s) failed", @"e.g., Downloading 2 note(s) failed"),
+									   [collector localizedActionDescription], (unsigned long)[[collector entriesToCollect] count]]];
 	} else {
 		reachabilityFailed = NO;
 		

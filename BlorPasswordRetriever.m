@@ -117,7 +117,7 @@
 		}
 	}
 	
-	[helpStringField setStringValue:[NSString stringWithFormat:NSLocalizedString(@"Please enter the passphrase to import old notes at %@.",nil), 
+	[helpStringField setStringValue:[NSString stringWithFormat:NSLocalizedString(@"Please enter the passphrase to access notes in %@.",nil), 
 		[path stringByAbbreviatingWithTildeInPath]]];
 	
 	int result = [NSApp runModalForWindow:window];

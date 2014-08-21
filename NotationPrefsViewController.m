@@ -561,7 +561,7 @@ enum {VERIFY_NOT_ATTEMPTED, VERIFY_FAILED, VERIFY_IN_PROGRESS, VERIFY_SUCCESS};
 			NSLocalizedString(@"plain text",nil), NSLocalizedString(@"rich text",nil), NSLocalizedString(@"HTML",nil) };
 		NSAlert *alert = [NSAlert alertWithMessageText:[NSString stringWithFormat:NSLocalizedString(@"Your notes are currently stored as %@ files on disk, but encryption requires a single database. Switch to a database format?",nil), formatStrings[format]]
 										 defaultButton:NSLocalizedString(@"Use a single database file",nil) alternateButton:NSLocalizedString(@"Cancel",nil) otherButton:nil
-							 informativeTextWithFormat:NSLocalizedString(@"Notational Velocity supports encryption only for notes stored in a database file.",nil)];
+							 informativeTextWithFormat:NSLocalizedString(@"nvALT supports encryption only for notes stored in a database file.",nil)];
 		
 		[alert beginSheetModalForWindow:[view window] modalDelegate:self 
 						 didEndSelector:@selector(encryptionFormatMismatchSheetDidEnd:returnCode:contextInfo:) contextInfo:NULL];

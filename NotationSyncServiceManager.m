@@ -324,10 +324,10 @@
 	//this occurs via startCollectingAddedNotesWithEntries:mergingWithNotes:
 	if ([locallyAddedNotes count] && ([locallyAddedNotes count] == [allNotes count] || wasToldToMerge)) {	
 		if ([allNotes count] > 1 && !wasToldToMerge) {
-			if (NSRunAlertPanel([NSString stringWithFormat:NSLocalizedString(@"Add %u existing notes in the database to %@?", nil), 
-								 [allNotes count], [[syncSession class] localizedServiceTitle]],
+			if (NSRunAlertPanel([NSString stringWithFormat:NSLocalizedString(@"Add %lu existing notes in the database to %@?", nil),
+								 (unsigned long)[allNotes count], [[syncSession class] localizedServiceTitle]],
 								NSLocalizedString(@"Notes will be merged, omitting entries duplicated on the server.", nil), 
-								NSLocalizedString(@"Add Notes", nil), NSLocalizedString(@"Turn Off Syncing", nil), nil) == NSAlertAlternateReturn) {
+								NSLocalizedString(@"Upload Notes", nil), NSLocalizedString(@"Turn Off Syncing", nil), nil) == NSAlertAlternateReturn) {
 				[syncSessionController disableService:serviceName];
 				goto ended;
 			} else {
@@ -430,16 +430,16 @@ ended:
 	NSInteger res = NSAlertDefaultReturn;
 	
 	if (!foundNotes) {
-		res = NSRunCriticalAlertPanel([NSString stringWithFormat:NSLocalizedString(@"The %@ server reports that no notes exist. Delete all %u notes in Notational Velocity to match it, or re-upload them now?", nil), serviceTitle, [allNotes count]],
-									  [NSString stringWithFormat:NSLocalizedString(@"If your %@ account is different, you may prefer to create a new database in Notational Velocity instead.", nil), serviceTitle],
+		res = NSRunCriticalAlertPanel([NSString stringWithFormat:NSLocalizedString(@"The %@ server reports that no notes exist. Delete all %lu notes in nvALT to match it, or re-upload them now?", nil), serviceTitle, [allNotes count]],
+									  [NSString stringWithFormat:NSLocalizedString(@"If your %@ account is different, you may prefer to create a new database in nvALT instead.", nil), serviceTitle],
 									  [NSString stringWithFormat:NSLocalizedString(@"Turn Off Syncing", nil), serviceTitle], 
 									  NSLocalizedString(@"Re-upload Notes", @"dialog button for uploading local notes when none exist remotely"), 
 									  NSLocalizedString(@"Remove All Notes", @"dialog button for deleting all notes when none exist remotely"));
 	} else {
-		res = NSRunCriticalAlertPanel([NSString stringWithFormat:NSLocalizedString(@"The %@ server holds a different set of notes. Replace all %u notes in Notational Velocity with the %u notes on the server, or merge both sets together?", nil), 
-									   serviceTitle, [allNotes count], foundNotes],
-									  [NSString stringWithFormat:NSLocalizedString(@"Replacing will remove all %u notes from Notational Velocity. Merging will upload all notes to %@, omitting duplicates.", nil), 
-									   [allNotes count], serviceTitle],
+		res = NSRunCriticalAlertPanel([NSString stringWithFormat:NSLocalizedString(@"The %@ server holds a different set of notes. Replace all %lu notes in nvALT with the %lu notes on the server, or merge both sets together?", nil),
+									   serviceTitle, (unsigned long)[allNotes count], (unsigned long)foundNotes],
+									  [NSString stringWithFormat:NSLocalizedString(@"Replacing will remove all %lu notes from nvALT. Merging will upload all notes to %@, omitting duplicates.", nil), 
+									   (unsigned long)[allNotes count], serviceTitle],
 									  [NSString stringWithFormat:NSLocalizedString(@"Turn Off Syncing", nil), serviceTitle], 
 									  NSLocalizedString(@"Merge Notes", @"dialog button for uploading local notes"), 
 									  NSLocalizedString(@"Replace All Notes", @"dialog button for deleting all notes"));

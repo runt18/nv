@@ -1521,7 +1521,7 @@ cancelCompetion:
 	theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Enter Full Screen",@"menu item title for entering fullscreen") action:@selector(switchFullScreen:) keyEquivalent:@""] autorelease];
 	[theMenuItem setTarget:[NSApp delegate]];
 	[theMenu addItem:theMenuItem];         
-    theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Insert Link",@"insert link menu item title") action:@selector(insertLink:) keyEquivalent:@""] autorelease];
+    theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Add Link",@"add link menu item title") action:@selector(insertLink:) keyEquivalent:@""] autorelease];
 	[theMenuItem setTarget:self];
 	[theMenu addItem:theMenuItem];
     theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Use Selection for Find",@"find using selection menu item title") action:@selector(performFindPanelAction:) keyEquivalent:@""] autorelease];
@@ -1577,7 +1577,7 @@ cancelCompetion:
         additionalEditItems = NO;
 		
         NSMenu *editMenu = [[NSApp mainMenu] numberOfItems] > 2 ? [[[NSApp mainMenu] itemAtIndex:2] submenu] : nil;
-		theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Insert Link",@"insert link menu item title") action:@selector(insertLink:) keyEquivalent:@"L"] autorelease];
+		theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Add Link",@"add link menu item title") action:@selector(insertLink:) keyEquivalent:@"L"] autorelease];
         [theMenuItem setTarget:self];
         [editMenu addItem:theMenuItem];
         

@@ -87,8 +87,8 @@
 }
 
 - (NSString*)statusText {
-	return [NSString stringWithFormat:NSLocalizedString(@"Downloading %u of %u notes", @"status text when downloading a note from the remote sync server"), 
-			entryFinishedCount, [entriesToCollect count]];
+	return [NSString stringWithFormat:NSLocalizedString(@"Downloading %lu of %lu notes", @"status text when downloading a note from the remote sync server"),
+			(unsigned long)entryFinishedCount, (unsigned long)[entriesToCollect count]];
 }
 
 - (SyncResponseFetcher*)currentFetcher {
@@ -371,8 +371,8 @@
 			return [NSString stringWithFormat:NSLocalizedString(@"%@ a note...", @"e.g., 'Deleting a note...'"), opName];
 		}
 	}
-	return [NSString stringWithFormat:NSLocalizedString(@"%@ %u of %u notes", @"Downloading/Creating/Updating/Deleting 5 of 10 notes"), 
-			opName, entryFinishedCount, [entriesToCollect count]];
+	return [NSString stringWithFormat:NSLocalizedString(@"%@ %lu of %lu notes", @"Downloading/Creating/Updating/Deleting 5 of 10 notes"),
+			opName, (unsigned long)entryFinishedCount, (unsigned long)[entriesToCollect count]];
 }
 
 - (NSDictionary*)preparedDictionaryWithFetcher:(SyncResponseFetcher*)fetcher receivedData:(NSData*)data {

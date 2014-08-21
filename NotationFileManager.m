@@ -341,7 +341,7 @@ long BlockSizeForNotation(NotationController *controller) {
 		[openPanel setTreatsFilePackagesAsDirectories:NO];
 		[openPanel setTitle:NSLocalizedString(@"Select a folder",nil)];
 		[openPanel setPrompt:NSLocalizedString(@"Select",nil)];
-		[openPanel setMessage:NSLocalizedString(@"Select a new location for your Notational Velocity notes.",nil)];
+		[openPanel setMessage:NSLocalizedString(@"Select a new location for your nvALT notes.",nil)];
 		
 		if ([openPanel runModal] == NSOKButton) {
             

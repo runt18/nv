@@ -141,7 +141,7 @@ static SecureTextEntryManager *sharedInstance = nil;
 				
 				CFStringRef offendingAppName = CFDictionaryGetValue(infoDict, kCFBundleNameKey);
 				NSAlert *alert = [NSAlert alertWithMessageText:
-								  [NSString stringWithFormat:NSLocalizedString(@"Secure Text Entry will prevent %@, which is currently installed on this computer, from working in Notational Velocity.", 
+								  [NSString stringWithFormat:NSLocalizedString(@"Secure Text Entry will prevent %@, which is currently installed on this computer, from working in nvALT.",
 																			   @"for warning about incompatibility with TextExpander, Typinator, etc."), offendingAppName] 
 												 defaultButton:NSLocalizedString(@"OK", nil) alternateButton:nil otherButton:nil informativeTextWithFormat:@""];
 				[alert setShowsSuppressionButton:YES];

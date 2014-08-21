@@ -852,9 +852,9 @@ terminateApp:
 		if ([prefsController confirmNoteDeletion]) {
 //			[deleteObj retain];
 			NSString *warningSingleFormatString = NSLocalizedString(@"Delete the note titled quotemark%@quotemark?", @"alert title when asked to delete a note");
-			NSString *warningMultipleFormatString = NSLocalizedString(@"Delete %d notes?", @"alert title when asked to delete multiple notes");
+			NSString *warningMultipleFormatString = NSLocalizedString(@"Delete %lu notes?", @"alert title when asked to delete multiple notes");
 			NSString *warnString = currentNote ? [NSString stringWithFormat:warningSingleFormatString, titleOfNote(currentNote)] :
-			[NSString stringWithFormat:warningMultipleFormatString, [indexes count]];
+			[NSString stringWithFormat:warningMultipleFormatString, (unsigned long)[indexes count]];
 			
             NSAlert *alert=[NSAlert new];
             alert.messageText=warnString;

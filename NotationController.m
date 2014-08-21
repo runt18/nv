@@ -223,8 +223,8 @@
 			notesChanged = YES;
 			[self flushEverything];
 		} else if ([notationPrefs epochIteration] > EPOC_ITERATION) {
-			if (NSRunCriticalAlertPanel(NSLocalizedString(@"Warning: this database was created by a newer version of Notational Velocity. Continue anyway?", nil), 
-										NSLocalizedString(@"If you make changes, some settings and metadata will be lost.", nil), 
+			if (NSRunCriticalAlertPanel(NSLocalizedString(@"Warning: this database was created by a newer version of nvALT. Continue anyway?", nil),
+										NSLocalizedString(@"If you make changes, some settings and metadata could be lost.", nil), 
 										NSLocalizedString(@"Quit", nil), NSLocalizedString(@"Continue", nil), nil) == NSAlertDefaultReturn)
 			exit(0);
 		}
@@ -602,7 +602,7 @@ bail:
 	
 	[self flushAllNoteChanges];
 	
-	NSRunAlertPanel(NSLocalizedString(@"Unable to create or access the Interim Note-Changes file. Is another copy of Notational Velocity currently running?",nil), 
+	NSRunAlertPanel(NSLocalizedString(@"Unable to create or access the Interim Note-Changes file. Is another copy of nvALT currently running?",nil), 
 			NSLocalizedString(@"Open Console in /Applications/Utilities/ for more information.",nil), NSLocalizedString(@"Quit",nil), NULL, NULL);
 	
 	
@@ -911,7 +911,7 @@ bail:
 		//NSLog(@"registering %s", _cmd);
 		[undoManager registerUndoWithTarget:self selector:@selector(removeNotes:) object:noteArray];		
 		if (! [[self undoManager] isUndoing] && ! [[self undoManager] isRedoing])
-			[undoManager setActionName:[NSString stringWithFormat:NSLocalizedString(@"Add %d Notes", @"undo action name for creating multiple notes"), [noteArray count]]];	
+			[undoManager setActionName:[NSString stringWithFormat:NSLocalizedString(@"Add %lu Notes", @"undo action name for creating multiple notes"), (unsigned long)[noteArray count]]];
 	}
 	[self resortAllNotes];
 	[self refilterNotes];
@@ -1083,7 +1083,7 @@ bail:
 	}
 	[undoManager endUndoGrouping];
 	if (! [[self undoManager] isUndoing] && ! [[self undoManager] isRedoing])
-		[undoManager setActionName:[NSString stringWithFormat:NSLocalizedString(@"Delete %d Notes",@"undo action name for deleting notes"), [noteArray count]]];
+		[undoManager setActionName:[NSString stringWithFormat:NSLocalizedString(@"Delete %lu Notes",@"undo action name for deleting notes"), (unsigned long)[noteArray count]]];
 	
 }
 

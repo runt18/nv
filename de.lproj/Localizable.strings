@@ -14,7 +14,7 @@
 "Cancel" = "Abbrechen";
 
 /* No comment provided by engineer. */
-"Choose a folder into which %d notes will be exported" = "Wähle ein Verzeichnis, in das %d Notizen exportiert werden sollen";
+"Choose a folder into which %lu notes will be exported" = "Wähle ein Verzeichnis, in das %lu Notizen exportiert werden sollen";
 
 /* no comment */
 "Continue" = "Weiter";
@@ -32,7 +32,7 @@
 "Delete" = "Löschen";
 
 /* alert title when asked to delete multiple notes */
-"Delete %d notes?" = "%d Notizen löschen?";
+"Delete %lu notes?" = "%lu Notizen löschen?";
 
 /* alert title when asked to delete a note */
 "Delete the note titled quotemark%@quotemark?" = "Notiz mit dem Titel “%@” löschen?";
@@ -92,7 +92,7 @@
 "No notes were selected for exporting." = "Es wurden keine Notizen zum Exportieren ausgewählt.";
 
 /* No comment provided by engineer. */
-"Notational Velocity should assume the file quotemark%@quotemark was saved with the encoding:" = "Notational Velocity soll voraussetzen, dass die Datei “%@” mit folgender Kodierung gespeichert wurde:";
+"nvALT should assume the file quotemark%@quotemark was saved with the encoding:" = "nvALT soll voraussetzen, dass die Datei “%@” mit folgender Kodierung gespeichert wurde:";
 
 /* No comment provided by engineer. */
 "Note Importing Cancelled" = "Importieren der Notizen abgebrochen";
@@ -197,13 +197,13 @@
 "Select" = "Wählen";
 
 /* No Comment */
-"Select the folder that Notational Velocity should use for reading and storing notes." = "Wähle das Verzeichnis welches Notational Velocity zum Lesen und Speichern der Notizen verwenden soll.";
+"Select the folder that nvALT should use for reading and storing notes." = "Wähle das Verzeichnis welches nvALT zum Lesen und Speichern der Notizen verwenden soll.";
 
 /* description for no key combination */
 "(None)" = "(Nichts)";
 
 /* no comment */
-"PBKDF2 iterations: %d" = "PBKDF2 Iterationen: %d";
+"PBKDF2 iterations: %ld" = "PBKDF2 Iterationen: %ld";
 
 /* no comment */
 "Please choose a different folder in which to store your notes." = "Wähle bitte zum Speichern der Notizen ein anderes Verzeichnis.";
@@ -230,7 +230,7 @@
 "Reverting to current location of %@." = "Zurückkehren zum momentanen Ort von %@.";
 
 /* no comment */
-"Warning: this database was created by a newer version of Notational Velocity. Continue anyway?" = "Warnung: Diese Datenbank wurde von einer aktuelleren Version von Notational Velocity angelegt. Trotzdem fortfahren?";
+"Warning: this database was created by a newer version of nvALT. Continue anyway?" = "Warnung: Diese Datenbank wurde von einer aktuelleren Version von nvALT angelegt. Trotzdem fortfahren?";
 
 /* no comment */
 "If you make changes, some settings and metadata could be lost." = "Wenn du Änderungen vornimmst, könnten Einstellungen und Metadaten verloren gehen.";
@@ -283,9 +283,8 @@
 /* No comment provided by engineer. */
 "Yesterday" = "Gestern";
 
-
 /* No comment provided by engineer. */
-"%d Notes Selected" = "%d Notizen ausgewählt";
+"%ld Notes Selected" = "%ld Notizen ausgewählt";
 
 /* No comment provided by engineer. */
 "(Unknown Note) [%@]" = "(Unbekannte Notiz) [%@]";
@@ -294,15 +293,15 @@
 "(WHAT??)" = "(Bitte??)";
 
 /* undo action name for creating multiple notes */
-"Add %d Notes" = "%d Notizen hinzufügen";
+"Add %lu Notes" = "%lu Notizen hinzufügen";
 
 /* menu item title for bookmarking a note */
 "Add to Bookmarks" = "Zu Lesezeichen hinzufügen";
 
-/* menu item title */
+/* menu item title for showing bookmarks */
 "Show Bookmarks" = "Lesezeichen zeigen";
 
-/* menu item title */
+/* menu item title for hiding bookmarks */
 "Hide Bookmarks" = "Lesezeichen ausblenden";
 
 /* No comment provided by engineer. */
@@ -333,7 +332,7 @@
 "Press Command-Z to undo this action later." = "⌘-Z drücken um diesen Vorgang später zu widerrufen.";
 
 /* undo action name for deleting notes */
-"Delete %d Notes" = "%d Notizen löschen";
+"Delete %lu Notes" = "%lu Notizen löschen";
 
 /* undo action name for deleting a single note */
 "Delete quotemark%@quotemark" = "“%@” Notiz löschen";
@@ -360,22 +359,22 @@
 "Individual files remain in the notes directory. Leave them alone or move them to the Trash?" = "Die einzelnen Dateien befinden sich noch im Notizenverzeichnis. Sollen sie dort zurückbleiben oder in den Papierkorb verschoben werden?";
 
 /* no comment */
-"<Feedback loop warning title>" = "Warnung: Dieses Notizenverzeichnis wird mit beidem synchronisiert, %@ und %@. Falls mehrere Instanzen von Notational Velocity dieses Verzeichnis nutzen, wird eine Rückkopplungsschleife produziert.";
+"<Feedback loop warning title>" = "Warnung: Dieses Notizenverzeichnis wird mit beidem synchronisiert, %@ und %@. Falls mehrere Instanzen von nvALT dieses Verzeichnis nutzen, wird eine Rückkopplungsschleife produziert.";
 
 /* no comment */
 "<Feedback loop warning message>" = "Wähle bitte einen anderen Ort für deine Notizen oder deaktiviere die Synchronisation mit %@ um dieses Problem zu vermeiden";
 
 /* No comment provided by engineer. */
-"The %@ server holds a different set of notes. Replace all %u notes in Notational Velocity with the %u notes on the server, or merge both sets together?" = "Auf dem %@ Server ist ein abweichender Satz an Notizen gespeichert. Alle %u Notizen in Notational Velocity mit den %u Notizen vom Server ersetzen oder alle Notizen zusammenfügen?";
+"The %@ server holds a different set of notes. Replace all %lu notes in nvALT with the %lu notes on the server, or merge both sets together?" = "Auf dem %@ Server ist ein abweichender Satz an Notizen gespeichert. Alle %lu Notizen in nvALT mit den %lu Notizen vom Server ersetzen oder alle Notizen zusammenfügen?";
 
 /* No comment provided by engineer. */
-"The %@ server reports that no notes exist. Delete all %u notes in Notational Velocity to match it, or re-upload them now?" = "Der %@ Server teilt mit, dass dort keine Notizen existieren. Sollen alle %u Notizen in Notational Velocity ebenfalls gelöscht oder jetzt neu hochgeladen werden?";
+"The %@ server reports that no notes exist. Delete all %lu notes in nvALT to match it, or re-upload them now?" = "Der %@ Server teilt mit, dass dort keine Notizen existieren. Sollen alle %lu Notizen in nvALT ebenfalls gelöscht oder jetzt neu hochgeladen werden?";
 
 /* No comment provided by engineer. */
-"Replacing will remove all %u notes from Notational Velocity. Merging will upload all notes to %@, omitting duplicates." = "Das Ersetzen wird alle %u Notizen aus Notational Velocity löschen. Das Hinzufügen wird alle Notizen zu %@ hochladen, während Duplikate ausgelassen werden.";
+"Replacing will remove all %lu notes from nvALT. Merging will upload all notes to %@, omitting duplicates." = "Das Ersetzen wird alle %lu Notizen aus nvALT löschen. Das Hinzufügen wird alle Notizen zu %@ hochladen, während Duplikate ausgelassen werden.";
 
 /* No comment provided by engineer. */
-"If your %@ account is different, you may prefer to create a new database in Notational Velocity instead." = "Falls du einen unterschiedlichen %@ Account verwendest, möchtest du anstatt dessen vielleicht lieber eine neue Datenbank in Notational Velocity anlegen.";
+"If your %@ account is different, you may prefer to create a new database in nvALT instead." = "Falls du einen unterschiedlichen %@ Account verwendest, möchtest du anstatt dessen vielleicht lieber eine neue Datenbank in nvALT anlegen.";
 
 /* default button in the dialog above */
 "Turn Off Syncing" = "Synchronisierung deaktivieren";
@@ -393,13 +392,10 @@
 "Re-upload Notes" = "Notizen erneut hochladen";
 
 /* No comment provided by engineer. */
-"Add %u existing notes in the database to %@?" = "%u in der lokalen Datenbank existierende Notizen zu %@ hinzufügen?";
+"Add %lu existing notes in the database to %@?" = "%lu in der lokalen Datenbank existierende Notizen zu %@ hinzufügen?";
 
 /* No comment provided by engineer. */
 "Notes will be merged, omitting entries duplicated on the server." = "Die Notizen werden hinzugefügt, auf dem Server doppelt vorhandene Einträge werden ausgelassen.";
-
-/* No comment provided by engineer. */
-"Add Notes" = "Notizen hinzufügen";
 
 /* No comment provided by engineer. */
 "Upload Notes" = "Notizen hochladen";
@@ -414,7 +410,7 @@
 "Dropbox" = "Dropbox";
 
 /* status text when downloading a note from the remote sync server */
-"Downloading %u of %u notes" = "Lade %u von %u Notiz(en) herunter";
+"Downloading %lu of %lu notes" = "Lade %lu von %lu Notiz(en) herunter";
 
 /* no comment */
 "Logging in..." = "Anmelden...";
@@ -444,10 +440,10 @@
 "%@ quot%@quot..." = "“%@” %@…";
 
 /* Downloading/Creating/Updating/Deleting 5 of 10 notes */
-"%@ %u of %u notes" = "%@ %u von %u Notizen";
+"%@ %lu of %lu notes" = "%@ %lu von %lu Notizen";
 
 /* e.g., Downloading 2 note(s) failed */
-"%@ %u note(s) failed" = "%@ von %u Notiz(en) schlug fehl";
+"%@ %lu note(s) failed" = "%@ von %lu Notiz(en) schlug fehl";
 
 /* <Sync Service Name>: Disabled */
 "%@: Disabled" = "%@: Deaktiviert";
@@ -462,7 +458,7 @@
 "Stop Synchronizing" = "Synchronisieren stoppen";
 
 /* no comment */
-"%u update(s) in progress" = "%u Aktualisierung(en) in Bearbeitung";
+"%lu update(s) in progress" = "%lu Aktualisierung(en) in Bearbeitung";
 
 /* no comment */
 "Not synchronized yet" = "Noch nicht synchronisiert";
@@ -507,7 +503,7 @@
 "No note selected." = "Keine Notiz ausgewählt.";
 
 /* No comment provided by engineer. */
-"Notational Velocity supports encryption only for notes stored in a database file." = "Notational Velocity unterstützt die Verschlüsselung nur für Notizen, welche in einer einzelnen Datenbankdatei gespeichert werden.";
+"nvALT supports encryption only for notes stored in a database file." = "nvALT unterstützt die Verschlüsselung nur für Notizen, welche in einer einzelnen Datenbankdatei gespeichert werden.";
 
 /* No comment provided by engineer. */
 "Open Console in /Applications/Utilities/ for more information." = "Konsole in /Applications/Utilities/ öffnen für weitere Informationen.";
@@ -530,11 +526,11 @@
 /* insert new password command in the edit menu */
 "Insert New Password" = "Neues Passwort einsetzen";
 
-/* menu item in the View menu to turn off note-body previews in the Title column */
-"Hide Note Previews in Title" = "Notizvorschau in Titel nicht anzeigen";
-
 /* menu item in the View menu to turn on note-body previews in the Title column */
 "Show Note Previews in Title" = "Notizvorschau in Titel anzeigen";
+
+/* menu item in the View menu to turn off note-body previews in the Title column */
+"Hide Note Previews in Title" = "Notizvorschau in Titel nicht anzeigen";
 
 /* No comment provided by engineer. */
 "Relocate Notes" = "Notizen verschieben";
@@ -549,10 +545,7 @@
 "rich text" = "formatierte Text";
 
 /* No comment provided by engineer. */
-"Select a new location for your Notational Velocity notes." = "Neuen Ort für die Notational Velocity Notizen wählen.";
-
-/* menu item title for showing bookmarks */
-"Show Bookmarks" = "Lesezeichen anzeigen";
+"Select a new location for your nvALT notes." = "Neuen Ort für die nvALT Notizen wählen.";
 
 /* No comment provided by engineer. */
 "Too many bookmarks." = "Zu viele Lesezeichen.";
@@ -567,7 +560,7 @@
 "Unable to create an FSRef from the chosen directory." = "FSRef konnte vom gewählten Verzeichnis nicht angelegt werden.";
 
 /* No comment provided by engineer. */
-"Unable to create or access the Interim Note-Changes file. Is another copy of Notational Velocity currently running?" = "Auf die “Interim Note-Changes“ Datei konnte nicht zugegriffen werden. Läuft gerade vielleicht eine weitere Instanz von Notational Velocity?";
+"Unable to create or access the Interim Note-Changes file. Is another copy of nvALT currently running?" = "Auf die “Interim Note-Changes“ Datei konnte nicht zugegriffen werden. Läuft gerade vielleicht eine weitere Instanz von nvALT?";
 
 /* No comment provided by engineer. */
 "Strikethrough" = "Durchgestrichen";
@@ -626,6 +619,7 @@
 /* date added/created column name */
 "Now editing this note; rename it with %@-R" = "Bearbeitung dieser Notiz; Umbenennen mit %@-R";
 
+
 /* default files name */
 "Excruciatingly Useful Shortcuts" = "Moglicherweise nutzliche Tastenkurzel";
 "Contact Information" = "Kontaktdaten";
@@ -641,7 +635,7 @@
 "Switch to Horizontal Layout" = "Zu horizontaler Darstellung wechseln";
 
 /* for warning about incompatibility with TextExpander, Typinator, etc. */
-"Secure Text Entry will prevent %@, which is currently installed on this computer, from working in Notational Velocity." = "Die Sichere Texteingabe wird %@, das momentan auf diesem Computer installiert ist, daran hindern, in Notational Velocity zu funktionieren.";
+"Secure Text Entry will prevent %@, which is currently installed on this computer, from working in nvALT." = "Die Sichere Texteingabe wird %@, das momentan auf diesem Computer installiert ist, daran hindern, in nvALT zu funktionieren.";
 
 /* Status message after downloading a URL */
 "Importing content..." = "Importiere Inhalt…";
@@ -649,17 +643,26 @@
 /* prefix for source-URLs inserted into imported notes; e.g., "From <http://www.apple.com>: ..." */
 "From" = "Von";
 
-/* insert link menu item title */
-"Insert Link" = "Link einfügen";
+/* menu item title for exiting fullscreen */
+"Exit Full Screen" = "Vollbild aus";
 
 /* menu item title for entering fullscreen */
-"Enter Full Screen" = "Vollbildmodus ein";
+"Enter Full Screen" = "Vollbild ein";
 
-/* menu item title for exiting fullscreen */
-"Exit Full Screen" = "Vollbildmodus aus";
+/* menu command to clear out custom external editors */
+"Reset" = "Zurücksetzen";
+
+/* No comment provided by engineer. */
+"Getting note changes..." = "Hinweis änderungen laden …";
+
+/* find using selection menu item title */
+"Use Selection for Find" = "Auswahl suchen";
+
+/* add link menu item title */
+"Add Link" = "Link hinzufügen";
 
 /* menu item title for expanding notes list */
-"Expand Notes List" = "Notizliste ausklappen";
+"Expand Notes List" = "Notizliste erweitern";
 
 /* menu item title for collapsing notes list */
-"Collapse Notes List" = "Notizliste einklappen";
+"Collapse Notes List" = "Notizliste reduzieren";
