@@ -76,7 +76,6 @@ static NSString	*ShowDockIcon = @"ShowDockIcon";
 static NSString	*KeepsMaxTextWidth = @"KeepsMaxTextWidth";
 static NSString	*NoteBodyMaxWidth = @"NoteBodyMaxWidth";
 static NSString	*ColorScheme = @"ColorScheme";
-static NSString	*TextEditor = @"TextEditor";
 static NSString *UseMarkdownImportKey = @"UseMarkdownImport";
 static NSString *UseReadabilityKey = @"UseReadability";
 static NSString *ShowGridKey = @"ShowGrid";
@@ -87,6 +86,7 @@ static NSString *markupPreviewMode = @"markupPreviewMode";
 static NSString *UseAutoPairing = @"UseAutoPairing";
 static NSString *UseETScrollbarsOnLion = @"UseETScrollbarsOnLion";
 static NSString *UsesMarkdownCompletions = @"UsesMarkdownCompletions";
+static NSString *UseFinderTagsKey = @"UseFinderTags";
 //static NSString *PasteClipboardOnNewNoteKey = @"PasteClipboardOnNewNote";
 
 //these 4 strings manually localized
@@ -114,7 +114,7 @@ static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id orig
 }
 
 - (id)init {
-	if ([super init]) {
+	if (self=[super init]) {
 	
 		runCallbacksIMP = [self methodForSelector:@selector(notifyCallbacksForSelector:excludingSender:)];
 		selectorObservers = [[NSMutableDictionary alloc] init];
@@ -122,14 +122,15 @@ static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id orig
 		defaults = [NSUserDefaults standardUserDefaults];
 		
 		tableColumns = nil;
-		
+
 		[defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSNumber numberWithBool:IsMavericksOrLater], UseFinderTagsKey,
 			[NSNumber numberWithBool:YES], AutoSuggestLinksKey,
 			[NSNumber numberWithBool:YES], AutoFormatsDoneTagKey, 
 			[NSNumber numberWithBool:YES], AutoIndentsNewLinesKey, 
 			[NSNumber numberWithBool:YES], AutoFormatsListBulletsKey,
 			[NSNumber numberWithBool:NO], UseSoftTabsKey,
-			[NSNumber numberWithInt:4], NumberOfSpacesInTabKey,
+			[NSNumber numberWithInteger:4], NumberOfSpacesInTabKey,
 			[NSNumber numberWithBool:YES], PastePreservesStyleKey,
 			[NSNumber numberWithBool:YES], TabKeyIndentsKey,
 			[NSNumber numberWithBool:YES], ConfirmNoteDeletionKey,
@@ -214,7 +215,7 @@ static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id orig
 		va_end(argList);
 		
 	} else {
-		NSLog(@"%s: target %@ does not respond to callback selector!", _cmd, [sender description]);
+		NSLog(@"%@: target %@ does not respond to callback selector!", NSStringFromSelector(_cmd), [sender description]);
 	}
 }
 
@@ -538,6 +539,19 @@ static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id orig
 	
 }
 
+- (void)setUseFinderTags:(BOOL)value sender:(id)sender {
+	if (!IsMavericksOrLater) {
+		[defaults setBool:NO forKey:UseFinderTagsKey];
+		return;
+	}
+	[defaults setBool:value forKey:UseFinderTagsKey];
+}
+
+- (BOOL)useFinderTags
+{
+	return [defaults boolForKey:UseFinderTagsKey];
+}
+
 - (void)setSoftTabs:(BOOL)value sender:(id)sender {
 	[defaults setBool:value forKey:UseSoftTabsKey];
 	
@@ -548,7 +562,7 @@ static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id orig
 	return [defaults boolForKey:UseSoftTabsKey];
 }
 
-- (int)numberOfSpacesInTab {
+- (NSInteger)numberOfSpacesInTab {
 	return [defaults integerForKey:NumberOfSpacesInTabKey];
 }
 
@@ -684,7 +698,7 @@ BOOL ColorsEqualWith8BitChannels(NSColor *c1, NSColor *c2) {
 	NSFont *bodyFont = [self noteBodyFont];
 
 	if (!noteBodyParagraphStyle && bodyFont) {
-		int numberOfSpaces = [self numberOfSpacesInTab];
+		NSInteger numberOfSpaces = [self numberOfSpacesInTab];
 		NSMutableString *sizeString = [[NSMutableString alloc] initWithCapacity:numberOfSpaces];
 		while (numberOfSpaces--) {
 			[sizeString appendString:@" "];

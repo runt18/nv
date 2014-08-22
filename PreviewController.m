@@ -15,6 +15,7 @@
 #import "ETTransparentButtonCell.h"
 #import "ETTransparentButton.h"
 #import "BTTransparentScroller.h"
+#import "NSFileManager_NV.h"
 
 #define kDefaultMarkupPreviewVisible @"markupPreviewVisible"
 
@@ -228,6 +229,12 @@
 
 -(void)requestPreviewUpdate:(NSNotification *)notification
 {
+	AppController *app = [notification object];
+	NSString *rawString = [app noteContent];
+	NSPasteboard* pb = [NSPasteboard pasteboardWithName:@"mkStreamingPreview"];
+    [pb clearContents];
+    [pb setString:rawString forType:(NSString*)kUTTypeUTF8PlainText];
+
     if (![[self window] isVisible]) {
         self.isPreviewOutdated = YES;
         return;
@@ -237,7 +244,7 @@
       return;
     }
 
-    AppController *app = [notification object];
+
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(preview:) object:app];
 
     [self performSelector:@selector(preview:) withObject:app afterDelay:0.05];
@@ -336,6 +343,7 @@
 //	NSString *lastScrollPosition = [[preview windowScriptObject] evaluateWebScript:@"document.getElementsByTagName('body')[0].scrollTop"];
 	AppController *app = object;
 	NSString *rawString = [app noteContent];
+
 	SEL mode = [self markupProcessorSelector:[app currentPreviewMode]];
 	NSString *processedString = [NSString performSelector:mode withObject:rawString];
   NSString *previewString = processedString;
@@ -360,6 +368,7 @@
 	[outputString replaceOccurrencesOfString:@"{%style%}" withString:cssString options:0 range:NSMakeRange(0, [outputString length])];
 
 	[[preview mainFrame] loadHTMLString:outputString baseURL:nil];
+	[preview stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"var body = document.getElementsByTagName('body')[0],oldscroll = %@;body.scrollTop = oldscroll;",lastScrollPosition]];
   [[self window] setTitle:noteTitle];
 
 	[sourceView replaceCharactersInRange:NSMakeRange(0, [[sourceView string] length]) withString:processedString];
@@ -387,7 +396,8 @@
 		NSString *folder = [[NSFileManager defaultManager] applicationSupportDirectory];
 		if ([fileManager fileExistsAtPath: folder] == NO)
 		{
-				[fileManager createDirectoryAtPath: folder attributes: nil];
+            [fileManager createFolderAtPath:folder];
+//				[fileManager createDirectoryAtPath: folder attributes: nil];
 
 		}
 
@@ -482,7 +492,7 @@
 	NSData * responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
 	NSString * responseString = [[[NSString alloc] initWithData:responseData encoding:NSASCIIStringEncoding] autorelease];
 	NSLog(@"RESPONSE STRING: %@", responseString);
-	NSLog(@"%d",response.statusCode);
+	NSLog(@"%ld",(long)response.statusCode);
 	shareURL = [[NSString stringWithString:responseString] retain];
 	if (response.statusCode == 200) {
 		[self showShareURL:[NSString stringWithFormat:@"View %@",shareURL] isError:NO];
@@ -507,7 +517,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
+    NSLog(@"Succeeded! Received %lu bytes of data",(unsigned long)[receivedData length]);
 
 	NSString * responseString = [[[NSString alloc] initWithData:receivedData encoding:NSASCIIStringEncoding] autorelease];
 	NSLog(@"RESPONSE STRING: %@", responseString);
@@ -568,19 +578,32 @@
   }
 
 	NSString *noteTitle =  ([app selectedNoteObject]) ? [NSString stringWithFormat:@"%@",titleOfNote([app selectedNoteObject])] : @"";
-	[savePanel beginSheetForDirectory:nil file:noteTitle modalForWindow:[self window] modalDelegate:self
-					   didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
-
-
+//	[savePanel beginSheetForDirectory:nil file:noteTitle modalForWindow:[self window] modalDelegate:self didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
+    savePanel.nameFieldStringValue=noteTitle;
+[savePanel beginSheetModalForWindow:[self window] completionHandler:^(NSInteger returnCode) {
+    if (returnCode == NSFileHandlingPanelOKButton) {
+        NSString *processedString = [[[NSString alloc] init] autorelease];
+        
+        if ([app currentPreviewMode] == MarkdownPreview) {
+            processedString = [NSString stringWithProcessedMarkdown:rawString];
+        } else if ([app currentPreviewMode] == MultiMarkdownPreview) {
+            processedString = ( [includeTemplate state] == NSOnState ) ? [NSString documentWithProcessedMultiMarkdown:rawString] : [NSString xhtmlWithProcessedMultiMarkdown:rawString];
+        } else if ([app currentPreviewMode] == TextilePreview) {
+            processedString = ( [includeTemplate state] == NSOnState ) ? [NSString documentWithProcessedTextile:rawString] : [NSString xhtmlWithProcessedTextile:rawString];
+        }
+        NSURL *file = [savePanel URL];
+        NSError *error;
+        [processedString writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    }
+}];
 	[fileTypes release];
 
 }
 
 -(IBAction)switchTabs:(id)sender
 {
-	int tabSelection = [tabView indexOfTabViewItem:[tabView selectedTabViewItem]];
 
-	if (tabSelection == 0) {
+	if ([tabView indexOfTabViewItem:[tabView selectedTabViewItem]] == 0) {
 		[tabSwitcher setTitle:@"View Preview"];
 		[tabView selectTabViewItem:[tabView tabViewItemAtIndex:1]];
 	} else {

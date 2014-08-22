@@ -23,13 +23,52 @@
 
 #define kMaxDataSize 4096
 
+- (BOOL)mirrorOMToFinderTags:(const char*)path
+{
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"UseFinderTags"]) return NO;
+
+	id tags = [self getOpenMetaTagsAtFSPath:path];
+	
+	return [self setFinderTags:tags atFSPath:path];
+}
+
+- (id)getTagsAtFSPath:(const char*)path
+{
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"UseFinderTags"])
+	{
+		return [self getFinderTagsAtFSPath:path];
+	}
+	else
+	{
+		return [self getOpenMetaTagsAtFSPath:path];
+	}
+}
+
+- (id)getFinderTagsAtFSPath:(const char*)path
+{
+	if (!path) return nil;
+
+	NSURL *url = [NSURL fileURLWithPath:[NSString stringWithCString:path encoding:NSUTF8StringEncoding]];
+	NSArray *existingTags;
+	NSError *error;
+	if (![url getResourceValue:&existingTags forKey:NSURLTagNamesKey error:&error])
+	{
+		return nil;
+	}
+	else
+	{
+		return existingTags;
+	}
+
+}
+
 - (id)getOpenMetaTagsAtFSPath:(const char*)path {
 	//return convention: empty tags should be an empty array; 
 	//for files that have never been tagged, or that have had their tags removed, return 
 	//files might lose their metadata if edited externally or synced without being first encoded
 	
 	if (!path) return nil;
-	
+
 	const char* inKeyNameC = "com.apple.metadata:kMDItemOMUserTags";
 	// retrieve data from store. 
 	char* data[kMaxDataSize];
@@ -50,7 +89,7 @@
 	NSString* errorString = nil;
 	id outObject = [NSPropertyListSerialization propertyListFromData:nsData mutabilityOption:kCFPropertyListImmutable format:&formatFound errorDescription:&errorString];
 	if (errorString) {
-		NSLog(@"%s: error deserializing labels: %@", _cmd, errorString);
+		NSLog(@"%@: error deserializing labels: %@", NSStringFromSelector(_cmd), errorString);
 		[errorString autorelease];
 		return nil;
 	}
@@ -60,11 +99,41 @@
 }
 
 
+- (BOOL)setTags:(id)plistObject atFSPath:(const char*)path {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"UseFinderTags"])
+	{
+		return [self setFinderTags:plistObject atFSPath:path];
+	}
+	else
+	{
+		return [self setOpenMetaTags:plistObject atFSPath:path];
+	}
+}
+
+- (BOOL)setFinderTags:(id)plistObject atFSPath:(const char*)path
+{
+	if (!path) return NO;
+	NSURL *url = [NSURL fileURLWithPath:[NSString stringWithCString:path]];
+	NSArray *tagArray = [NSArray arrayWithArray:plistObject];
+	NSError *error;
+	if (![url setResourceValue:tagArray forKey:NSURLTagNamesKey error:&error])
+	{
+		NSLog(@"%@", error);
+		NSLog(@"Error setting Finder tags for %@", [url path]);
+		return NO;
+	}
+	else
+	{
+		return YES;
+	}
+}
+
+
 - (BOOL)setOpenMetaTags:(id)plistObject atFSPath:(const char*)path {
 	if (!path) return NO;
-	
+
 	// If the object passed in has no data - is a string of length 0 or an array or dict with 0 objects, then we remove the data at the key.
-	
+
 	const char* inKeyNameC = "com.apple.metadata:kMDItemOMUserTags";
 	
 	long returnVal = 0;
@@ -75,7 +144,7 @@
 		NSString *errorString = nil;
 		dataToSendNS = [NSPropertyListSerialization dataFromPropertyList:plistObject format:kCFPropertyListBinaryFormat_v1_0 errorDescription:&errorString];
 		if (errorString) {
-			NSLog(@"%s: error serializing labels: %@", _cmd, errorString);
+			NSLog(@"%@: error serializing labels: %@", NSStringFromSelector(_cmd), errorString);
 			[errorString autorelease];
 			return NO;
 		}
@@ -91,7 +160,7 @@
 	}
 	
 	if (returnVal < 0) {
-		if (errno != ENOATTR) NSLog(@"%s: couldn't set/remove attribute: %d (value '%@')", _cmd, errno, dataToSendNS);
+		if (errno != ENOATTR) NSLog(@"%@: couldn't set/remove attribute: %d (value '%@')", NSStringFromSelector(_cmd), errno, dataToSendNS);
 		return NO;
 	}
 
@@ -106,7 +175,7 @@
 	
 	CFStringEncoding cfStringEncoding = CFStringConvertNSStringEncodingToEncoding(encoding);
 	if (cfStringEncoding == kCFStringEncodingInvalidId) {
-		NSLog(@"%s: encoding %lu is invalid!", _cmd, encoding);
+		NSLog(@"%@: encoding %lu is invalid!", NSStringFromSelector(_cmd), encoding);
 		return NO;
 	}
 	NSString *textEncStr = [(NSString *)CFStringConvertEncodingToIANACharSetName(cfStringEncoding) stringByAppendingFormat:@";%@", 
@@ -185,5 +254,55 @@ errorReturn:
 	return path;
 }
 
+- (BOOL)createFolderAtPath:(NSString *)path{
+    return [self createFolderAtPath:path withAttributes:nil];
+}
+
+- (BOOL)createFolderAtPath:(NSString *)path withAttributes:(NSDictionary *)attributes{
+    NSError *err=nil;
+    if (![self createDirectoryAtPath:path withIntermediateDirectories:NO attributes:attributes error:&err]||(err!=nil)) {
+        NSLog(@"trouble creating directory at path:>%@<",[err description]);
+        return NO;
+    }else{
+        return YES;
+    }
+}
+
+- (NSDictionary *)attributesAtPath:(NSString *)path followLink:(BOOL)follow{
+    
+    if (follow) {
+        path=[path stringByResolvingSymlinksInPath];
+    }
+    NSError *err=nil;
+    NSDictionary *dict=[self attributesOfItemAtPath:path error:&err];
+    if ((dict!=nil)&&(err==nil)) {
+        return dict;
+    }else if (err) {
+        NSLog(@"trouble getting attributes at path:>%@<\ndict:%@",[err description],dict);
+    }
+    
+    return [NSDictionary dictionary];
+}
+
+- (NSArray *)folderContentsAtPath:(NSString *)path{
+    NSError *err=nil;
+    NSArray *arr=[self contentsOfDirectoryAtPath:path error:&err];
+    if ((arr!=nil)&&(err==nil)) {
+        return arr;
+    }else if (err) {
+        NSLog(@"trouble getting contents of path:>%@<",[err description]);
+    }
+    return @[];
+}
+
+- (BOOL)deleteFileAtPath:(NSString *)path{
+    NSError *err=nil;
+    if([self removeItemAtPath:path error:&err]&&(err==nil)){
+        return YES;
+    }else if(err){
+        NSLog(@"trouble removing file at path:>%@<",err.localizedDescription);
+    }
+    return NO;
+}
 
 @end
