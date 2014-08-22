@@ -422,61 +422,81 @@ void outletObjectAwoke(id sender) {
     NSDate *before = [NSDate date];
 	prefsWindowController = [[PrefsWindowController alloc] init];
 	
-	OSStatus err = noErr;
-	NotationController *newNotation = nil;
+	__block OSStatus err = noErr;
+	__block NotationController *newNotation = nil;
+	__block FSRef notesDirectoryRef;
+	__block NSString *location = nil;
+
 	NSData *aliasData = [prefsController aliasDataForDefaultDirectory];
-	
 	NSString *subMessage = @"";
-	
+
+	void(^terminateApp)(void) = ^{
+		[newNotation release];
+		newNotation = nil;
+		[NSApp terminate:self];
+	};
+
+	BOOL(^showOpenPanel)(void) = ^{
+		if (![prefsWindowController getNewNotesRefFromOpenPanel:&notesDirectoryRef returnedPath:&location]) {
+			//they cancelled the open panel, or it was unable to get the path/FSRef of the file
+			terminateApp();
+			return NO;
+		}
+
+		NotationController *oldNotation = newNotation;
+		newNotation = [[NotationController alloc] initWithDirectoryRef:&notesDirectoryRef error:&err];
+		[oldNotation release];
+
+		if (!newNotation) { return NO; }
+
+		//have to make sure alias data is saved from setNotationController
+		[newNotation setAliasNeedsUpdating:YES];
+		return YES;
+	};
+
 	//if the option key is depressed, go straight to picking a new notes folder location
 	if (kCGEventFlagMaskAlternate == (CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState) & NSDeviceIndependentModifierFlagsMask)) {
-		goto showOpenPanel;
-	}
-	
-	if (aliasData) {
-	    newNotation = [[[NotationController alloc] initWithAliasData:aliasData error:&err] autorelease];
-	    subMessage = NSLocalizedString(@"Please choose a different folder in which to store your notes.",nil);
+		showOpenPanel();
 	} else {
-	    newNotation = [[[NotationController alloc] initWithDefaultDirectoryReturningError:&err] autorelease];
-	    subMessage = NSLocalizedString(@"Please choose a folder in which your notes will be stored.",nil);
-	}
-	//no need to display an alert if the error wasn't real
-	if (err == kPassCanceledErr)
-		goto showOpenPanel;
-	
-	NSString *location = (aliasData ? [[NSFileManager defaultManager] pathCopiedFromAliasData:aliasData] : NSLocalizedString(@"your Application Support directory",nil));
-	if (!location) { //fscopyaliasinfo sucks
-		FSRef locationRef;
-		if ([aliasData fsRefAsAlias:&locationRef] && LSCopyDisplayNameForRef(&locationRef, (CFStringRef*)&location) == noErr) {
-			[location autorelease];
+		if (aliasData) {
+			newNotation = [[NotationController alloc] initWithAliasData:aliasData error:&err];
+			subMessage = NSLocalizedString(@"Please choose a different folder in which to store your notes.",nil);
 		} else {
-			location = NSLocalizedString(@"its current location",nil);
+			newNotation = [[NotationController alloc] initWithDefaultDirectoryReturningError:&err];
+			subMessage = NSLocalizedString(@"Please choose a folder in which your notes will be stored.",nil);
+		}
+
+		//no need to display an alert if the error wasn't real
+		if (err == kPassCanceledErr) {
+			showOpenPanel();
+		} else {
+			location = (aliasData ? [[NSFileManager defaultManager] pathCopiedFromAliasData:aliasData] : NSLocalizedString(@"your Application Support directory",nil));
+			if (!location) { //fscopyaliasinfo sucks
+				FSRef locationRef;
+				if ([aliasData fsRefAsAlias:&locationRef] && LSCopyDisplayNameForRef(&locationRef, (CFStringRef*)&location) == noErr) {
+					[location autorelease];
+				} else {
+					location = NSLocalizedString(@"its current location",nil);
+				}
+			}
+
+			while (!newNotation) {
+				location = [location stringByAbbreviatingWithTildeInPath];
+				NSString *reason = [NSString reasonStringFromCarbonFSError:err];
+
+				if (NSRunAlertPanel([NSString stringWithFormat:NSLocalizedString(@"Unable to initialize notes database in \n%@ because %@.",nil), location, reason],
+									subMessage, NSLocalizedString(@"Choose another folder",nil),NSLocalizedString(@"Quit",nil),NULL) == NSAlertDefaultReturn) {
+					//show nsopenpanel, defaulting to current default notes dir
+					if (showOpenPanel()) break;
+				} else {
+					terminateApp();
+					return;
+				}
+			}
+
 		}
 	}
-	
-	while (!newNotation) {
-	    location = [location stringByAbbreviatingWithTildeInPath];
-	    NSString *reason = [NSString reasonStringFromCarbonFSError:err];
-		
-	    if (NSRunAlertPanel([NSString stringWithFormat:NSLocalizedString(@"Unable to initialize notes database in \n%@ because %@.",nil), location, reason],
-							subMessage, NSLocalizedString(@"Choose another folder",nil),NSLocalizedString(@"Quit",nil),NULL) == NSAlertDefaultReturn) {
-			//show nsopenpanel, defaulting to current default notes dir
-			FSRef notesDirectoryRef;
-		showOpenPanel:
-			if (![prefsWindowController getNewNotesRefFromOpenPanel:&notesDirectoryRef returnedPath:&location]) {
-				//they cancelled the open panel, or it was unable to get the path/FSRef of the file
-//                [newNotation release];
-				goto terminateApp;
-			} else if ((newNotation = [[[NotationController alloc] initWithDirectoryRef:&notesDirectoryRef error:&err] autorelease])) {
-				//have to make sure alias data is saved from setNotationController
-				[newNotation setAliasNeedsUpdating:YES];
-				break;
-			}
-	    } else {
-			goto terminateApp;
-	    }
-	}
-	
+
 	[self setNotationController:newNotation];
 	
 	NSLog(@"load time: %g, ",[[NSDate date] timeIntervalSinceDate:before]);
@@ -485,7 +505,8 @@ void outletObjectAwoke(id sender) {
 	//import old database(s) here if necessary
 	[AlienNoteImporter importBlorOrHelpFilesIfNecessaryIntoNotation:newNotation];
 	
-//	[newNotation release];
+	[newNotation release];
+
 	if (pathsToOpenOnLaunch) {
 		[notationController openFiles:[pathsToOpenOnLaunch autorelease]];//autorelease
 		pathsToOpenOnLaunch = nil;
@@ -511,12 +532,6 @@ void outletObjectAwoke(id sender) {
 	 @selector(setAutoCompleteSearches:sender:),@selector(setUseETScrollbarsOnLion:sender:), nil];   //when to tell notationcontroller to build its title-prefix connections
 	
 	[self performSelector:@selector(runDelayedUIActionsAfterLaunch) withObject:nil afterDelay:0.0];
-    
-	
-    
-	return;
-terminateApp:
-	[NSApp terminate:self];
 }
 
 - (void)handleGetURLEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
