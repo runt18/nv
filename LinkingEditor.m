@@ -19,7 +19,7 @@
 #import "NSCollection_utils.h"
 #import "AttributedPlainText.h"
 #import "NSString_NV.h"
-#import "NVPasswordGenerator.h"
+#import "NTVPasswordGenerator.h"
 #import "ETClipView.h"
 //#import "NVTextFinderAdditions.h"
 
@@ -1618,13 +1618,13 @@ cancelCompetion:
 }
 
 - (void)insertGeneratedPassword:(id)sender {
-    NSString *password = [NVPasswordGenerator strong];
+    NSString *password = [NTVPasswordGenerator strong];
     [self insertPassword:password];
 }
 
 - (void)showGeneratedPasswords:(id)sender {
     #ifdef notyet
-    NSArray *suggestedPasswords = [NVPasswordGenerator suggestions];
+    NSArray *suggestedPasswords = [NTVPasswordGenerator suggestions];
     
     // display modal overlay, get user selection and insert it
     // Nice to have:

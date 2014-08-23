@@ -262,7 +262,8 @@
 		B69E26F516F0B523001C6E4B /* DFCapRightInactive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B69E26ED16F0B523001C6E4B /* DFCapRightInactive@2x.png */; };
 		B69E26F616F0B523001C6E4B /* Pencil@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B69E26EE16F0B523001C6E4B /* Pencil@2x.png */; };
 		B69E26F716F0B523001C6E4B /* Search@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B69E26EF16F0B523001C6E4B /* Search@2x.png */; };
-		D3EECA00106F66C70023D7F8 /* NVPasswordGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = D3EEC9FE106F66C70023D7F8 /* NVPasswordGenerator.m */; };
+		D3EECA00106F66C70023D7F8 /* NTVPasswordGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = D3EEC9FE106F66C70023D7F8 /* NTVPasswordGenerator.m */; };
+		DB30022219A8FCA800FAE64D /* NSArray+NTVFunctional.m in Sources */ = {isa = PBXBuildFile; fileRef = DB30022119A8FCA800FAE64D /* NSArray+NTVFunctional.m */; };
 		DBD70D8A19A63C000026F349 /* HelpNotes in Resources */ = {isa = PBXBuildFile; fileRef = DBD70D8819A63C000026F349 /* HelpNotes */; };
 		DBD70E0B19A641F90026F349 /* SaveHTMLPreview.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E0919A641F90026F349 /* SaveHTMLPreview.xib */; };
 		DBD70E1419A6427D0026F349 /* DeletionManager.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E1219A6427D0026F349 /* DeletionManager.xib */; };
@@ -666,8 +667,10 @@
 		B69E26ED16F0B523001C6E4B /* DFCapRightInactive@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "DFCapRightInactive@2x.png"; path = "Images/DFCapRightInactive@2x.png"; sourceTree = "<group>"; };
 		B69E26EE16F0B523001C6E4B /* Pencil@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Pencil@2x.png"; path = "Images/Pencil@2x.png"; sourceTree = "<group>"; };
 		B69E26EF16F0B523001C6E4B /* Search@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Search@2x.png"; path = "Images/Search@2x.png"; sourceTree = "<group>"; };
-		D3EEC9FE106F66C70023D7F8 /* NVPasswordGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NVPasswordGenerator.m; sourceTree = "<group>"; };
-		D3EEC9FF106F66C70023D7F8 /* NVPasswordGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NVPasswordGenerator.h; sourceTree = "<group>"; };
+		D3EEC9FE106F66C70023D7F8 /* NTVPasswordGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTVPasswordGenerator.m; sourceTree = "<group>"; };
+		D3EEC9FF106F66C70023D7F8 /* NTVPasswordGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTVPasswordGenerator.h; sourceTree = "<group>"; };
+		DB30022019A8FCA800FAE64D /* NSArray+NTVFunctional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+NTVFunctional.h"; sourceTree = "<group>"; };
+		DB30022119A8FCA800FAE64D /* NSArray+NTVFunctional.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+NTVFunctional.m"; sourceTree = "<group>"; };
 		DB327BE219A6B3C500947BAE /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/ServicesMenu.strings; sourceTree = "<group>"; };
 		DBD70CE119A638B50026F349 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/ServicesMenu.strings; sourceTree = "<group>"; };
 		DBD70CF219A639200026F349 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -894,8 +897,8 @@
 				21DB4BE512DE4E3D0057F52B /* NSString_CustomTruncation.m */,
 				212B84600978422300F3597F /* NSString_NV.h */,
 				212B84610978422300F3597F /* NSString_NV.m */,
-				D3EEC9FF106F66C70023D7F8 /* NVPasswordGenerator.h */,
-				D3EEC9FE106F66C70023D7F8 /* NVPasswordGenerator.m */,
+				D3EEC9FF106F66C70023D7F8 /* NTVPasswordGenerator.h */,
+				D3EEC9FE106F66C70023D7F8 /* NTVPasswordGenerator.m */,
 				2191982009D607C600586B15 /* PrefsWindowController.h */,
 				2191982109D607C600586B15 /* PrefsWindowController.m */,
 				5CA10F18131C297000DE1F91 /* PreviewController.h */,
@@ -1248,6 +1251,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				DB30021F19A8FC9300FAE64D /* Categories */,
 				93B90E7D138601C100BEC5FB /* ODBEditor */,
 				5C96F5A8131C379200A2E4AC /* Markup */,
 				5CA10FFA131C2A7600DE1F91 /* readability */,
@@ -1397,6 +1401,15 @@
 				93B90E83138601C100BEC5FB /* ODBEditorSuite.h */,
 			);
 			path = ODBEditor;
+			sourceTree = "<group>";
+		};
+		DB30021F19A8FC9300FAE64D /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				DB30022019A8FCA800FAE64D /* NSArray+NTVFunctional.h */,
+				DB30022119A8FCA800FAE64D /* NSArray+NTVFunctional.m */,
+			);
+			name = Categories;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1621,6 +1634,7 @@
 				217D4282096545A000E84749 /* LabelObject.m in Sources */,
 				21A30EA70971D11D0071E9AF /* FastListDataSource.m in Sources */,
 				21A6E6FD0974204F008436A9 /* LabelsListController.m in Sources */,
+				DB30022219A8FCA800FAE64D /* NSArray+NTVFunctional.m in Sources */,
 				212B84620978422300F3597F /* NSString_NV.m in Sources */,
 				21DC788F097894B600E59B09 /* NSCollection_utils.m in Sources */,
 				2155DEA6097B5F0300163A10 /* BufferUtils.c in Sources */,
@@ -1666,7 +1680,7 @@
 				21469C8C0BEBA6A10094835F /* TemporaryFileCache.m in Sources */,
 				2182B39A106B2296008641E4 /* RBSplitSubview.m in Sources */,
 				2182B39B106B2296008641E4 /* RBSplitView.m in Sources */,
-				D3EECA00106F66C70023D7F8 /* NVPasswordGenerator.m in Sources */,
+				D3EECA00106F66C70023D7F8 /* NTVPasswordGenerator.m in Sources */,
 				21BD2ED110DAF31500BA3DF6 /* LinearDividerShader.m in Sources */,
 				21F078FC10EC280E004FE56F /* NotationSyncServiceManager.m in Sources */,
 				21F0794310EC5EA2004FE56F /* SimplenoteSession.m in Sources */,
