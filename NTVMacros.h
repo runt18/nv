@@ -17,4 +17,12 @@ NS_INLINE AppController *NTVAppDelegate(void) {
 	return (AppController *)[NSApp delegate];
 }
 
+NS_INLINE BOOL NTVFloatsEqual(CGFloat a, CGFloat b) {
+#if CGFLOAT_IS_DOUBLE
+    return fabs(a - b) < DBL_EPSILON;
+#else
+    return fabsf(a - b) < FLT_EPSILON;
+#endif
+}
+
 #endif /* !NTV_MACROS */
