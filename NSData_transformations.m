@@ -18,13 +18,14 @@
 /* NSData_transformations.m */
 
 #import "NSData_transformations.h"
-#include "pbkdf2.h"
 #include "hmacsha1.h"
 #include "broken_md5.h"
+#import <CommonCrypto/CommonCrypto.h>
 
 #include <unistd.h>
 #include <zlib.h>
 #include <openssl/bio.h>
+#include <openssl/evp.h>
 
 #import <WebKit/WebKit.h>
 
@@ -164,22 +165,20 @@
 	return randomData;
 }
 
-- (NSMutableData*)derivedKeyOfLength:(int)len salt:(NSData*)salt iterations:(int)count {
-	
+- (NSData *)derivedKeyOfLength:(int)len salt:(NSData*)salt iterations:(int)count {
 	NSMutableData *derivedKey = [NSMutableData dataWithLength:len];
-	
-	//NSDate *date = [NSDate date];
-	//when compiled with -Os or greater, this is always faster than OpenSSL version
-#if 1
-	if (!pbkdf2_sha1([self bytes], [self length], [salt bytes], [salt length], (unsigned int)count, [derivedKey mutableBytes], (size_t)len))
+
+	if (IsLionOrLater) {
+		if (CCKeyDerivationPBKDF(kCCPBKDF2, self.bytes, self.length, salt.bytes, salt.length, kCCPRFHmacAlgSHA1, (unsigned int)count, derivedKey.mutableBytes, derivedKey.length) != kCCSuccess) {
+			return nil;
+		}
+	}
+
+	if (PKCS5_PBKDF2_HMAC_SHA1(self.bytes, (int)self.length, salt.bytes, (int)salt.length, count, len, derivedKey.mutableBytes) != 1) {
 		return nil;
-	//NSLog(@"dk_time(%d): %g", count, (float)[[NSDate date] timeIntervalSinceDate:date]);
-#else
-	if (!PKCS5_PBKDF2_HMAC_SHA1([self bytes], [self length], (unsigned char*)[salt bytes], [salt length], count, len, [derivedKey mutableBytes]))
-		return nil;
-#endif
-	
-	return derivedKey;
+	}
+
+	return [[derivedKey copy] autorelease];
 }
 
 - (unsigned long)CRC32 {
