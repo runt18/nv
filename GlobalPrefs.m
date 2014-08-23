@@ -108,8 +108,9 @@ NSString *HotKeyAppToFrontName = @"bring Notational Velocity to the foreground";
 static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id originalSender) {
 	
 	if (originalSender != self) {
-		self->runCallbacksIMP(self, @selector(notifyCallbacksForSelector:excludingSender:), 
-							 selector, originalSender);
+		self->runCallbacksIMP(self,
+							  @selector(notifyCallbacksForSelector:excludingSender:),
+							  selector, originalSender);
 	}
 }
 
@@ -117,7 +118,7 @@ static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id orig
 	self = [super init];
 	if (!self) { return nil; }
 
-	runCallbacksIMP = [self methodForSelector:@selector(notifyCallbacksForSelector:excludingSender:)];
+	runCallbacksIMP = (void(*)(id, SEL, SEL, id))[self methodForSelector:@selector(notifyCallbacksForSelector:excludingSender:)];
 	selectorObservers = [[NSMutableDictionary alloc] init];
 
 	defaults = [NSUserDefaults standardUserDefaults];

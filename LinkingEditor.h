@@ -41,8 +41,9 @@
 	NSString *stringDuringFind;
 	NoteObject *noteDuringFind;
 	
-	IMP defaultIBeamCursorIMP, whiteIBeamCursorIMP;
-    
+	NSCursor *(*defaultIBeamCursorIMP)(Class, SEL);
+	NSCursor *(*whiteIBeamCursorIMP)(Class, SEL);
+
     BOOL managesTextWidth;
 	NSString *beforeString;
 	NSString *afterString;

@@ -86,8 +86,8 @@ CGFloat _perceptualDarkness(NSColor*a);
     [self prepareTextFinder];
     
 	[[self window] setAcceptsMouseMovedEvents:YES];
-	defaultIBeamCursorIMP = method_getImplementation(class_getClassMethod([NSCursor class], @selector(IBeamCursor)));
-	whiteIBeamCursorIMP = method_getImplementation(class_getClassMethod([NSCursor class], @selector(whiteIBeamCursor)));
+	defaultIBeamCursorIMP = (NSCursor *(*)(Class, SEL))method_getImplementation(class_getClassMethod([NSCursor class], @selector(IBeamCursor)));
+	whiteIBeamCursorIMP = (NSCursor *(*)(Class, SEL))method_getImplementation(class_getClassMethod([NSCursor class], @selector(whiteIBeamCursor)));
 	
 	didRenderFully = NO;
 	[[self layoutManager] setDelegate:self];
@@ -1050,7 +1050,7 @@ copyRTFType:
 		
 		//set method implementation directly; whiteIBeamCursorIMP and defaultIBeamCursorIMP always point to the same respective blocks of code
 		Method defaultIBeamCursorMethod = class_getClassMethod(class, @selector(IBeamCursor));
-		method_setImplementation(defaultIBeamCursorMethod, shouldBeWhite ? whiteIBeamCursorIMP : defaultIBeamCursorIMP);
+		method_setImplementation(defaultIBeamCursorMethod, (IMP)(shouldBeWhite ? whiteIBeamCursorIMP : defaultIBeamCursorIMP));
 		
 		NSCursor *currentCursor = [NSCursor currentCursor];
 		NSCursor *whiteCursor = whiteIBeamCursorIMP(class, @selector(whiteIBeamCursor));
