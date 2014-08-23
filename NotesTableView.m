@@ -1161,18 +1161,6 @@ enum { kNext_Tag = 'j', kPrev_Tag = 'k' };
 		[editor setString: tagsInTitleColumn ? labelsOfNote(note) : titleOfNote(note)];
 		
 		NSRange range = NSMakeRange(0, [[editor string] length]);
-#if 0
-		NoteAttributeColumn *col = [self noteAttributeColumnForIdentifier:NoteTitleColumnString];
-		if (tagsInTitleColumn && dereferencingFunction(col) != unifiedCellSingleLineForNote) {
-			//the textview will comply! when editing tags, use a smaller font, right-aligned
-			[editor setAlignment:NSRightTextAlignment range:range];
-			NSFont *smallerFont = [NSFont systemFontOfSize:[globalPrefs tableFontSize] - 1.0];
-			[editor setFont:smallerFont range:range];
-			NSMutableParagraphStyle *pstyle = [[[NSMutableParagraphStyle alloc] init] autorelease];
-			[pstyle setAlignment:NSRightTextAlignment];
-			[editor setTypingAttributes:[NSDictionary dictionaryWithObjectsAndKeys:pstyle, NSParagraphStyleAttributeName, smallerFont, NSFontAttributeName, nil]];
-		}
-#endif
 		
 		if (flag) [editor setSelectedRange:range];
 	}	

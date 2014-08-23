@@ -144,31 +144,6 @@
     return NSNotFound;
 }
 
-
-#if 0
-- (NSRange)nextRangeForString:(NSString*)string activeNote:(NoteObject*)startNote options:(unsigned)opts range:(NSRange)inRange {
-	unsigned noteCount = [self count];
-	NSRange range = NSMakeRange(NSNotFound, 0);
-	
-	if (count > 0) {
-		unsigned noteIndex, startIndex = [self indexOfObjectIdenticalTo:startNote];
-		BOOL reversed = opts | NSBackwardsSearch;
-		if (startIndex == NSNotFound) startIndex = reversed ? count - 1 : 0;
-		noteIndex = startIndex;
-		
-		unsigned quoteIndex = [string rangeOfString:@"\"" options:NSLiteralSearch].location;
-		NSArray *words = [string componentsSeparatedByString:quoteIndex == NSNotFound ? @" " : @"\""];
-		
-		do {
-			NSRange range = [[self objectAtIndex:noteIndex] nextRangeForWords:words options:opts range:inRange];
-			noteIndex = noteIndex + reversed ? -1 : 1;
-		} while (range.location == NSNotFound && (reversed ? noteIndex > 0 : noteIndex < count - 1));
-	}
-	
-	return range;
-}
-#endif
-
 - (void)addMenuItemsForURLsInNotes:(NSMenu*)urlsMenu {
 	//iterate over notes in array
 	//accumulate links as NSMenuItems, with separators between them and disabled items being names of notes

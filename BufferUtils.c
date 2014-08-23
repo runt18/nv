@@ -274,31 +274,6 @@ void QuickSortBuffer(void **buffer, unsigned int objCount, int (*compar)(const v
 	qsort_r((void *)buffer, (size_t)objCount, sizeof(void*), compar, (int (*)(void *, const void *, const void *))genericSortContextFirst);
 }
 
-#if 0
-//this does not use the user's defined date styles
-const double dayInSeconds = 86400.0;
-enum {ThisDay = 0, NextDay, PriorDay};
-CFStringRef GetRelativeDateStringFromTimeAndLocaleInfo(CFAbsoluteTime time, CFStringRef *designations, char **months) {
-    static CFAbsoluteTime currentDay = 0.0;
-    if (currentDay == 0.0)
-	currentDay = ceil(CFAbsoluteTimeGetCurrent() / dayInSeconds) * dayInSeconds;
-
-    CFGregorianDate unitsDate = CFAbsoluteTimeGetGregorianDate(time, NULL);
-    
-    CFAbsoluteTime timeDay = ceil(time / dayInSeconds) * dayInSeconds;
-    if (timeDay == currentDay) {
-	return designations[ThisDay];
-    } else if (timeDay == currentDay + dayInSeconds) {
-	return designations[NextDay];
-    } else if (timeDay == currentDay - dayInSeconds) {
-	return designations[PriorDay];
-    }
-    
-    return CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("%s %u, %u  %u:%u %s"), 
-				    months[unitsDate.month], unitsDate.day, unitsDate.year, unitsDate.hour, unitsDate.minute, amppmStr);
-}
-#endif
-
 //these two methods manipulate notes' perdiskinfo groups, changing the buffers in place
 //on return, groupCount will be set to the number of perdiskinfo structs currently in the buffer
 

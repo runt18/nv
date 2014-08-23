@@ -74,16 +74,6 @@ BOOL splitViewAwoke;
 
 @synthesize isEditing;
 
-//an instance of this class is designated in the nib as the delegate of the window, nstextfield and two nstextviews
-/*
- + (void)initialize
- {
- NSDictionary *appDefaults = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:MultiMarkdownPreview] forKey:kDefaultMarkupPreviewMode];
- 
- [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
- } // initialize*/
-
-
 - (id)init {
     self = [super init];
     if (self) {
@@ -1580,13 +1570,6 @@ terminateApp:
 			}
 			return;
 		}
-	} else { //tags
-#if 0
-		if (numberSelected == 1)
-			[notationController filterNotesFromLabelAtIndex:selectedRow];
-		else if (numberSelected > 1)
-			[notationController filterNotesFromLabelIndexSet:[table selectedRowIndexes]];
-#endif
 	}
 	
 	if (!isFilteringFromTyping) {
@@ -2683,10 +2666,7 @@ terminateApp:
 }
 
 - (void)windowDidEnterFullScreen:(NSNotification *)aNotification{
-    
-    [self setDualFieldIsVisible:wasDFVisible];
-    
-//    [self performSelector:@selector(postToggleToolbar:) withObject:[NSNumber numberWithBool:wasDFVisible] afterDelay:0.0001];
+	[self setDualFieldIsVisible:wasDFVisible];
     [textView updateInsetAndForceLayout:YES];
 }
 
@@ -2702,10 +2682,7 @@ terminateApp:
     }
 }
 - (void)windowDidExitFullScreen:(NSNotification *)notification{
-    //  [window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary|NSWindowCollectionBehaviorMoveToActiveSpace];
-    
     [self setDualFieldIsVisible:wasDFVisible];
-//    [self performSelector:@selector(postToggleToolbar:) withObject:[NSNumber numberWithBool:wasDFVisible] afterDelay:0.0001];
     if (wasDFVisible&&fieldWasFirstResponder) {
         [window makeFirstResponder:field];
     }
@@ -2908,7 +2885,7 @@ terminateApp:
         [fieldAttributes release];
     }
     fieldAttributes = [[NSDictionary dictionaryWithObject:[textView _selectionColorForForegroundColor:foregrndColor backgroundColor:backgrndColor] forKey:NSBackgroundColorAttributeName] retain];
-    
+
     if (self.isEditing) {
         [theFieldEditor setDrawsBackground:NO];
         [theFieldEditor setTextColor:foregrndColor];

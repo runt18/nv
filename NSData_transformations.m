@@ -389,22 +389,6 @@
 	}
 }
 
-//extends nsmutabledata if necessary
-- (void)alignForBlockSize:(int)alignedBlockSize {
-	int dataBlockSize = [self length];
-	int paddedDataBlockSize = 0;
-	
-	if (dataBlockSize <= alignedBlockSize)
-		paddedDataBlockSize = alignedBlockSize;
-	else
-		paddedDataBlockSize = alignedBlockSize * ((dataBlockSize + (alignedBlockSize-1)) / alignedBlockSize);
-
-	//if malloc was used on conventional architectures, nsdata should be smart enough not to have to allocate a new block
-	int difference = paddedDataBlockSize - dataBlockSize;
-	if (difference > 0)
-		[self increaseLengthBy:difference];	
-}
-
 - (BOOL)encryptAESDataWithKey:(NSData*)key iv:(NSData*)iv {
 	return [self encryptDataWithCipher:EVP_aes_256_cbc() key:key iv:iv];
 }
@@ -439,7 +423,6 @@
 		return NO;
 	}
 	
-	//[self alignForBlockSize:EVP_CIPHER_CTX_block_size(&cipherContext)];
 	[self increaseLengthBy:EVP_CIPHER_CTX_block_size(&cipherContext)];
 	int encLen, finalLen = 0;
 	
@@ -489,7 +472,6 @@
 		return NO;
 	}
 	
-	//[self alignForBlockSize:EVP_CIPHER_CTX_block_size(&cipherContext)];
 	[self increaseLengthBy:EVP_CIPHER_CTX_block_size(&cipherContext)];
 	int decLen, finalLen = 0;
 	

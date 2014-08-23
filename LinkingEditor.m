@@ -29,9 +29,6 @@
 
 #define PASSWORD_SUGGESTIONS 0
 
-#ifdef notyet
-static long (*GetGetScriptManagerVariablePointer())(short);
-#endif
 
 #define kDefaultTextInsetWidth 8.0
 #define kDefaultTextInsetHeight 8.0
@@ -94,13 +91,6 @@ CGFloat _perceptualDarkness(NSColor*a);
 	
 	didRenderFully = NO;
 	[[self layoutManager] setDelegate:self];
-	
-//	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-//	[center addObserver:self selector:@selector(windowBecameOrResignedMain:) name:NSWindowDidBecomeMainNotification object:[self window]];
-//	[center addObserver:self selector:@selector(windowBecameOrResignedMain:) name:NSWindowDidResignMainNotification object:[self window]];
-    
-	//[center addObserver:self selector:@selector(updateTextColors) name:NSSystemColorsDidChangeNotification object:nil]; // recreate gradient if needed
-    //	NoMods = YES;
    
 	outletObjectAwoke(self);
 }
@@ -108,31 +98,13 @@ CGFloat _perceptualDarkness(NSColor*a);
 - (void)settingChangedForSelectorString:(NSString*)selectorString {
     
     if ([selectorString isEqualToString:SEL_STR(setCheckSpellingAsYouType:sender:)]) {
-	
 		[self setContinuousSpellCheckingEnabled:[prefsController checkSpellingAsYouType]];
-		
 	} else if ([selectorString isEqualToString:SEL_STR(setUseTextReplacement:sender:)]) {
-
 		[self setAutomaticTextReplacementEnabled:[prefsController useTextReplacement]];
-
 	} else if ([selectorString isEqualToString:SEL_STR(setNoteBodyFont:sender:)]) {
-
 		[self setTypingAttributes:[prefsController noteBodyAttributes]];
-		//[textView setFont:[prefsController noteBodyFont]];
 	} else if ([selectorString isEqualToString:SEL_STR(setMakeURLsClickable:sender:)]) {
-		
 		[self setLinkTextAttributes:[self preferredLinkAttributes]];
-    
-	//} else if ([selectorString isEqualToString:SEL_STR(setBackgroundTextColor:sender:)]) {
-		
-		//link-color is derived both from foreground and background colors
-		//[self updateTextColors];
-		
-	//} else if ([selectorString isEqualToString:SEL_STR(setForegroundTextColor:sender:)]) {
-		
-		//[self updateTextColors];
-		//[self setTypingAttributes:[prefsController noteBodyAttributes]];
-		
 	} else if ([selectorString isEqualToString:SEL_STR(setSearchTermHighlightColor:sender:)] || 
 			   [selectorString isEqualToString:SEL_STR(setShouldHighlightSearchTerms:sender:)]) {
 		
@@ -1367,18 +1339,6 @@ cancelCompetion:
 	return [super shouldChangeTextInRange:affectedCharRange replacementString:replacementString];
 }
 
-#ifdef notyet
-static long (*GetGetScriptManagerVariablePointer())(short) {
-	static long (*_GetScriptManagerVariablePointer)(short) = NULL;
-	if (!_GetScriptManagerVariablePointer) {
-		NSLog(@"looking up");
-		CFBundleRef csBundle = CFBundleCreate(NULL, CFURLCreateWithFileSystemPath(NULL, CFSTR("/System/Library/Frameworks/CoreServices.framework"), kCFURLPOSIXPathStyle, TRUE));
-		if (csBundle) _GetScriptManagerVariablePointer = (long (*)(short))CFBundleGetDataPointerForName(csBundle, CFSTR("GetScriptManagerVariable"));
-	}
-	return _GetScriptManagerVariablePointer;
-}
-#endif
-
 - (void)fixTypingAttributesForSubstitutedFonts {
 	//fixes a problem with fonts substituted by non-system input languages that Apple should have fixed themselves
 	
@@ -1617,15 +1577,6 @@ static long (*GetGetScriptManagerVariablePointer())(short) {
         additionalEditItems = NO;
 		
         NSMenu *editMenu = [[NSApp mainMenu] numberOfItems] > 2 ? [[[NSApp mainMenu] itemAtIndex:2] submenu] : nil;
-		
-//		if (IsSnowLeopardOrLater) {
-//            
-//			theMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Use Automatic Text Replacement", "use-text-replacement command in the edit menu")
-//													 action:@selector(toggleAutomaticTextReplacement:) keyEquivalent:@""];
-//			[theMenuItem setTarget:self];
-//			[editMenu addItem:theMenuItem];
-//			[theMenuItem release];
-//		}
 		theMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Insert Link",@"insert link menu item title") action:@selector(insertLink:) keyEquivalent:@"L"] autorelease];
         [theMenuItem setTarget:self];
         [editMenu addItem:theMenuItem];

@@ -77,23 +77,6 @@ static void SNReachabilityCallback(SCNetworkReachabilityRef	target, SCNetworkCon
     return [NSURL URLWithString:[NSString stringWithFormat:@"https://api.simperium.com/1/chalk-bump-f49%@%@", path, queryStr]];
 }
 
-#if 0
-+ (NSString*)localizedNetworkDiagnosticMessage {
-	
-	CFNetDiagnosticRef networkDiagnosticRef = CFNetDiagnosticCreateWithURL(kCFAllocatorDefault, (CFURLRef)[self authURLWithPath:@"/" parameters:nil]);
-	if (networkDiagnosticRef) {
-		
-		CFStringRef localizedDiagnosticString = NULL;
-		(void)CFNetDiagnosticCopyNetworkStatusPassively(networkDiagnosticRef, &localizedDiagnosticString);
-		CFRelease(networkDiagnosticRef);
-		
-		return [(id)localizedDiagnosticString autorelease];
-	}
-	return nil;
-}
-#endif
-
-
 + (SCNetworkReachabilityRef)createReachabilityRefWithCallback:(SCNetworkReachabilityCallBack)callout target:(id)aTarget {
 	SCNetworkReachabilityRef reachableRef = NULL;
 	

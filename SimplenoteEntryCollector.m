@@ -371,19 +371,6 @@
 			opName, entryFinishedCount, [entriesToCollect count]];
 }
 
-#if 0 /* allowing creation to complete will be of no use when the note's 
-	delegate notationcontroller has closed its WAL and DB, and as it is unretained can cause a crash */
-- (void)stop {
-	//cancel the current fetcher only if it is not a creator-fetcher; otherwise we risk it finishing without fully receiving notification of its sucess
-	if (@selector(fetcherForCreatingNote:) == fetcherOpSEL) {
-		//only stop the progression but allow the current fetcher to complete
-		stopped = YES;
-	} else {
-		[super stop];
-	}
-}
-#endif
-
 - (NSDictionary*)preparedDictionaryWithFetcher:(SyncResponseFetcher*)fetcher receivedData:(NSData*)data {
 	NSString *bodyString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 	

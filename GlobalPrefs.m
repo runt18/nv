@@ -657,7 +657,6 @@ BOOL ColorsEqualWith8BitChannels(NSColor *c1, NSColor *c2) {
 		NSMutableDictionary *attrs = [[NSMutableDictionary dictionaryWithObjectsAndKeys:bodyFont, NSFontAttributeName, nil] retain];
 		
 		//not storing the foreground color in each note will make the database smaller, and black is assumed when drawing text
-		//NSColor *fgColor = [self foregroundTextColor];
 		NSColor *fgColor = [[NSApp delegate] foregrndColor];
 		
 		if (!ColorsEqualWith8BitChannels([NSColor blackColor], fgColor)) {
@@ -671,18 +670,13 @@ BOOL ColorsEqualWith8BitChannels(NSColor *c1, NSColor *c2) {
 			if (pStyle)
 				[attrs setObject:pStyle forKey:NSParagraphStyleAttributeName];
 		}
-	   /*NSTextWritingDirectionEmbedding*/
-		//[NSArray arrayWithObjects:[NSNumber numberWithInt:0], [NSNumber numberWithInt:0], nil], @"NSWritingDirection", //for auto-LTR-RTL text
 		noteBodyAttributes = attrs;
 	}else {
-		//NSLog(@"notebody att4");
 		NSMutableDictionary *attrs = [[NSMutableDictionary dictionaryWithObjectsAndKeys:bodyFont, NSFontAttributeName, nil] retain];
 		NSColor *fgColor = [[NSApp delegate] foregrndColor];
 		
-		//	if (!ColorsEqualWith8BitChannels([NSColor blackColor], fgColor)) {
 		[attrs setObject:fgColor forKey:NSForegroundColorAttributeName];
 		noteBodyAttributes = attrs;
-		//	}
 	}
 
 	return noteBodyAttributes;
