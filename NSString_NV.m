@@ -702,7 +702,7 @@ BOOL IsHardLineBreakUnichar(unichar uchar, NSString *str, unsigned charIndex) {
 	
 #define AddIfUnique(enc) if (!ContainsUInteger(encodingsToTry, encodingIndex, (enc))) encodingsToTry[encodingIndex++] = (enc)
 	
-	NSStringEncoding encodingsToTry[5];
+	NSStringEncoding encodingsToTry[] = { [0 ... 4] = NSASCIIStringEncoding };
 	NSUInteger encodingIndex = 0;
 	
 	AddIfUnique(firstEncodingToTry);

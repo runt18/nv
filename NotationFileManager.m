@@ -664,7 +664,8 @@ terminate:
 				origLen = 245;
 			
 			FSRef duplicateFile;
-			err = FSMakeFSRefUnicode(&folder, name.length, name.unicode, kTextEncodingUnknown, &duplicateFile);
+			FSMakeFSRefUnicode(&folder, name.length, name.unicode, kTextEncodingUnknown, &duplicateFile);
+			
 			int i = 1, j;
 			while (1) {
 				i++;
@@ -682,7 +683,8 @@ terminate:
 				err = FSRenameUnicode(&duplicateFile, newName.length, newName.unicode, kTextEncodingUnknown, NULL);
 				if (err != dupFNErr)
 					break;
-			}    
+			}
+			
 			if (err == noErr)
 				err = FSMoveObject(childRef, &folder, NULL);    
 		}

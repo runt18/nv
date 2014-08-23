@@ -1148,6 +1148,8 @@ void outletObjectAwoke(id sender) {
 
 - (void)applicationWillBecomeActive:(NSNotification *)aNotification {
 	SpaceSwitchingContext thisSpaceSwitchCtx;
+	bzero(&thisSpaceSwitchCtx, sizeof(SpaceSwitchingContext));
+
 	if ([window windowNumber]!=-1) {
 		CurrentContextForWindowNumber([window windowNumber], &thisSpaceSwitchCtx);
 	}
