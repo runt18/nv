@@ -36,26 +36,28 @@
 thumbs.db
 Icon?
 Thumbs.db
-Notation.xcodeproj/xcuserdata/*
-Notation.xcodeproj/project.xcworkspace/*
 Loren.*
 ttscoff.*
-UserInterfaceState.xcuserstate
 .DS_Store
-build/*
-zh.lproj/*.nvhelp
-it.lproj/*.nvhelp
-zh_CN.lproj/*.nvhelp
-Portuguese.lproj/*.nvhelp
-Italian.lproj/*.nvhelp
-French.lproj/*.nvhelp
-*.pbxproj
-*.xcscheme
-<<<<<<< HEAD
-=======
 
->>>>>>> another gitignore
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+
 SimperiumConfig.h
-
-*.pbxproj
 nvalt.taskpaper
+
+.idea
