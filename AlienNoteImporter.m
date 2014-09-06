@@ -28,7 +28,7 @@
 #import "NotationPrefs.h"
 #import "NotationController.h"
 #import "NoteObject.h"
-#import <Quartz/Quartz.h>
+@import Quartz;
 
 NSString *ShouldImportCreationDates = @"ShouldImportCreationDates";
 
