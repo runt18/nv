@@ -71,7 +71,7 @@ static NSString *BMNoteUUIDStringKey = @"NoteUUIDString";
 	if (!self) { return nil; }
     
     if (!NTVSynchronizedNoteGetUUIDBytes(aNote, &uuidBytes)) {
-        NSLog(@"NoteBookmark init: no cfuuidbytes pointer from note %@", titleOfNote(aNote));
+        NSLog(@"NoteBookmark init: no cfuuidbytes pointer from note %@", aNote.title);
         [self release];
         return (self = nil);
     }
