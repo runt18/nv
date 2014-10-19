@@ -19,7 +19,6 @@
 
 #import "NSData_transformations.h"
 #include "hmacsha1.h"
-#include "broken_md5.h"
 #import <CommonCrypto/CommonCrypto.h>
 
 #include <unistd.h>
@@ -196,17 +195,6 @@
 	sha1_finish_ctx(&keyhash, [mutableData mutableBytes]);
 	
 	return mutableData;
-}
-
-- (NSData*)BrokenMD5Digest {
-	BrokenMD5_CTX context;
-	NSMutableData *digest = [NSMutableData dataWithLength:16];
-    
-    BrokenMD5Init(&context);
-    BrokenMD5Update(&context, [self bytes], [self length]);
-    BrokenMD5Final([digest mutableBytes], &context);
-	
-	return digest;
 }
 
 - (NSData*)MD5Digest {
