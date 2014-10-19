@@ -140,7 +140,7 @@ static void sendCallbacksForGlobalPrefs(GlobalPrefs* self, SEL selector, id orig
 		[NSNumber numberWithBool:NO], TextReplacementInNoteBodyKey, 
 		[NSNumber numberWithBool:YES], AutoCompleteSearchesKey, 
 		[NSNumber numberWithBool:YES], QuitWhenClosingMainWindowKey, 
-		[NSNumber numberWithBool:NO], TriedToImportBlorKey,
+		[NSNumber numberWithBool:YES], TriedToImportBlorKey,
 		[NSNumber numberWithBool:NO], HorizontalLayoutKey,
 		[NSNumber numberWithBool:YES], MakeURLsClickableKey,
 		[NSNumber numberWithBool:YES], HighlightSearchTermsKey, 
@@ -977,13 +977,6 @@ BOOL ColorsEqualWith8BitChannels(NSColor *c1, NSColor *c2) {
     return nil;
 }
 
-- (void)setBlorImportAttempted:(BOOL)value {
-	[defaults setBool:value forKey:TriedToImportBlorKey];
-}
-
-- (BOOL)triedToImportBlor {
-	return [defaults boolForKey:TriedToImportBlorKey];
-}
 - (void)synchronize {
     [defaults synchronize];
 }

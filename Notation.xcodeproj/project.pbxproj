@@ -59,7 +59,6 @@
 		21973A290AFE447A0046683E /* PassphraseRetriever.nib in Resources */ = {isa = PBXBuildFile; fileRef = 21973A230AFE447A0046683E /* PassphraseRetriever.nib */; };
 		219D1BB3110EA66A005E7DF5 /* TBAlert.png in Resources */ = {isa = PBXBuildFile; fileRef = 219D1BB2110EA66A005E7DF5 /* TBAlert.png */; };
 		219FD3160B2CC655004E132B /* LinkingEditor_Indentation.m in Sources */ = {isa = PBXBuildFile; fileRef = 219FD3150B2CC655004E132B /* LinkingEditor_Indentation.m */; };
-		219FD63E0B309B69004E132B /* BlorPasswordRetriever.m in Sources */ = {isa = PBXBuildFile; fileRef = 219FD63D0B309B69004E132B /* BlorPasswordRetriever.m */; };
 		21A2F95E09DF3FDC001AF0B5 /* NotationPrefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 21A2F95D09DF3FDC001AF0B5 /* NotationPrefs.m */; };
 		21A2FA1709DF6174001AF0B5 /* NotationPrefsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 21A2FA1609DF6174001AF0B5 /* NotationPrefsViewController.m */; };
 		21A30EA70971D11D0071E9AF /* FastListDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 21A30EA60971D11D0071E9AF /* FastListDataSource.m */; };
@@ -261,7 +260,6 @@
 		DBD70E0B19A641F90026F349 /* SaveHTMLPreview.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E0919A641F90026F349 /* SaveHTMLPreview.xib */; };
 		DBD70E1419A6427D0026F349 /* DeletionManager.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E1219A6427D0026F349 /* DeletionManager.xib */; };
 		DBD70E1C19A642B60026F349 /* EncodingsManager.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E1A19A642B60026F349 /* EncodingsManager.xib */; };
-		DBD70E3619A645120026F349 /* BlorPasswordRetriever.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E2219A645120026F349 /* BlorPasswordRetriever.xib */; };
 		DBD70E3719A645120026F349 /* ExporterManager.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E2419A645120026F349 /* ExporterManager.xib */; };
 		DBD70E3819A645120026F349 /* FindPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E2619A645120026F349 /* FindPanel.xib */; };
 		DBD70E3919A645120026F349 /* ImporterAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD70E2819A645120026F349 /* ImporterAccessory.xib */; };
@@ -424,8 +422,6 @@
 		219D1BB2110EA66A005E7DF5 /* TBAlert.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TBAlert.png; path = Images/TBAlert.png; sourceTree = "<group>"; };
 		219FD3140B2CC655004E132B /* LinkingEditor_Indentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkingEditor_Indentation.h; sourceTree = "<group>"; };
 		219FD3150B2CC655004E132B /* LinkingEditor_Indentation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkingEditor_Indentation.m; sourceTree = "<group>"; };
-		219FD63C0B309B69004E132B /* BlorPasswordRetriever.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlorPasswordRetriever.h; sourceTree = "<group>"; };
-		219FD63D0B309B69004E132B /* BlorPasswordRetriever.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = BlorPasswordRetriever.m; sourceTree = "<group>"; };
 		21A2F95C09DF3FDC001AF0B5 /* NotationPrefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotationPrefs.h; sourceTree = "<group>"; };
 		21A2F95D09DF3FDC001AF0B5 /* NotationPrefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotationPrefs.m; sourceTree = "<group>"; };
 		21A2FA1509DF6174001AF0B5 /* NotationPrefsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotationPrefsViewController.h; sourceTree = "<group>"; };
@@ -679,8 +675,6 @@
 		DBD70E1919A642870026F349 /* zh */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh; path = zh.lproj/DeletionManager.xib; sourceTree = "<group>"; };
 		DBD70E2019A642BC0026F349 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/EncodingsManager.xib; sourceTree = "<group>"; };
 		DBD70E2119A642BD0026F349 /* zh */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh; path = zh.lproj/EncodingsManager.xib; sourceTree = "<group>"; };
-		DBD70E4419A645290026F349 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/BlorPasswordRetriever.xib; sourceTree = "<group>"; };
-		DBD70E4519A645290026F349 /* zh */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh; path = zh.lproj/BlorPasswordRetriever.xib; sourceTree = "<group>"; };
 		DBD70E4919A645360026F349 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/URLGetter.xib; sourceTree = "<group>"; };
 		DBD70E4A19A645380026F349 /* zh */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh; path = zh.lproj/URLGetter.xib; sourceTree = "<group>"; };
 		DBD70E4E19A6453E0026F349 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/ExporterManager.xib; sourceTree = "<group>"; };
@@ -755,10 +749,6 @@
 		DBD70ED119A651240026F349 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/PTKeyComboPanel.xib; sourceTree = "<group>"; };
 		DBD70ED219A651240026F349 /* pt */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pt; path = pt.lproj/PTKeyComboPanel.xib; sourceTree = "<group>"; };
 		DBD70ED319A651250026F349 /* de */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = de; path = de.lproj/PTKeyComboPanel.xib; sourceTree = "<group>"; };
-		DBD70ED419A651270026F349 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/BlorPasswordRetriever.xib; sourceTree = "<group>"; };
-		DBD70ED519A651280026F349 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/BlorPasswordRetriever.xib; sourceTree = "<group>"; };
-		DBD70ED619A651290026F349 /* pt */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pt; path = pt.lproj/BlorPasswordRetriever.xib; sourceTree = "<group>"; };
-		DBD70ED719A651290026F349 /* de */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = de; path = de.lproj/BlorPasswordRetriever.xib; sourceTree = "<group>"; };
 		DBD70ED819A6512C0026F349 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ExporterManager.xib; sourceTree = "<group>"; };
 		DBD70ED919A6512C0026F349 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/ExporterManager.xib; sourceTree = "<group>"; };
 		DBD70EDA19A6512D0026F349 /* pt */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pt; path = pt.lproj/ExporterManager.xib; sourceTree = "<group>"; };
@@ -932,8 +922,6 @@
 				212089D70B0C2CA500A15A69 /* StickiesDocument.m */,
 				212089AF0B0C24F500A15A69 /* AlienNoteImporter.h */,
 				212089B00B0C24F500A15A69 /* AlienNoteImporter.m */,
-				219FD63C0B309B69004E132B /* BlorPasswordRetriever.h */,
-				219FD63D0B309B69004E132B /* BlorPasswordRetriever.m */,
 				21E6B09E0B6E6D18001ABEDC /* URLGetter.h */,
 				21E6B09D0B6E6D18001ABEDC /* URLGetter.m */,
 			);
@@ -1241,7 +1229,6 @@
 				219195E409D3A20F00586B15 /* Preferences.xib */,
 				5C84319314229D810020E5A7 /* PassphraseRetriever.xib */,
 				5CE5B00A1422795300FB554C /* PTKeyComboPanel.xib */,
-				DBD70E2219A645120026F349 /* BlorPasswordRetriever.xib */,
 				DBD70E2419A645120026F349 /* ExporterManager.xib */,
 				DBD70E2619A645120026F349 /* FindPanel.xib */,
 				DBD70E2819A645120026F349 /* ImporterAccessory.xib */,
@@ -1548,7 +1535,6 @@
 				B683A0D516F1CDA600564A1D /* SnapBack@2x.tif in Resources */,
 				B683A0D616F1CDA600564A1D /* SnapBackPressed@2x.tif in Resources */,
 				B683A0D716F1CDA600564A1D /* TBAlert@2x.png in Resources */,
-				DBD70E3619A645120026F349 /* BlorPasswordRetriever.xib in Resources */,
 				B683A0D816F1CDA600564A1D /* TBAlertWhite@2x.png in Resources */,
 				B683A0D916F1CDA600564A1D /* TBDownArrow@2x.png in Resources */,
 				B683A0DA16F1CDA600564A1D /* TBDownArrowWhite@2x.png in Resources */,
@@ -1607,7 +1593,6 @@
 				212089B10B0C24F500A15A69 /* AlienNoteImporter.m in Sources */,
 				212089D80B0C2CA500A15A69 /* StickiesDocument.m in Sources */,
 				219FD3160B2CC655004E132B /* LinkingEditor_Indentation.m in Sources */,
-				219FD63E0B309B69004E132B /* BlorPasswordRetriever.m in Sources */,
 				211344450B354E000081B064 /* idea_ossl.c in Sources */,
 				211345AB0B35D8540081B064 /* broken_md5.c in Sources */,
 				21F1CD6D0B3A38DB001FB5F6 /* PTHotKeyCenter.m in Sources */,
@@ -1876,19 +1861,6 @@
 				DBD70EC719A651170026F349 /* de */,
 			);
 			name = EncodingsManager.xib;
-			sourceTree = "<group>";
-		};
-		DBD70E2219A645120026F349 /* BlorPasswordRetriever.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				DBD70E4419A645290026F349 /* it */,
-				DBD70E4519A645290026F349 /* zh */,
-				DBD70ED419A651270026F349 /* en */,
-				DBD70ED519A651280026F349 /* fr */,
-				DBD70ED619A651290026F349 /* pt */,
-				DBD70ED719A651290026F349 /* de */,
-			);
-			name = BlorPasswordRetriever.xib;
 			sourceTree = "<group>";
 		};
 		DBD70E2419A645120026F349 /* ExporterManager.xib */ = {

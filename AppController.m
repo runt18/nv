@@ -503,7 +503,7 @@ void outletObjectAwoke(id sender) {
 	//	NSLog(@"version: %s", PRODUCT_NAME);
 	
 	//import old database(s) here if necessary
-	[AlienNoteImporter importBlorOrHelpFilesIfNecessaryIntoNotation:newNotation];
+	[AlienNoteImporter importHelpFilesIfNecessaryIntoNotation:newNotation];
 	
 	[newNotation release];
 
