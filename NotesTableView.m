@@ -283,10 +283,10 @@ static void _CopyItemWithSelectorFromMenu(NSMenu *destMenu, NSMenu *sourceMenu, 
 	for (i=0; i<[allColumns count]; i++) {
 		[[[allColumns objectAtIndex:i] dataCell] setFont:font];
 	}	
-//	BOOL isOneRow = !horiz || (![globalPrefs tableColumnsShowPreview] && !ColumnIsSet(NoteLabelsColumn, [globalPrefs tableColumnsBitmap]));
+	BOOL isOneRow = !horiz || (![globalPrefs tableColumnsShowPreview] && !ColumnIsSet(NoteLabelsColumn, [globalPrefs tableColumnsBitmap]));
     if (IsLeopardOrLater){
-        [self setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
-        //[self setSelectionHighlightStyle:isOneRow ? NSTableViewSelectionHighlightStyleRegular : NSTableViewSelectionHighlightStyleSourceList];
+//        [self setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
+        [self setSelectionHighlightStyle:isOneRow ? NSTableViewSelectionHighlightStyleRegular : NSTableViewSelectionHighlightStyleSourceList];
     }
 	NSLayoutManager *lm = [[NSLayoutManager alloc] init];
 	tableFontHeight = [lm defaultLineHeightForFont:font];
@@ -310,14 +310,13 @@ static void _CopyItemWithSelectorFromMenu(NSMenu *destMenu, NSMenu *sourceMenu, 
 		[self abortEditing];
 		
 		//restore columns according to the current preferences
-		
 		[self restoreColumns];
-		[self updateHeaderViewForColumns];
-		
+        
 		[self _configureAttributesForCurrentLayout];
-		
-		[self updateTitleDereferencorState];
-		
+        
+        [self updateTitleDereferencorState];
+        [self updateHeaderViewForColumns];
+
 		viewMenusValid = NO;
 	}else if (([selectorString isEqualToString:SEL_STR(setShowGrid:sender:)])||([selectorString isEqualToString:SEL_STR(setAlternatingRows:sender:)]) ) {
         if (([selectorString isEqualToString:SEL_STR(setAlternatingRows:sender:)])) {
@@ -1367,6 +1366,7 @@ enum { kNext_Tag = 'j', kPrev_Tag = 'k' };
 
 - (void)setBackgroundColor:(NSColor *)color{
     [super setBackgroundColor:color];
+     
     if (![[color colorSpaceName] isEqualToString:@"NSNamedColorSpace"]) {
         [NotesTableHeaderCell setBColor:color];
         CGFloat fWhite;
@@ -1387,8 +1387,9 @@ enum { kNext_Tag = 'j', kPrev_Tag = 'k' };
 # pragma mark alternating rows 
 - (void)drawBackgroundInClipRect:(NSRect)clipRect{
 	if (![self usesAlternatingRowBackgroundColors]) {
-        [[self backgroundColor]setFill];
-        NSRectFill(clipRect);
+        [super drawBackgroundInClipRect:clipRect];
+//        [[self backgroundColor]setFill];
+//        NSRectFill(clipRect);
     }else{
         NSColor *backColor=[self backgroundColor];
         NSColor *altColor;
@@ -1432,7 +1433,7 @@ enum { kNext_Tag = 'j', kPrev_Tag = 'k' };
     if (![self dataSource]) {
 		return;
 	}
-    [super highlightSelectionInClipRect:clipRect];
+        [super highlightSelectionInClipRect:clipRect];
 }
 
 @end

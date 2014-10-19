@@ -196,8 +196,10 @@
 	//[self setDrawsBackground:NO];
 	DualFieldCell *myCell = [self cell];
 	//[myCell setWraps:YES];
-	
-	[self setDrawsBackground:NO];
+    [self setDrawsBackground:NO];
+    if(IsYosemiteOrLater){
+        [self setTextColor:[NSColor blackColor]];
+    }
 	[self setBordered:NO];
 	[self setBezeled:NO];
 	[self setFocusRingType:NSFocusRingTypeExterior];
@@ -471,7 +473,7 @@
 	//drawWithFrame: would make sense to override, but this works, too
 	[[self cell] drawWithFrame:NSMakeRect(0, 0, NSWidth(tBounds), NSHeight(tBounds)) inView:self];
 	
-	if (IsLeopardOrLater) {
+	if (IsLeopardOrLater&&!IsYosemiteOrLater) {
 		//ALERT: TEMPORARY WORK-AROUND FOR TIGER FOCUS RING BUILDUP: DO NOT DRAW FOCUS RING ON TIGER
 		if ([self currentEditor] && isActiveWin) {
 			//draw focus ring

@@ -57,6 +57,7 @@ enum {VERIFY_NOT_ATTEMPTED, VERIFY_FAILED, VERIFY_IN_PROGRESS, VERIFY_SUCCESS};
 
 - (id)init {
     if (self=[super init]) {
+        
 		didAwakeFromNib = NO;
 		notationPrefs = [[[GlobalPrefs defaultPrefs] notationPrefs] retain];
 		
@@ -160,6 +161,9 @@ enum {VERIFY_NOT_ATTEMPTED, VERIFY_FAILED, VERIFY_IN_PROGRESS, VERIFY_SUCCESS};
 		
 		[allowedTypesTable reloadData];
 		[allowedExtensionsTable reloadData];
+        if (!IsMavericksOrLater||([notationPrefs notesStorageFormat]==SingleDatabaseFormat)) {
+            [useFinderTaggingButton setHidden:YES];
+        }
     }
 }
 
@@ -610,6 +614,25 @@ enum {VERIFY_NOT_ATTEMPTED, VERIFY_FAILED, VERIFY_IN_PROGRESS, VERIFY_SUCCESS};
 	} else {
 		[self disableEncryptionWithWarning:YES];
 	}
+}
+
+
+#pragma mark nvALT Finder tagging
+
+- (IBAction)switchToFinderTags:(id)sender{
+    if (IsMavericksOrLater) {
+        NSAlert *tagWarning=[NSAlert new];
+        [tagWarning setMessageText:NSLocalizedString(@"This will permanently convert all your nvALT tags to Finder tags, and use Finder tags from here on out.", @"Finder tag warning message text")];
+        [tagWarning setInformativeText:NSLocalizedString(@"This cannot be undone.", @"Finder tag warning informative text")];
+        [tagWarning addButtonWithTitle:NSLocalizedString(@"Do It", @"name of delete button")];
+        [tagWarning addButtonWithTitle:NSLocalizedString(@"Cancel", @"name of cancel button")];
+        [tagWarning beginSheetModalForWindow:[view window] completionHandler:^(NSModalResponse returnCode) {
+            if (returnCode == NSAlertFirstButtonReturn) {
+                [[GlobalPrefs defaultPrefs]setUseFinderTags:sender];
+            }
+        }];
+        [tagWarning release];
+    }
 }
 
 @end

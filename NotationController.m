@@ -173,7 +173,20 @@
 
 - (void)mirrorAllOMToFinderTags
 {
-	[allNotes makeObjectsPerformSelector:@selector(mirrorTags)];
+    if(IsMavericksOrLater&&([self currentNoteStorageFormat]!=SingleDatabaseFormat)&&(allNotes!=nil)&&(allNotes.count>0)){
+        NSUInteger mirroredCount=0;
+        for (NoteObject *note in allNotes) {
+            if(![note mirrorTags]){
+                break;
+            }
+            mirroredCount++;
+        }
+        if (mirroredCount!=allNotes.count) {
+            NSLog(@"didn't mirror every note");
+        }else{
+            [self performSelector:@selector(sortAndRedisplayNotes) withObject:nil afterDelay:2.5f];
+        }
+    }
 }
 
 - (void)upgradeDatabaseIfNecessary {
@@ -617,7 +630,6 @@ bail:
 	}
 	
     if (currentStorageFormat == SingleDatabaseFormat) {
-		
 		[self stopFileNotifications];
 		
 		/*if (![self initializeJournaling]) {
@@ -1539,8 +1551,12 @@ bail:
 }
 
 - (void)regeneratePreviewsForColumn:(NSTableColumn*)col visibleFilteredRows:(NSRange)rows forceUpdate:(BOOL)force {
-	
-	float width = [col width] - [NSScroller scrollerWidthForControlSize:NSRegularControlSize];
+    float width = [col width];
+    if(IsLionOrLater){
+        width-=[NSScroller scrollerWidthForControlSize:NSRegularControlSize scrollerStyle:[NSScroller preferredScrollerStyle]];
+    }else{
+    width-=[NSScroller scrollerWidthForControlSize:NSRegularControlSize];
+    }
 	
 	if (force || roundf(width) != roundf(titleColumnWidth)) {
 		titleColumnWidth = width;
